@@ -41,8 +41,8 @@ class Settings {
     return executionContext.getProvider()
   }
 
-  getAccountBalanceForAddress (address, cb) {
-    return this.udapp.getBalanceInEther(address, cb)
+  getAccountBalances (accountId, cb) {
+    return this.udapp.getAccountBalances(accountId, cb)
   }
 
   updateNetwork (cb) {
@@ -64,7 +64,7 @@ class Settings {
   // }
 
   getAccounts (cb) {
-    return this.udapp.getAccounts(cb)
+    return this.udapp.getAccounts(cb);
   }
 
   isEchojslibProvider () {

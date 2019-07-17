@@ -38,17 +38,6 @@ class SettingsUI {
     this.loadedAccounts = {}
   }
 
-  updateAccountBalances () {
-    if (!this.el) return
-    var accounts = $(this.el.querySelector('#txorigin')).children('option')
-    accounts.each((index, account) => {
-      this.settings.getAccountBalanceForAddress(account.value, (err, balance) => {
-        if (err) return
-        account.innerText = helper.shortenAddress(account.value, balance)
-      })
-    })
-  }
-
   render () {
     this.netUI = yo`<span class="${css.network} badge badge-secondary"></span>`
 
@@ -58,15 +47,15 @@ class SettingsUI {
           Environment
         </div>
         <div class=${css.environment}>
-          <select id="selectExEnvOptions" onchange=${() => { this.updateNetwork() }} class="form-control ${css.select}">
+          <select id="selectExEnvOptions" onchange=${() => {  }} class="form-control ${css.select}">
             <option id="injected-mode"
               title="Execution environment has been provided by Bridge or similar provider."
               value="injected" name="executionContext"> Injected EchojsLib
             </option>
-            <option id="echojs-mode"
+            <option id="echojslib-mode"
               title="Execution environment connects to node at localhost (or via ыыы if available), transactions will be sent to the network and can cause loss of money or worse!
               If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http."
-              value="echojs" name="executionContext"> EchojsLib Provider
+              value="echojslib" name="executionContext"> Echojslib Provider
             </option>
           </select>
           <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.infoDeployAction} fas fa-info"></i></a>
@@ -88,9 +77,24 @@ class SettingsUI {
           Account
         </div>
         <div class=${css.account}>
-          <select name="txorigin" class="form-control ${css.select}" id="txorigin"></select>
+          <select name="txorigin" class="form-control ${css.select}" id="txorigin" 
+          onchange=${() => {
+            this.updateNetwork()
+            this.updateAccountBalances()
+          }}></select>
           ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
           <i id="remixRunSignMsg" class="fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
+        </div>
+      </div>
+    `
+
+    const assetEl = yo`
+      <div class="${css.crow}">
+        <div class="${css.col1_1}">
+          Asset
+        </div>
+        <div class=${css.asset}>
+          <select name="assets" class="form-control ${css.select}" id="assets"></select>
         </div>
       </div>
     `
@@ -115,6 +119,7 @@ class SettingsUI {
         ${environmentEl}
         ${networkEl}
         ${accountEl}
+        ${assetEl}
         ${valueEl}
       </div>
     `
@@ -251,20 +256,46 @@ class SettingsUI {
       this.accountListCallId++
       if (err) { addTooltip(`Cannot get account list: ${err}`) }
       for (let loadedaddress in this.loadedAccounts) {
-        if (accounts.find((account) => account.id === loadedaddress) === -1) {
+        if (accounts.findIndex((account) => account.id === loadedaddress) === -1) {
           txOrigin.removeChild(txOrigin.querySelector('option[value="' + loadedaddress + '"]'))
           delete this.loadedAccounts[loadedaddress]
         }
       }
       for (let i in accounts) {
-        let {id: address} = accounts[i]
-        if (!this.loadedAccounts[address]) {
-          txOrigin.appendChild(yo`<option value="${address}" >${address}</option>`)
-          this.loadedAccounts[address] = 1
+        let {id} = accounts[i]
+        if (!this.loadedAccounts[id]) {
+          txOrigin.appendChild(yo`<option value="${id}" >${id}</option>`)
+          this.loadedAccounts[id] = 1
         }
       }
       txOrigin.setAttribute('value', accounts[0].id)
     })
+  }
+
+  updateAccountBalances () {
+    this._clearBalances()
+    if (!this.el) return
+    let accountEl = this.el.querySelector('#txorigin')
+    if (accountEl.selectedIndex === -1) return
+
+    let accountId = accountEl.options[accountEl.selectedIndex].value
+
+    this.settings.getAccountBalances(accountId, (err, results) => {
+      console.log(results)
+      let assetsEl = this.el.querySelector('#assets')
+
+      results.forEach((element) => {
+        const { amount, assetType } = element;
+        assetsEl.appendChild(yo`<option value="${element.assetType}">${assetType} (${helper.coinBalanceNormalizer(amount)})</option>`)
+      })
+    })
+  }
+
+  _clearBalances () {
+    let assetsEl = this.el.querySelector('#assets')
+    while (assetsEl.firstChild) {
+      assetsEl.removeChild(assetsEl.firstChild)
+    }
   }
 
 }

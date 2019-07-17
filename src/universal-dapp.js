@@ -155,6 +155,44 @@ module.exports = class UniversalDApp extends Plugin {
     })
   }
 
+  getAccountBalances(accountId, cb){
+    executionContext.echojslib().echo.api.getFullAccounts([accountId], false, true)
+    .then((results) => {
+      if (!results.length){
+        return cb('No balances')
+      }
+
+      console.log(results[0])
+      const { balances } = results[0]
+      const balancesArray = Object.keys(balances).map((assetType) => ({assetType, objectId: balances[assetType]}))
+
+      // TODO to constants
+      if (!balancesArray.length) {
+        return cb(null, [{
+          amount: '0',
+          assetType: '1.3.0'
+        }])
+      } else {
+        Promise.all(balancesArray.map((balanceObject) => {
+          return new Promise((resolve) => {
+            executionContext.echojslib().echo.api.getObject(balanceObject.objectId)
+            .then((result) => resolve({
+              amount: result.balance,
+              assetType: balanceObject.assetType
+            }))
+            .catch(() => resolve({
+              amount: null,
+              assetType: balanceObject.assetType
+            }))
+          })
+        }))
+        .then((result) => {
+          return cb(null, result);
+        })
+      }
+    })
+  }
+
   getBalance (address, cb) {
     address = ethJSUtil.stripHexPrefix(address)
 
@@ -162,7 +200,6 @@ module.exports = class UniversalDApp extends Plugin {
       return cb('No accounts?')
     }
 
-    console.log(executionContext.echojslib().echo.api)
     executionContext.echojslib().echo.api.getAccountBalances(address, ['1.3.0'], true)
     .then((result) => {
       const [item] = result

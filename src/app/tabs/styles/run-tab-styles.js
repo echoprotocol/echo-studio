@@ -55,6 +55,11 @@ var css = csjs`
     align-items: center;
     width: 90%;
   }
+  .asset {
+    display: flex;
+    align-items: center;
+    width: 70%;
+  }
   .col2 {
     border-radius: 3px;
   }
