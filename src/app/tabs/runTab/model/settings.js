@@ -59,9 +59,9 @@ class Settings {
     })(this.networkcallid)
   }
 
-  newAccount (passphraseCb, cb) {
-    return this.udapp.newAccount('', passphraseCb, cb)
-  }
+  // newAccount (passphraseCb, cb) {
+  //   return this.udapp.newAccount('', passphraseCb, cb)
+  // }
 
   getAccounts (cb) {
     return this.udapp.getAccounts(cb)

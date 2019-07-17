@@ -78,63 +78,53 @@ module.exports = class UniversalDApp extends Plugin {
     this.transactionContextAPI = transactionContextAPI
   }
 
-  /**
-   * Create a VM Account
-   * @param {{privateKey: string, balance: string}} newAccount The new account to create
-   */
-  createVMAccount (newAccount) {
-    const { privateKey, balance } = newAccount
-    if (executionContext.getProvider() !== 'vm') {
-      throw new Error('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
-    }
-    this._addAccount(privateKey, balance)
-    const privKey = Buffer.from(privateKey, 'hex')
-    return '0x' + ethJSUtil.privateToAddress(privKey).toString('hex')
-  }
+  // /**
+  //  * Create a VM Account
+  //  * @param {{privateKey: string, balance: string}} newAccount The new account to create
+  //  */
+  // createVMAccount (newAccount) {
+  //   const { privateKey, balance } = newAccount
+  //   if (executionContext.getProvider() !== 'vm') {
+  //     throw new Error('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
+  //   }
+  //   this._addAccount(privateKey, balance)
+  //   const privKey = Buffer.from(privateKey, 'hex')
+  //   return '0x' + ethJSUtil.privateToAddress(privKey).toString('hex')
+  // }
 
-  newAccount (password, passwordPromptCb, cb) {
-    var privateKey
-    do {
-      privateKey = crypto.randomBytes(32)
-    } while (!ethJSUtil.isValidPrivate(privateKey))
-    this._addAccount(privateKey, '0x56BC75E2D63100000')
-    cb(null, '0x' + ethJSUtil.privateToAddress(privateKey).toString('hex'));
-  }
+  // newAccount (password, passwordPromptCb, cb) {
+  //   var privateKey
+  //   do {
+  //     privateKey = crypto.randomBytes(32)
+  //   } while (!ethJSUtil.isValidPrivate(privateKey))
+  //   this._addAccount(privateKey, '0x56BC75E2D63100000')
+  //   cb(null, '0x' + ethJSUtil.privateToAddress(privateKey).toString('hex'));
+  // }
 
-  _addAccount (privateKey, balance) {
-
-    if (this.accounts) {
-      privateKey = Buffer.from(privateKey, 'hex')
-      const address = ethJSUtil.privateToAddress(privateKey)
-
-      // FIXME: we don't care about the callback, but we should still make this proper
-      let stateManager = executionContext.vm().stateManager
-      stateManager.getAccount(address, (error, account) => {
-        if (error) return console.log(error)
-        account.balance = balance || '0xf00000000000000001'
-        stateManager.putAccount(address, account, function cb (error) {
-          if (error) console.log(error)
-        })
-      })
-
-      this.accounts['0x' + address.toString('hex')] = { privateKey, nonce: 0 }
-    }
-  }
+  // _addAccount (privateKey, balance) {
+  //
+  //   if (this.accounts) {
+  //     privateKey = Buffer.from(privateKey, 'hex')
+  //     const address = ethJSUtil.privateToAddress(privateKey)
+  //
+  //     // FIXME: we don't care about the callback, but we should still make this proper
+  //     let stateManager = executionContext.vm().stateManager
+  //     stateManager.getAccount(address, (error, account) => {
+  //       if (error) return console.log(error)
+  //       account.balance = balance || '0xf00000000000000001'
+  //       stateManager.putAccount(address, account, function cb (error) {
+  //         if (error) console.log(error)
+  //       })
+  //     })
+  //
+  //     this.accounts['0x' + address.toString('hex')] = { privateKey, nonce: 0 }
+  //   }
+  // }
 
   getAccounts (cb) {
     return new Promise((resolve, reject) => {
-      const provider = executionContext.getProvider()
+      const provider = executionContext.getProvider();
       switch (provider) {
-        case 'vm': {
-          if (!this.accounts) {
-            if (cb) cb('No accounts?')
-            reject('No accounts?')
-            return
-          }
-          if (cb) cb(null, Object.keys(this.accounts))
-          resolve(Object.keys(this.accounts))
-        }
-          break
         case 'web3': {
           if (this._deps.config.get('settings/personal-mode')) {
             return executionContext.web3().personal.getListAccounts((error, accounts) => {
@@ -153,11 +143,10 @@ module.exports = class UniversalDApp extends Plugin {
           break
         case 'injected': {
           executionContext.echojslib().extension.getAccounts().then((accounts) => {
-            console.log(accounts)
             if (cb) cb(null, accounts)
-            resolve(accounts)
+            return resolve(accounts)
           })
-          .catch((error)=>{
+          .catch((error) => {
             if (cb) cb(error, [])
             return reject(error)
           })

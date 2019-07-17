@@ -30,8 +30,6 @@ class SettingsUI {
       config: this._components.registry.get('config').api
     }
 
-    this._deps.config.events.on('settings/personal-mode_changed', this.onPersonalChange.bind(this))
-
     setInterval(() => {
       this.updateAccountBalances()
     }, 10 * 1000)
@@ -88,22 +86,12 @@ class SettingsUI {
       <div class="${css.crow}">
         <div class="${css.col1_1}">
           Account
-          <span id="remixRunPlusWraper" title="Create a new account" onload=${this.updatePlusButton.bind(this)}>
-            <i id="remixRunPlus" class="fas fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${this.newAccount.bind(this)}"></i>
-          </span>
         </div>
         <div class=${css.account}>
           <select name="txorigin" class="form-control ${css.select}" id="txorigin"></select>
           ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
           <i id="remixRunSignMsg" class="fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
         </div>
-      </div>
-    `
-
-    const gasPriceEl = yo`
-      <div class="${css.crow}">
-        <div class="${css.col1_1}">Gas limit</div>
-        <input type="number" class="form-control ${css.gasNval} ${css.col2}" id="gasLimit" value="3000000">
       </div>
     `
 
@@ -127,11 +115,9 @@ class SettingsUI {
         ${environmentEl}
         ${networkEl}
         ${accountEl}
-        ${gasPriceEl}
         ${valueEl}
       </div>
     `
-
     var selectExEnv = environmentEl.querySelector('#selectExEnvOptions')
     this.setDropdown(selectExEnv)
 
@@ -197,56 +183,6 @@ class SettingsUI {
     this.selectExEnv.value = this.settings.getProvider()
     this.event.trigger('clearInstance', [])
     this.updateNetwork()
-    this.updatePlusButton()
-  }
-
-  updatePlusButton () {
-    // enable/disable + button
-    let plusBtn = document.getElementById('remixRunPlus')
-    let plusTitle = document.getElementById('remixRunPlusWraper')
-    switch (this.selectExEnv.value) {
-      case 'injected': {
-        plusBtn.classList.add(css.disableMouseEvents)
-        plusTitle.title = "Unfortunately it's not possible to create an account using injected web3. Please create the account directly from your provider (i.e metamask or other of the same type)."
-      }
-        break
-      case 'web3': {
-        this.onPersonalChange()
-      }
-        break
-      default:
-    }
-  }
-
-  onPersonalChange () {
-    let plusBtn = document.getElementById('remixRunPlus')
-    let plusTitle = document.getElementById('remixRunPlusWraper')
-    if (!this._deps.config.get('settings/personal-mode')) {
-      plusBtn.classList.add(css.disableMouseEvents)
-      plusTitle.title = 'Creating an account is possible only in Personal mode. Please go to Settings to enable it.'
-    } else {
-      plusBtn.classList.remove(css.disableMouseEvents)
-      plusTitle.title = 'Create a new account'
-    }
-  }
-
-  newAccount () {
-    this.settings.newAccount(
-      (cb) => {
-        modalDialogCustom.promptPassphraseCreation((error, passphrase) => {
-          if (error) {
-            return modalDialogCustom.alert(error)
-          }
-          cb(passphrase)
-        }, () => {})
-      },
-      (error, address) => {
-        if (error) {
-          return addTooltip('Cannot create an account: ' + error)
-        }
-        addTooltip(`account ${address} created`)
-      }
-    )
   }
 
   signMessage () {
@@ -315,7 +251,6 @@ class SettingsUI {
       this.accountListCallId++
       if (err) { addTooltip(`Cannot get account list: ${err}`) }
       for (let loadedaddress in this.loadedAccounts) {
-        // TODO
         if (accounts.find((account) => account.id === loadedaddress) === -1) {
           txOrigin.removeChild(txOrigin.querySelector('option[value="' + loadedaddress + '"]'))
           delete this.loadedAccounts[loadedaddress]
@@ -324,7 +259,7 @@ class SettingsUI {
       for (let i in accounts) {
         let {id: address} = accounts[i]
         if (!this.loadedAccounts[address]) {
-          txOrigin.appendChild(yo`<option value="${address}" >${address}(100 уер)</option>`)
+          txOrigin.appendChild(yo`<option value="${address}" >${address}</option>`)
           this.loadedAccounts[address] = 1
         }
       }
