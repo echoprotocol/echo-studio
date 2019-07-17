@@ -1,4 +1,3 @@
-var ethJSUtil = require('ethereumjs-util')
 var Personal = require('web3-eth-personal')
 var remixLib = require('remix-lib')
 const addTooltip = require('../../../ui/tooltip')
@@ -68,32 +67,18 @@ class Settings {
     return this.udapp.getAccounts(cb)
   }
 
-  isWeb3Provider () {
-    var isVM = executionContext.isVM()
+  isEchojslibProvider () {
     var isInjected = executionContext.getProvider() === 'injected'
-    return (!isVM && !isInjected)
+    return !isInjected
   }
 
-  isInjectedWeb3 () {
+  isInjectedEchojslib () {
     return executionContext.getProvider() === 'injected'
   }
 
   signMessage (message, account, passphrase, cb) {
-    var isVM = executionContext.isVM()
     var isInjected = executionContext.getProvider() === 'injected'
 
-    if (isVM) {
-      const personalMsg = ethJSUtil.hashPersonalMessage(Buffer.from(message))
-      var privKey = this.udapp.accounts[account].privateKey
-      try {
-        var rsv = ethJSUtil.ecsign(personalMsg, privKey)
-        var signedData = ethJSUtil.toRpcSig(rsv.v, rsv.r, rsv.s)
-        cb(null, '0x' + personalMsg.toString('hex'), signedData)
-      } catch (e) {
-        cb(e.message)
-      }
-      return
-    }
     if (isInjected) {
       const hashedMsg = executionContext.web3().sha3(message)
       try {

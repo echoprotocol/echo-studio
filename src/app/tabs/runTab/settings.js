@@ -61,18 +61,14 @@ class SettingsUI {
         </div>
         <div class=${css.environment}>
           <select id="selectExEnvOptions" onchange=${() => { this.updateNetwork() }} class="form-control ${css.select}">
-            <option id="vm-mode"
-              title="Execution environment does not connect to any node, everything is local and in memory only."
-              value="vm" name="executionContext"> JavaScript VM
-            </option>
             <option id="injected-mode"
-              title="Execution environment has been provided by Metamask or similar provider."
-              value="injected" name="executionContext"> Injected Web3
+              title="Execution environment has been provided by Bridge or similar provider."
+              value="injected" name="executionContext"> Injected EchojsLib
             </option>
-            <option id="web3-mode"
-              title="Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!
+            <option id="echojs-mode"
+              title="Execution environment connects to node at localhost (or via ыыы if available), transactions will be sent to the network and can cause loss of money or worse!
               If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http."
-              value="web3" name="executionContext"> Web3 Provider
+              value="echojs" name="executionContext"> EchojsLib Provider
             </option>
           </select>
           <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.infoDeployAction} fas fa-info"></i></a>
@@ -123,7 +119,7 @@ class SettingsUI {
             <option data-unit="ether">ether</option>
           </select>
         </div>
-      </div>
+      </d
     `
 
     const el = yo`
@@ -214,11 +210,6 @@ class SettingsUI {
         plusTitle.title = "Unfortunately it's not possible to create an account using injected web3. Please create the account directly from your provider (i.e metamask or other of the same type)."
       }
         break
-      case 'vm': {
-        plusBtn.classList.remove(css.disableMouseEvents)
-        plusTitle.title = 'Create a new account'
-      }
-        break
       case 'web3': {
         this.onPersonalChange()
       }
@@ -266,7 +257,7 @@ class SettingsUI {
 
       var signMessageDialog = { 'title': 'Sign a message', 'text': 'Enter a message to sign', 'inputvalue': 'Message to sign' }
       var $txOrigin = this.el.querySelector('#txorigin')
-      if (!$txOrigin.selectedOptions[0] && (this.settings.isInjectedWeb3() || this.settings.isWeb3Provider())) {
+      if (!$txOrigin.selectedOptions[0] && (this.settings.isInjectedEchojslib() || this.settings.isEchojslibProvider())) {
         return addTooltip(`Account list is empty, please make sure the current provider is properly connected to remix`)
       }
 
@@ -290,7 +281,7 @@ class SettingsUI {
         }, false)
       }
 
-      if (this.settings.isWeb3Provider()) {
+      if (this.settings.isEchojslibProvider()) {
         return modalDialogCustom.promptPassphrase(
           'Passphrase to sign a message',
           'Enter your passphrase for this account to sign the message',
@@ -309,8 +300,7 @@ class SettingsUI {
         this.netUI.innerHTML = 'can\'t detect network '
         return
       }
-      let network = this._components.networkModule.getNetworkProvider
-      this.netUI.innerHTML = (network() !== 'vm') ? `${name} (${id || '-'}) network` : ''
+      this.netUI.innerHTML = `${name} (${id || '-'}) network`
     })
     this.fillAccountsList()
   }
@@ -318,26 +308,27 @@ class SettingsUI {
   // TODO: unclear what's the goal of accountListCallId, feels like it can be simplified
   fillAccountsList () {
     this.accountListCallId++
-    var callid = this.accountListCallId
-    var txOrigin = this.el.querySelector('#txorigin')
+    let callid = this.accountListCallId
+    let txOrigin = this.el.querySelector('#txorigin')
     this.settings.getAccounts((err, accounts) => {
       if (this.accountListCallId > callid) return
       this.accountListCallId++
       if (err) { addTooltip(`Cannot get account list: ${err}`) }
-      for (var loadedaddress in this.loadedAccounts) {
-        if (accounts.indexOf(loadedaddress) === -1) {
+      for (let loadedaddress in this.loadedAccounts) {
+        // TODO
+        if (accounts.find((account) => account.id === loadedaddress) === -1) {
           txOrigin.removeChild(txOrigin.querySelector('option[value="' + loadedaddress + '"]'))
           delete this.loadedAccounts[loadedaddress]
         }
       }
-      for (var i in accounts) {
-        var address = accounts[i]
+      for (let i in accounts) {
+        let {id: address} = accounts[i]
         if (!this.loadedAccounts[address]) {
-          txOrigin.appendChild(yo`<option value="${address}" >${address}</option>`)
+          txOrigin.appendChild(yo`<option value="${address}" >${address}(100 уер)</option>`)
           this.loadedAccounts[address] = 1
         }
       }
-      txOrigin.setAttribute('value', accounts[0])
+      txOrigin.setAttribute('value', accounts[0].id)
     })
   }
 

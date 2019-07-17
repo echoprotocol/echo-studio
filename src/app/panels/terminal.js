@@ -683,7 +683,7 @@ function domTerminalFeatures (self, scopedCommands) {
     swarmgw,
     ethers,
     remix: self._components.cmdInterpreter,
-    web3: new Web3(executionContext.web3().currentProvider),
+    // web3: new Web3(executionContext.web3().currentProvider),
     console: {
       log: function () { scopedCommands.log.apply(scopedCommands, arguments) },
       info: function () { scopedCommands.info.apply(scopedCommands, arguments) },

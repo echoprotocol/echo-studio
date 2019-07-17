@@ -116,10 +116,6 @@ class DropdownLogic {
     return executionContext.web3().eth.getGasPrice(cb)
   }
 
-  isVM () {
-    return executionContext.isVM()
-  }
-
   // TODO: check if selectedContract and data can be joined
   createContract (selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, finalCb) {
     if (data) {
@@ -189,17 +185,10 @@ class DropdownLogic {
         if (error) {
           return finalCb(`creation of ${selectedContract.name} errored: ${error}`)
         }
-        var isVM = executionContext.isVM()
-        if (isVM) {
-          var vmError = txExecution.checkVMError(txResult)
-          if (vmError.error) {
-            return finalCb(vmError.message)
-          }
-        }
         if (txResult.result.status && txResult.result.status === '0x0') {
           return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
         }
-        var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
+        var address = txResult.result.contractAddress
         finalCb(null, selectedContract, address)
       }
     )
