@@ -184,7 +184,7 @@ class SettingsUI {
 
   setWifInput() {
     const settings = document.querySelector(`.${css.settings}`);
-    const toInsertAfterNode = settings.childNodes[0];
+    const toInsertAfterNode = settings.childNodes[1];
 
     const wifInput = yo`
       <div class="${css.crow}" id="wifBlock">
@@ -284,25 +284,23 @@ class SettingsUI {
   }
 
   async getInfoByWif() {
-    console.log('ON CHANGE ')
     try {
+      const txOrigin = this.el.querySelector('#txorigin')
+      const assets = this.el.querySelector('#assets')
+
+      txOrigin.innerHTML = ''
+      assets.innerHTML = ''
+
       const wifInput = document.querySelector('#wifInput');
       const wif = wifInput.value;
-      console.log(`WIF: ${value}`);
-
       const isValidWif = this.settings.validateWif(wif);
-      console.log('===00')
-      console.log(isValidWif)
-      console.log('===00')
 
-      const info = await this.settings.getInfoByWif(wif);
-      console.log('info:')
-
-      let txOrigin = this.el.querySelector('#txorigin')
-
-          txOrigin.appendChild(yo`<option value="${info[0][0]}" >${info[0][0]}</option>`)
-
-      console.log(info);
+      if (isValidWif) {
+        const info = await this.settings.getInfoByWif(wif)
+        
+        txOrigin.appendChild(yo`<option value="${info[0][0]}" >${info[0][0]}</option>`)
+        this.updateAccountBalances();
+      }
     } catch (error) {
       console.log(error)
     }

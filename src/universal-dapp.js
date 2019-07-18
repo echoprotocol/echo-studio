@@ -151,6 +151,7 @@ module.exports = class UniversalDApp extends Plugin {
             return reject(error)
           })
         }
+        break
       }
     })
   }
@@ -247,6 +248,7 @@ module.exports = class UniversalDApp extends Plugin {
     * @param {Function} callback    - callback.
     */
   createContract (data, confirmationCb, continueCb, promptCb, callback) {
+    console.log(data)
     this.runTx({data: data, useCall: false}, confirmationCb, continueCb, promptCb, (error, txResult) => {
       // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
       callback(error, txResult)
@@ -333,32 +335,28 @@ module.exports = class UniversalDApp extends Plugin {
   }
 
   runTx (args, confirmationCb, continueCb, promptCb, cb) {
+    console.log('RUN TX')
+    console.log(args)
     const self = this
     async.waterfall([
-      function getGasLimit (next) {
-        if (self.transactionContextAPI.getGasLimit) {
-          return self.transactionContextAPI.getGasLimit(next)
-        }
-        next(null, 3000000)
-      },
-      function queryValue (gasLimit, next) {
+      function queryValue (next) {
         if (args.value) {
-          return next(null, args.value, gasLimit)
+          return next(null, args.value)
         }
         if (args.useCall || !self.transactionContextAPI.getValue) {
-          return next(null, 0, gasLimit)
+          return next(null, 0)
         }
         self.transactionContextAPI.getValue(function (err, value) {
-          next(err, value, gasLimit)
+          next(err, value)
         })
       },
-      function getAccount (value, gasLimit, next) {
+      function getAccount (value, next) {
         if (args.from) {
-          return next(null, args.from, value, gasLimit)
+          return next(null, args.from, value)
         }
         if (self.transactionContextAPI.getAddress) {
           return self.transactionContextAPI.getAddress(function (err, address) {
-            next(err, address, value, gasLimit)
+            next(err, address, value)
           })
         }
         self.getAccounts(function (err, accounts) {
@@ -366,11 +364,22 @@ module.exports = class UniversalDApp extends Plugin {
 
           if (err) return next(err)
           if (!address) return next('No accounts available')
-          next(null, address, value, gasLimit)
+          next(null, address, value)
         })
       },
-      function runTransaction (fromAddress, value, gasLimit, next) {
-        var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, gasLimit: gasLimit, timestamp: args.data.timestamp }
+      function getAsset (fromAddress, value, next) {
+        if (args.asset) {
+          return next(null, args.from, value)
+        }
+        if (self.transactionContextAPI.getAsset) {
+          return self.transactionContextAPI.getAsset(function (err, asset) {
+            next(err, asset, fromAddress, value)
+          })
+        }
+      },
+      function runTransaction (asset, fromAddress, value, next) {
+        var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, timestamp: args.data.timestamp, asset, wif: args.data.wif }
+        console.log(tx)
         var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
         var timestamp = Date.now()
         if (tx.timestamp) {

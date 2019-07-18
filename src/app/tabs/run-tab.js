@@ -56,20 +56,17 @@ class RunTab extends ViewPlugin {
       getValue: (cb) => {
         try {
           var number = document.querySelector('#value').value
-          var select = document.getElementById('unit')
-          var index = select.selectedIndex
-          var selectedUnit = select.querySelectorAll('option')[index].dataset.unit
-          var unit = 'ether' // default
-          if (['ether', 'finney', 'gwei', 'wei'].indexOf(selectedUnit) >= 0) {
-            unit = selectedUnit
-          }
-          cb(null, executionContext.web3().toWei(number, unit))
+          cb(null, number)
         } catch (e) {
           cb(e)
         }
       },
       getGasLimit: (cb) => {
         cb(null, $('#gasLimit').val())
+      },
+      getAsset: (cb) => {
+        const asset = $('#assets').val()
+        cb(null, asset.split(' ')[0])  
       }
     })
   }

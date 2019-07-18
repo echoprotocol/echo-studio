@@ -118,17 +118,21 @@ class DropdownLogic {
 
   // TODO: check if selectedContract and data can be joined
   createContract (selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, finalCb) {
+    console.log('CREATE CONTRACT')
     if (data) {
       data.contractName = selectedContract.name
       data.linkReferences = selectedContract.bytecodeLinkReferences
       data.contractABI = selectedContract.abi
+      data.wif = document.querySelector('#wifInput').value
     }
 
     var confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       if (network.name !== 'Main') {
         return continueTxExecution(null)
       }
+      console.log('pidr')
       var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
+      console.log('pidr2')
 
       // TODO: there is still a UI dependency to remove here, it's still too coupled at this point to remove easily
       var content = confirmDialog(tx, amount, gasEstimation, this.recorder,
@@ -195,6 +199,7 @@ class DropdownLogic {
   }
 
   runTransaction (data, continueCb, promptCb, modalDialog, confirmDialog, finalCb) {
+    console.log('RUN TRANSACTION')
     var confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       if (network.name !== 'Main') {
         return continueTxExecution(null)
@@ -260,12 +265,15 @@ class DropdownLogic {
     try {
       contractMetadata = await this.runView.call('compilerMetadata', 'deployMetadataOf', selectedContract.name)
     } catch (error) {
+      console.log('zalupka1')
       return statusCb(`creation of ${selectedContract.name} errored: ` + error)
     }
     if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
       return txFormat.buildData(selectedContract.name, selectedContract.object, this.compilersArtefacts['__last'].getData().contracts, true, constructor, args, (error, data) => {
-        if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
+        console.log('zalupka2')
 
+        if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
+        console.log('zalupka3')
         statusCb(`creation of ${selectedContract.name} pending...`)
         this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, cb)
       }, statusCb, (data, runTxCallback) => {
@@ -280,6 +288,14 @@ class DropdownLogic {
       statusCb(`creation of ${selectedContract.name} pending...`)
       this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, cb)
     })
+  }
+
+  async forceSendEcho(selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, statusCb, cb) {
+    this.createEchoContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, cb);
+  }
+
+  createEchoContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, finalCb) {
+
   }
 
 }

@@ -246,11 +246,8 @@ var css = csjs`
   }
   .wifInput {
     margin-right: 10px;
-    width: 150px;
+    width: 90%;
     font-size: 0.8rem;
-  }
-  .wifButton {
-    border-radius: 3px;
   }
   .gasNvalUnit {
     /* transform: scale(0.7); */
