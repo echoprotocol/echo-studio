@@ -60,6 +60,11 @@ var css = csjs`
     align-items: center;
     width: 100%;
   }
+  .asset {
+    display: flex;
+    align-items: center;
+    width: 70%;
+  }
   .col2 {
     border-radius: 3px;
   }

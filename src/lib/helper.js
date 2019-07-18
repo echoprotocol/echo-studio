@@ -1,9 +1,13 @@
-var async = require('async')
+const async = require('async')
+const bignumber = require('bignumber.js')
 
 module.exports = {
   shortenAddress: function (address, etherBalance) {
     var len = address.length
     return address.slice(0, 5) + '...' + address.slice(len - 5, len) + (etherBalance ? ' (' + etherBalance.toString() + ' ether)' : '')
+  },
+  coinBalanceNormalizer: function (value, precision) {
+    return bignumber(value).dividedBy(10 ** precision).toString()
   },
   shortenHexData: function (data) {
     if (!data) return ''

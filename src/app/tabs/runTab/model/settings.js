@@ -26,6 +26,10 @@ class Settings {
       this.event.trigger('removeProvider', [name])
     })
 
+    executionContext.event.register('connectToNetwork', (name, id) => {
+      this.event.trigger('connectToNetwork', [name, id])
+    })
+
     this.networkcallid = 0
   }
 
@@ -41,8 +45,8 @@ class Settings {
     return executionContext.getProvider()
   }
 
-  getAccountBalanceForAddress (address, cb) {
-    return this.udapp.getBalanceInEther(address, cb)
+  getAccountBalances (accountId, cb) {
+    return this.udapp.getAccountBalances(accountId, cb)
   }
 
   updateNetwork (cb) {
@@ -64,7 +68,7 @@ class Settings {
   // }
 
   getAccounts (cb) {
-    return this.udapp.getAccounts(cb)
+    return this.udapp.getAccounts(cb);
   }
 
   getInfoByWif(wif) {

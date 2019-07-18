@@ -159,6 +159,51 @@ module.exports = class UniversalDApp extends Plugin {
     const pb = executionContext.echojslib().PrivateKey.fromWif(wif).toPublicKey().toPublicKeyString()
     return executionContext.echoConnection().api.getKeyReferences([pb]);
   }
+  
+  getAccountBalances (accountId, cb) {
+    executionContext.echojslib().echo.api.getFullAccounts([accountId])
+    .then((results) => {
+
+      if (!results || !results[0]) {
+        return cb('Unknown account id')
+      }
+
+      const { balances } = results[0]
+      const balancesArray = Object.keys(balances).map((assetType) => ({assetType, objectId: balances[assetType]}))
+
+      if (!balancesArray.length) {
+        return cb(null, [{
+          amount: '0',
+          assetType: '1.3.0'
+        }])
+      }
+
+      Promise.all(balancesArray.map((balanceObject) => {
+        return new Promise((resolve) => {
+          executionContext.echojslib().echo.api.getObject(balanceObject.objectId)
+          .then((result) => ({
+            amount: result.balance,
+            assetType: balanceObject.assetType
+          }))
+          .then((result) => {
+            executionContext.echojslib().echo.api.getObject(result.assetType)
+            .then((assetResult) => resolve({
+              ...result,
+              symbol: assetResult.symbol,
+              precision: assetResult.precision
+            }))
+          })
+          .catch(() => resolve({
+            amount: null,
+            assetType: balanceObject.assetType
+          }))
+        })
+      }))
+      .then((result) => {
+        return cb(null, result);
+      })
+    })
+  }
 
   getBalance (address, cb) {
     address = ethJSUtil.stripHexPrefix(address)
@@ -167,7 +212,6 @@ module.exports = class UniversalDApp extends Plugin {
       return cb('No accounts?')
     }
 
-    console.log(executionContext.echojslib().echo.api)
     executionContext.echojslib().echo.api.getAccountBalances(address, ['1.3.0'], true)
     .then((result) => {
       const [item] = result
