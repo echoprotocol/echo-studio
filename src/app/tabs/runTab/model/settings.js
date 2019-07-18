@@ -33,8 +33,8 @@ class Settings {
     return executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
   }
 
-  setProviderFromEndpoint (target, context, cb) {
-    return executionContext.setProviderFromEndpoint(target, context, cb)
+  setProviderFromEndpoint (target, context, infoCb, cb) {
+    return executionContext.setProviderFromEndpoint(target, context, infoCb, cb)
   }
 
   getProvider () {
@@ -67,6 +67,10 @@ class Settings {
     return this.udapp.getAccounts(cb)
   }
 
+  getInfoByWif(wif) {
+    return this.udapp.getInfo(wif);
+  }
+
   isEchojslibProvider () {
     var isInjected = executionContext.getProvider() === 'injected'
     return !isInjected
@@ -74,6 +78,10 @@ class Settings {
 
   isInjectedEchojslib () {
     return executionContext.getProvider() === 'injected'
+  }
+
+  isExternalEchoConnected() {
+    return executionContext.isExternalEchoConnected()
   }
 
   signMessage (message, account, passphrase, cb) {

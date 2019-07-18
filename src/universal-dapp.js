@@ -155,6 +155,11 @@ module.exports = class UniversalDApp extends Plugin {
     })
   }
 
+  getInfo(wif, cb) {
+    const pb = executionContext.echojslib().PrivateKey.fromWif(wif).toPublicKey().toPublicKeyString()
+    return executionContext.echoConnection().api.getKeyReferences([pb]);
+  }
+
   getBalance (address, cb) {
     address = ethJSUtil.stripHexPrefix(address)
 

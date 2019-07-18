@@ -66,7 +66,7 @@ class SettingsUI {
             <option id="echojs-mode"
               title="Execution environment connects to node at localhost (or via ыыы if available), transactions will be sent to the network and can cause loss of money or worse!
               If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http."
-              value="echojs" name="executionContext"> EchojsLib Provider
+              value="echojslib" name="executionContext"> EchojsLib Provider
             </option>
           </select>
           <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.infoDeployAction} fas fa-info"></i></a>
@@ -160,14 +160,13 @@ class SettingsUI {
     selectExEnv.addEventListener('change', (event) => {
       let context = selectExEnv.options[selectExEnv.selectedIndex].value
       this.settings.changeExecutionContext(context, () => {
-        modalDialogCustom.confirm('External node request', 'Are you sure you want to connect to an ethereum node?', () => {
-          modalDialogCustom.prompt('External node request', 'Web3 Provider Endpoint', 'http://localhost:8545', (target) => {
+        modalDialogCustom.confirm('External node request', 'Are you sure you want to connect to an echo node?', () => {
+          modalDialogCustom.prompt('External node request', 'Echo Provider Endpoint', 'wss://testnet.echo-dev.io/ws', (target) => {
             this.settings.setProviderFromEndpoint(target, context, (alertMsg) => {
               if (alertMsg) {
                 modalDialogCustom.alert(alertMsg)
               }
-              this.setFinalContext()
-            })
+            }, this.setFinalContext.bind(this))
           }, this.setFinalContext.bind(this))
         }, this.setFinalContext.bind(this))
       }, (alertMsg) => {
@@ -176,11 +175,46 @@ class SettingsUI {
     })
 
     selectExEnv.value = this.settings.getProvider()
+
+  }
+
+  setWifInput() {
+    const settings = document.querySelector(`.${css.settings}`);
+    const toInsertAfterNode = settings.childNodes[0];
+
+    const wifInput = yo`
+      <div class="${css.crow}" id="wifBlock">
+        <div class="${css.col1_1}">
+          WIF
+        </div>
+        <div class=${css.wif}>
+          <input type="text" oninput=${() => { this.getInfoByWif() }} class="form-control ${css.wifInput} ${css.col2}" id="wifInput" title="Enter the value and choose the unit">
+        </div>
+      </div>
+    `
+    settings.insertBefore(wifInput, toInsertAfterNode.nextSibling);
+  }
+
+  removeWifInput() {
+    const settings = document.querySelector(`.${css.settings}`);
+    const nodeToDelete = document.querySelector('#wifBlock');
+
+    if (nodeToDelete) {
+      settings.removeChild(nodeToDelete)
+    }
   }
 
   setFinalContext () {
     // set the final context. Cause it is possible that this is not the one we've originaly selected
-    this.selectExEnv.value = this.settings.getProvider()
+    const provider = this.settings.getProvider()
+
+    if (!this.settings.isExternalEchoConnected() || provider !== 'echojslib') {
+      this.removeWifInput();
+    } else if (!document.querySelector('#wifBlock')){
+      this.setWifInput();
+    }
+
+    this.selectExEnv.value = provider
     this.event.trigger('clearInstance', [])
     this.updateNetwork()
   }
@@ -239,6 +273,21 @@ class SettingsUI {
       this.netUI.innerHTML = `${name} (${id || '-'}) network`
     })
     this.fillAccountsList()
+  }
+
+  async getInfoByWif() {
+    console.log('ON CHANGE ')
+    try {
+      const wifInput = document.querySelector('#wifInput');
+      const wif = wifInput.value;
+      console.log(`WIF: ${value}`);
+  
+      const info = await this.settings.getInfoByWif(wif);
+      console.log('info:')
+      console.log(info);
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   // TODO: unclear what's the goal of accountListCallId, feels like it can be simplified
