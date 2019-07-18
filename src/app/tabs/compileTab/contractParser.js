@@ -18,22 +18,21 @@ var getDetails = function (contractName, contract, source) {
 
   detail.abi = contract.abi
 
+  detail.functionHashes = {}
+  for (var fun in contract.evm.methodIdentifiers) {
+    detail.functionHashes[contract.evm.methodIdentifiers[fun]] = fun
+  }
+
   if (contract.evm.bytecode.object) {
     detail.bytecode = contract.evm.bytecode
-    detail.web3Deploy = gethDeploy(contractName.toLowerCase(), contract.abi, contract.evm.bytecode.object)
+    detail.echoJSDeploy = echoJSDeploy(contractName.toLowerCase(), contract.abi, contract.evm.bytecode.object)
+    detail.echoJSContractDeploy = echoJSContractDeploy(contractName.toLowerCase(), contract.abi, contract.evm.bytecode.object)
 
     detail.metadataHash = retrieveMetadataHash(contract.evm.bytecode.object)
     if (detail.metadataHash) {
       detail.swarmLocation = 'bzzr://' + detail.metadataHash
     }
   }
-
-  detail.functionHashes = {}
-  for (var fun in contract.evm.methodIdentifiers) {
-    detail.functionHashes[contract.evm.methodIdentifiers[fun]] = fun
-  }
-
-  detail.gasEstimates = formatGasEstimates(contract.evm.gasEstimates)
 
   detail.devdoc = contract.devdoc
   detail.userdoc = contract.userdoc
@@ -59,62 +58,71 @@ var retrieveMetadataHash = function (bytecode) {
   }
 }
 
-var gethDeploy = function (contractName, jsonInterface, bytecode) {
+var echoJSDeploy = function (contractName, jsonInterface, bytecode) {
   var code = ''
-  var funABI = txHelper.getConstructorInterface(jsonInterface)
-
-  funABI.inputs.forEach(function (inp) {
-    code += 'var ' + inp.name + ' = /* var of type ' + inp.type + ' here */ ;\n'
-  })
-
-  contractName = contractName.replace(/[:./]/g, '_')
-  code += 'var ' + contractName + 'Contract = web3.eth.contract(' + JSON.stringify(jsonInterface).replace('\n', '') + ');' +
-    '\nvar ' + contractName + ' = ' + contractName + 'Contract.new('
-
-  funABI.inputs.forEach(function (inp) {
-    code += '\n   ' + inp.name + ','
-  })
-
-  code += '\n   {' +
-    '\n     from: web3.eth.accounts[0], ' +
-    "\n     data: '0x" + bytecode + "', " +
-    "\n     gas: '4700000'" +
-    '\n   }, function (e, contract){' +
-    '\n    console.log(e, contract);' +
-    "\n    if (typeof contract.address !== 'undefined') {" +
-    "\n         console.log('Contract mined! address: ' + contract.address + ' transactionHash: ' + contract.transactionHash);" +
-    '\n    }' +
-    '\n })'
+  code += 'import echo, { constants, PrivateKey } from \'echolib-js\';\n'
+  code += '\n'
+  code += '(async () => {\n'
+  code += '\n'
+  code += '    const privateKey = PrivateKey.fromWif(/* WIF key here */);\n'
+  code += '\n'
+  code += '    const contractCode = \'' + bytecode + '\';\n'
+  code += '    const constructorCode = \'/* Constructor code here */\';\n'
+  code += '\n'
+  code += '    const operation = {' +
+  '\n       fee: { // optional, default fee asset: 1.3.0, amount: will be calculated' +
+  '\n           asset_id: \'1.3.0\'' +
+  '\n       },' +
+  '\n       registrar: \'1.2.20\',' +
+  '\n       value: {' +
+  '\n           asset_id: \'1.3.0\',' +
+  '\n           amaunt: 1' +
+  '\n       },' +
+  '\n       code: contractCode + constructorCode,' +
+  '\n       eth_accuracy: false' +
+  '\n    };\n'
+  code += '\n'
+  code += '    await echo.connect(\'ws://127.0.0.1:9000\');\n'
+  code += '\n'
+  code += '    const result = await echo' +
+  '\n             .createTransaction()' +
+  '\n             .addOperation(constants.OPERATIONS_IDS.CREATE_CONTRACT, operation)' +
+  '\n             .addSigner(privateKey)' +
+  '\n             .broadcast();' +
+  '\n' +
+  '\n})();'
 
   return code
 }
 
-var formatGasEstimates = function (data) {
-  if (!data) return {}
-  if (data.creation === undefined && data.external === undefined && data.internal === undefined) return {}
+var echoJSContractDeploy = function (contractName, jsonInterface, bytecode) {
+  var code = ''
 
-  var gasToText = function (g) {
-    return g === null ? 'unknown' : g
-  }
+  code += 'import echo, { PrivateKey } from \'echolib-js\';\n'
+  code += 'import { Contract } from \'echojs-contract\';\n'
+  code += '\n'
 
-  var ret = {}
-  var fun
-  if ('creation' in data) {
-    ret['Creation'] = data.creation
-  }
+  code += '(async () => {\n'
+  code += '\n'
 
-  if ('external' in data) {
-    ret['External'] = {}
-    for (fun in data.external) {
-      ret['External'][fun] = gasToText(data.external[fun])
-    }
-  }
+  var funABI = txHelper.getConstructorInterface(jsonInterface)
+  var args = []
 
-  if ('internal' in data) {
-    ret['Internal'] = {}
-    for (fun in data.internal) {
-      ret['Internal'][fun] = gasToText(data.internal[fun])
-    }
-  }
-  return ret
+  funABI.inputs.forEach(function (inp) {
+    code += '    const ' + inp.name + ' = /* var of type ' + inp.type + ' here */;\n'
+    args.push(inp.name)
+  })
+
+  code += '\n'
+  code += '    const privateKey = PrivateKey.fromWif(/* WIF key here */);\n'
+  code += '    const contractCode = \'' + bytecode + '\';\n'
+  code += '    const abi = \'' + JSON.stringify(jsonInterface).replace('\n', '') + '\';\n'
+  code += '\n'
+  code += '    await echo.connect(\'ws://127.0.0.1:9000\');\n'
+  code += '\n'
+  code += '    const contract = await Contract.deploy(code, echo, privateKey, { abi, value: { amount: 0 }' + (args.length ? ', args: [' + args.join(', ') + ']' : '') + ' });'
+  code += '\n'
+  code += '\n})();'
+
+  return code
 }

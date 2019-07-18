@@ -304,13 +304,13 @@ class CompileTab extends ViewPlugin {
       'Runtime Bytecode': 'Bytecode storing the state and being executed during normal contract call',
       'bytecode': 'Bytecode being executed during contract creation',
       'functionHashes': 'List of declared function and their corresponding hash',
-      'gasEstimates': 'Gas estimation for each function call',
       'metadata': 'Contains all informations related to the compilation',
       'metadataHash': 'Hash representing all metadata information',
       'abi': 'ABI: describing all the functions (input/output params, scope, ...)',
       'name': 'Name of the compiled contract',
       'swarmLocation': 'Swarm url where all metadata information can be found (contract needs to be published first)',
-      'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
+      'echoJSDeploy': 'Copy/paste this code to any JavaScript/Echo console to deploy this contract',
+      'echoJSContractDeploy': 'Copy/paste this code to any JavaScript/Echo console to deploy this contract'
     }
     if (!this.selectedContract) throw new Error('No contract compiled yet')
     const contractProperties = this.data.contractsDetails[this.selectedContract]
@@ -328,7 +328,7 @@ class CompileTab extends ViewPlugin {
 
   insertValue (details, propertyName) {
     var node
-    if (propertyName === 'web3Deploy' || propertyName === 'name' || propertyName === 'Assembly') {
+    if (propertyName === 'echoJSContractDeploy' || propertyName === 'echoJSDeploy' || propertyName === 'name' || propertyName === 'Assembly') {
       node = yo`<pre>${details[propertyName]}</pre>`
     } else if (propertyName === 'abi' || propertyName === 'metadata') {
       const treeView = new TreeView({
