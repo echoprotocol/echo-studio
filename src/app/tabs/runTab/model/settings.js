@@ -26,6 +26,10 @@ class Settings {
       this.event.trigger('removeProvider', [name])
     })
 
+    executionContext.event.register('connectToNetwork', (name, id) => {
+      this.event.trigger('connectToNetwork', [name, id])
+    })
+
     this.networkcallid = 0
   }
 

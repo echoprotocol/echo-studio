@@ -16,6 +16,11 @@ class SettingsUI {
     this.event = new EventManager()
     this._components = {}
 
+    this.settings.event.register('connectToNetwork', (name, id) => {
+      this.netUI.innerHTML = `${name} (${id || '-'}) network`
+      this.fillAccountsList()
+    })
+
     this.settings.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
       if (error) return
       if (!lookupOnly) this.el.querySelector('#value').value = '0'
@@ -30,12 +35,9 @@ class SettingsUI {
       config: this._components.registry.get('config').api
     }
 
-    setInterval(() => {
-      this.updateAccountBalances()
-    }, 10 * 1000)
-
     this.accountListCallId = 0
     this.loadedAccounts = {}
+    this.loadAssetTypes = {}
   }
 
   render () {
@@ -50,7 +52,7 @@ class SettingsUI {
           <select id="selectExEnvOptions" onchange=${() => {  }} class="form-control ${css.select}">
             <option id="injected-mode"
               title="Execution environment has been provided by Bridge or similar provider."
-              value="injected" name="executionContext"> Injected EchojsLib
+              value="injected" name="executionContext"> Injected Bridge
             </option>
             <option id="echojslib-mode"
               title="Execution environment connects to node at localhost (or via ыыы if available), transactions will be sent to the network and can cause loss of money or worse!
@@ -77,10 +79,8 @@ class SettingsUI {
           Account
         </div>
         <div class=${css.account}>
-          <select name="txorigin" class="form-control ${css.select}" id="txorigin" 
-          onchange=${() => {
+          <select name="txorigin" class="form-control ${css.select}" id="txorigin" onchange=${() => { 
             this.updateNetwork()
-            this.updateAccountBalances()
           }}></select>
           ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
           <i id="remixRunSignMsg" class="fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
@@ -94,7 +94,7 @@ class SettingsUI {
           Asset
         </div>
         <div class=${css.asset}>
-          <select name="assets" class="form-control ${css.select}" id="assets"></select>
+          <select name="assets" class="form-control ${css.select}" id="assets" ></select>
         </div>
       </div>
     `
@@ -136,7 +136,6 @@ class SettingsUI {
 
     this.el = el
 
-    this.fillAccountsList()
     return el
   }
 
@@ -236,14 +235,18 @@ class SettingsUI {
   }
 
   updateNetwork () {
-    this.settings.updateNetwork((err, {id, name} = {}) => {
-      if (err) {
-        this.netUI.innerHTML = 'can\'t detect network '
-        return
-      }
-      this.netUI.innerHTML = `${name} (${id || '-'}) network`
-    })
-    this.fillAccountsList()
+    if (!this.settings.isInjectedEchojslib()) {
+      this.settings.updateNetwork((err, {id, name} = {}) => {
+        if (err) {
+          this.netUI.innerHTML = 'can\'t detect network '
+          return
+        }
+        this.netUI.innerHTML = `${name} (${id || '-'}) network`
+        this.fillAccountsList()
+      })
+    } else {
+      this.fillAccountsList()
+    }
   }
 
   // TODO: unclear what's the goal of accountListCallId, feels like it can be simplified
@@ -269,33 +272,44 @@ class SettingsUI {
         }
       }
       txOrigin.setAttribute('value', accounts[0].id)
+      this.updateAccountBalances()
     })
   }
 
   updateAccountBalances () {
-    this._clearBalances()
     if (!this.el) return
     let accountEl = this.el.querySelector('#txorigin')
     if (accountEl.selectedIndex === -1) return
+    let assetsEl = this.el.querySelector('#assets')
+    assetsEl.innerHTML = ''
 
     let accountId = accountEl.options[accountEl.selectedIndex].value
-
     this.settings.getAccountBalances(accountId, (err, results) => {
-      console.log(results)
-      let assetsEl = this.el.querySelector('#assets')
+
+      if (err) {
+        console.warn(err)
+        return
+      }
+
+      for (let loadAssetType in this.loadAssetTypes) {
+        if (!results.find(({assetType}) => assetType === loadAssetType)) {
+          assetsEl.removeChild(assetsEl.querySelector('option[value="' + loadAssetType + '"]'))
+          delete this.loadedAccounts[loadAssetType]
+        }
+      }
 
       results.forEach((element) => {
-        const { amount, assetType } = element;
-        assetsEl.appendChild(yo`<option value="${element.assetType}">${assetType} (${helper.coinBalanceNormalizer(amount)})</option>`)
-      })
+        const { amount, assetType, precision, symbol } = element
+        const value = `${assetType} (${helper.coinBalanceNormalizer(amount, precision)} ${symbol} )`
+        if (!this.loadedAccounts[assetType]) {
+          assetsEl.appendChild(yo`<option value="${element.assetType}">${value}</option>`)
+          this.loadAssetTypes[assetType] = 1
+        } else {
+          assetsEl.querySelector('option[value="' + assetType + '"]').innerHTML = value
+        }
+       }
+      )
     })
-  }
-
-  _clearBalances () {
-    let assetsEl = this.el.querySelector('#assets')
-    while (assetsEl.firstChild) {
-      assetsEl.removeChild(assetsEl.firstChild)
-    }
   }
 
 }
