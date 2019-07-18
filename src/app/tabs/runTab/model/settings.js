@@ -75,6 +75,10 @@ class Settings {
     return this.udapp.getInfo(wif);
   }
 
+  validateWif(wif) {
+    return this.udapp.validateWif(wif);
+  }
+
   isEchojslibProvider () {
     var isInjected = executionContext.getProvider() === 'injected'
     return !isInjected

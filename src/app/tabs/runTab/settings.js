@@ -57,11 +57,7 @@ class SettingsUI {
             <option id="echojslib-mode"
               title="Execution environment connects to node at localhost (or via ыыы if available), transactions will be sent to the network and can cause loss of money or worse!
               If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http."
-<<<<<<< HEAD
-              value="echojslib" name="executionContext"> EchojsLib Provider
-=======
               value="echojslib" name="executionContext"> Echojslib Provider
->>>>>>> ES-15
             </option>
           </select>
           <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.infoDeployAction} fas fa-info"></i></a>
@@ -293,9 +289,19 @@ class SettingsUI {
       const wifInput = document.querySelector('#wifInput');
       const wif = wifInput.value;
       console.log(`WIF: ${value}`);
-  
+
+      const isValidWif = this.settings.validateWif(wif);
+      console.log('===00')
+      console.log(isValidWif)
+      console.log('===00')
+
       const info = await this.settings.getInfoByWif(wif);
       console.log('info:')
+
+      let txOrigin = this.el.querySelector('#txorigin')
+
+          txOrigin.appendChild(yo`<option value="${info[0][0]}" >${info[0][0]}</option>`)
+
       console.log(info);
     } catch (error) {
       console.log(error)

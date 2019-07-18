@@ -159,6 +159,10 @@ module.exports = class UniversalDApp extends Plugin {
     const pb = executionContext.echojslib().PrivateKey.fromWif(wif).toPublicKey().toPublicKeyString()
     return executionContext.echoConnection().api.getKeyReferences([pb]);
   }
+
+  validateWif(wif) {
+    return executionContext.echojslib().validators.isHex(wif)
+  }
   
   getAccountBalances (accountId, cb) {
     executionContext.echojslib().echo.api.getFullAccounts([accountId])
