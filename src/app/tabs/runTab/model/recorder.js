@@ -74,8 +74,6 @@ class Recorder {
       console.log(!!error)
       if (error) return console.log(error)
       if (call) return
-      console.log('ZALUPKA')
-      console.log(txResult)
       var id = txResult[0].id
       // if (!id) return // not a contract creation
       // address = this.addressToString(address)

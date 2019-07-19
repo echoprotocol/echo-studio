@@ -206,7 +206,7 @@ function log (self, tx, receipt) {
 }
 
 function renderKnownTransaction (self, data) {
-  var from = data.resolvedData.contractAddress
+  var from = data.tx.trx.operations[0][1].registrar
   var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var obj = {from, to}
   var txType = 'knownTx'
@@ -295,15 +295,16 @@ function checkTxStatus (tx, type) {
 
 function context (self, opts) {
   var data = opts.data || ''
-  var from = opts.from ? helper.shortenHexData(opts.from) : ''
+  var from = opts.from ? opts.from : ''
   var to = opts.to
   if (data.tx.to) to = to + ' ' + helper.shortenHexData(data.tx.to)
   var val = data.tx.trx.operations[0][1].value.amount
   var hash = data.tx.id ? helper.shortenHexData(data.tx.id) : ''
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
-  var logs = data.logs && data.logs.decoded && data.logs.decoded.length ? data.logs.decoded.length : 0
-  var block = data.tx.blockNumber || ''
-  var i = data.tx.transactionIndex
+  // var logs = data.logs && data.logs.decoded && data.logs.decoded.length ? data.logs.decoded.length : 0
+  var logs = data.resolvedData.logs
+  var block = data.tx.block_num || ''
+  var i = data.tx.id
   var value = val ? typeConversion.toInt(val) : 0
   if (executionContext.getProvider() === 'vm') {
     return yo`
@@ -322,13 +323,11 @@ function context (self, opts) {
     return yo`
       <div>
         <span class=${css.txLog}>
-          <span class='${css.tx}'>[block:${block} txIndex:${i}]</span>
+          <span class='${css.tx}'>[block:${block} txId:${i}]</span>
           <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value}</div>
-          <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>logs:</span> ${logs}</div>
-          <div class=${css.txItem}><span class=${css.txItemTitle}>hash:</span> ${hash}</div>
         </span>
       </div>`
   } else {
@@ -366,19 +365,22 @@ function txDetails (e, tx, data, obj) {
     log.removeChild(arrow)
     log.appendChild(arrowUp)
     table = createTable({
-      hash: data.tx.id,
-      status: data.receipt ? data.receipt.status : null,
+      txId: data.tx.id,
+      status: data.resolvedData ? data.resolvedData.status : null,
       isCall: data.tx.isCall,
       contractAddress: data.resolvedData.address,
+      contractId: `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`,
       data: data.tx,
       from,
       to,
+      gasUsed: data.resolvedData.gasUsed,
       input: data.tx.input,
       'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
       'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
       logs: data.logs,
       val: data.tx.trx.operations[0][1].value.amount,
     })
+    console.log(data.resolvedData)
     tx.appendChild(table)
   }
 }
@@ -403,15 +405,15 @@ function createTable (opts) {
       </tr>`)
   }
 
-  var transactionHash = yo`
+  var transactionId = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> transaction hash </td>
-      <td class="${css.td}">${opts.hash}
-        ${copyToClipboard(() => opts.hash)}
+      <td class="${css.td}"> transaction id </td>
+      <td class="${css.td}">${opts.txId}
+        ${copyToClipboard(() => opts.txId)}
       </td>
     </tr>
   `
-  table.appendChild(transactionHash)
+  table.appendChild(transactionId)
 
   var contractAddress = yo`
     <tr class="${css.tr}">
@@ -422,6 +424,16 @@ function createTable (opts) {
     </tr>
   `
   if (opts.contractAddress) table.appendChild(contractAddress)
+
+  var contractId = yo`
+    <tr class="${css.tr}">
+      <td class="${css.td}"> contract id </td>
+      <td class="${css.td}">${opts.contractId}
+        ${copyToClipboard(() => opts.contractId)}
+      </td>
+    </tr>
+  `
+  if (opts.contractId) table.appendChild(contractId)
 
   var from = yo`
     <tr class="${css.tr}">
@@ -449,6 +461,16 @@ function createTable (opts) {
     </tr>
   `
   if (opts.to) table.appendChild(to)
+
+  var gasUsed = yo`
+    <tr class="${css.tr}">
+      <td class="${css.td}"> gas used </td>
+      <td class="${css.td}">${opts.gasUsed}
+        ${copyToClipboard(() => opts.gasUsed)}
+      </td>
+    </tr>
+  `
+  if (opts.gasUsed) table.appendChild(gasUsed)
 
   var gas = yo`
     <tr class="${css.tr}">
