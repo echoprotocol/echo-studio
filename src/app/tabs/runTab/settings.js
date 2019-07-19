@@ -284,27 +284,19 @@ class SettingsUI {
   }
 
   async getInfoByWif() {
-    console.log('ON CHANGE ')
     try {
       const wifInput = document.querySelector('#wifInput');
       const wif = wifInput.value;
-      console.log(`WIF: ${value}`);
 
       const isValidWif = this.settings.validateWif(wif);
-      console.log('===00')
-      console.log(isValidWif)
-      console.log('===00')
 
       const info = await this.settings.getInfoByWif(wif);
-      console.log('info:')
 
       let txOrigin = this.el.querySelector('#txorigin')
 
           txOrigin.appendChild(yo`<option value="${info[0][0]}" >${info[0][0]}</option>`)
 
-      console.log(info);
     } catch (error) {
-      console.log(error)
     }
   }
 
