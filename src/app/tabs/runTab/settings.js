@@ -302,7 +302,6 @@ class SettingsUI {
         this.updateAccountBalances();
       }
     } catch (error) {
-      console.log(error)
     }
   }
 
