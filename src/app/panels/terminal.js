@@ -414,7 +414,7 @@ class Terminal extends Plugin {
     self._cmdTemp = ''
 
     var intro = yo`
-      <div><div> - Welcome to Remix ${packageV.version} - </div><br>
+      <div><div> - Welcome to Echo Studio ${packageV.version} - </div><br>
       <div>You can use this terminal for: </div>
       <ul class=${css2.ul}>
         <li>Checking transactions details and start debugging.</li>
@@ -679,11 +679,11 @@ class Terminal extends Plugin {
 }
 
 function domTerminalFeatures (self, scopedCommands) {
-  return {
-    swarmgw,
-    ethers,
-    remix: self._components.cmdInterpreter,
-    web3: new Web3(executionContext.web3().currentProvider),
+  return {	
+    // swarmgw,
+    // ethers,
+    // remix: self._components.cmdInterpreter,
+    // web3: new Web3(executionContext.web3().currentProvider),
     console: {
       log: function () { scopedCommands.log.apply(scopedCommands, arguments) },
       info: function () { scopedCommands.info.apply(scopedCommands, arguments) },

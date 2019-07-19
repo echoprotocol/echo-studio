@@ -88,7 +88,7 @@ module.exports = class SettingsTab extends ViewPlugin {
     this._view.themesCheckBoxes = this.createThemeCheckies()
     this._view.config.homePage = yo`
 
-    <div class="${css.info} card">
+    <div style="display: none;" class="${css.info} card">
       <div class="card-body">
       <h6 class="${css.title} card-title">Have a question?</h6>
       <button class="btn btn-primary sm-1" onclick="${() => { window.open('https://gitter.im/ethereum/remix') }}">Gitter Channel</button>
@@ -102,7 +102,7 @@ module.exports = class SettingsTab extends ViewPlugin {
     this._view.warnPersonalMode = yo`<i class="${css.icon} fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>`
 
     this._view.config.general = yo`
-      <div class="${css.info} card">
+      <div style="display: none;" class="${css.info} card">
         <div class="card-body">
           <h6 class="${css.title} card-title">General settings</h6>
           <div class="form-check ${css.frow}">

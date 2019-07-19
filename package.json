@@ -74,7 +74,7 @@
   },
   "dependencies": {
     "http-server": "^0.11.1",
-    "@remixproject/engine": "^0.1.2-7",
+    "@remixproject/engine": "^0.1.6",
     "remixd": "0.1.8-alpha.6"
   },
   "repository": {

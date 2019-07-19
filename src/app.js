@@ -343,10 +343,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   await appManager.activate(['menuicons', 'home', 'sidePanel', 'pluginManager', 'fileExplorers', 'settings'])
   
 
-  await appManager.activate(['solidity', 'run', 'solidityStaticAnalysis'])
+  
 
   // Set workspace after initial activation
-  if (Array.isArray(workspace)) await appManager.activate(workspace);  
+  if (Array.isArray(workspace)) {
+	await appManager.activate(workspace)
+  } else {
+	await appManager.activate(['solidity', 'run', 'solidityStaticAnalysis'])
+  }  
 
   // Load and start the service who manager layout and frame
   const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)

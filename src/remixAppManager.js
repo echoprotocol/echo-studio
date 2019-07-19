@@ -6,7 +6,7 @@ import { PermissionHandler } from './app/ui/persmission-handler'
 const requiredModules = [ // services + layout views + system views
   'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'sourceHighlighters', 'offsetToLineColumnConverter', 'network', 'theme', 'fileManager', 'contentImport', 'udapp',
   'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons', 'fileExplorers',
-  'terminal', 'home', 'settings', 'pluginManager']
+  'terminal', 'settings', 'pluginManager']
 
 export class RemixAppManager extends PluginEngine {
 
@@ -36,15 +36,15 @@ export class RemixAppManager extends PluginEngine {
     return Object.keys(this.registered)
   }
 
-  onDeactivation (plugin) {
-    localStorage.setItem('workspace', JSON.stringify(this.actives))
-    this.event.emit('deactivate', plugin.name)
-  }
-
   onRegistration (plugin) {
     if (!this.registered) this.registered = {}
     this.registered[plugin.name] = plugin
     this.event.emit('added', plugin.name)
+  }
+
+  onDeactivated (plugin) {
+    localStorage.setItem('workspace', JSON.stringify(this.actives))
+    this.event.emit('deactivate', plugin.name)
   }
 
   // TODO check whether this can be removed

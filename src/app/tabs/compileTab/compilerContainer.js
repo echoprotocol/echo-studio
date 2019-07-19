@@ -298,7 +298,8 @@ class CompilerContainer {
         return console.log('loading ' + this.data.selectedVersion + ' not allowed')
       }
       url = `${this.data.baseurl}/${this.data.selectedVersion}`
-    }
+	}
+	console.log('url', url)
     const isFirefox = typeof InstallTrigger !== 'undefined'
     if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
       // Workers cannot load js on "file:"-URLs and we get a
