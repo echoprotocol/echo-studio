@@ -107,12 +107,12 @@ export class SidePanel extends AbstractPanel {
   /** The header of the side panel */
   renderHeader () {
     let name = ' - '
-    let docLink = ''
+    // let docLink = ''
     let versionWarning
     if (this.active) {
       const { profile } = this.appManager.getOne(this.active)
       name = profile.displayName ? profile.displayName : profile.name
-      docLink = profile.documentation ? yo`<a href="${profile.documentation}" class="${css.titleInfo}" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>` : ''
+    //   docLink = profile.documentation ? yo`<a href="${profile.documentation}" class="${css.titleInfo}" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>` : ''
       if (profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)) {
         versionWarning = yo`<small title="Version Alpha" class="${css.versionWarning}">alpha</small>`
       }
@@ -124,8 +124,7 @@ export class SidePanel extends AbstractPanel {
 
     return yo`
       <header class="${css.swapitHeader}">
-          <h6 class="${css.swapitTitle}">${name}</h6>
-          ${docLink}
+          <h6 class="${css.swapitTitle}">${name}</h6>          
           ${versionWarning}
       </header>
     `

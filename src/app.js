@@ -331,19 +331,22 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   appManager.register([
     compileTab,
     run,
-    debug,
+    // debug,
     analysis,
-    test,
-    filePanel.remixdHandle,
-    ...appManager.registeredPlugins()
+    // test,
+    // filePanel.remixdHandle,
+    // ...appManager.registeredPlugins()
   ])
 
   await appManager.activate(['contentImport', 'theme', 'sourceHighlighters', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'udapp', 'network', 'offsetToLineColumnConverter'])
   await appManager.activate(['mainPanel'])
   await appManager.activate(['menuicons', 'home', 'sidePanel', 'pluginManager', 'fileExplorers', 'settings'])
+  
+
+  await appManager.activate(['solidity', 'run', 'solidityStaticAnalysis'])
 
   // Set workspace after initial activation
-  if (Array.isArray(workspace)) await appManager.activate(workspace)
+  if (Array.isArray(workspace)) await appManager.activate(workspace);  
 
   // Load and start the service who manager layout and frame
   const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)
