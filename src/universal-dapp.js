@@ -335,7 +335,6 @@ module.exports = class UniversalDApp extends Plugin {
   }
 
   runTx (args, confirmationCb, continueCb, promptCb, cb) {
-    console.log('RUN TX')
     console.log(args)
     const self = this
     async.waterfall([

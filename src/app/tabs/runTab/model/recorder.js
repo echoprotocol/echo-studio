@@ -70,15 +70,18 @@ class Recorder {
     })
 
     this.udapp.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
+      console.log('transactionExecuted event')
+      console.log(!!error)
       if (error) return console.log(error)
       if (call) return
-
-      var address = txResult.result.contractAddress
-      if (!address) return // not a contract creation
-      address = this.addressToString(address)
+      console.log('ZALUPKA')
+      console.log(txResult)
+      var id = txResult[0].id
+      // if (!id) return // not a contract creation
+      // address = this.addressToString(address)
       // save back created addresses for the convertion from tokens to real adresses
-      this.data._createdContracts[address] = timestamp
-      this.data._createdContractsReverse[timestamp] = address
+      this.data._createdContracts[id] = timestamp
+      this.data._createdContractsReverse[timestamp] = id
     })
     executionContext.event.register('contextChanged', this.clearAll.bind(this))
     this.event.register('newTxRecorded', (count) => {

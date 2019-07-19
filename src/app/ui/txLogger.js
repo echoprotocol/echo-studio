@@ -188,17 +188,17 @@ function debug (e, data, self) {
 }
 
 function log (self, tx, receipt) {
-  var resolvedTransaction = self.txListener.resolvedTransaction(tx.hash)
+  var resolvedTransaction = self.txListener.resolvedTransaction(tx.id)
   if (resolvedTransaction) {
     var compiledContracts = null
     if (self._deps.compilersArtefacts['__last']) {
       compiledContracts = self._deps.compilersArtefacts['__last'].getContracts()
     }
-    self.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, (error, logs) => {
-      if (!error) {
-        self.logKnownTX({ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs })
-      }
-    })
+    // self.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, (error, logs) => {
+    //   if (!error) {
+    self.logKnownTX({ tx: tx, receipt: receipt, resolvedData: resolvedTransaction })
+    //   }
+    // })
   } else {
     // contract unknown - just displaying raw tx.
     self.logUnknownTX({ tx: tx, receipt: receipt })
@@ -206,12 +206,12 @@ function log (self, tx, receipt) {
 }
 
 function renderKnownTransaction (self, data) {
-  var from = data.tx.from
+  var from = data.resolvedData.contractAddress
   var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var obj = {from, to}
   var txType = 'knownTx'
   var tx = yo`
-    <span id="tx${data.tx.hash}">
+    <span id="tx${data.tx.id}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
         ${checkTxStatus(data.receipt, txType)}
         ${context(self, {from, to, data})}
@@ -279,16 +279,18 @@ function renderEmptyBlock (self, data) {
 }
 
 function checkTxStatus (tx, type) {
-  if (tx.status === '0x1') {
-    return yo`<i class="${css.txStatus} ${css.succeeded} fas fa-check-circle"></i>`
-  }
-  if (type === 'call' || type === 'unknownCall') {
-    return yo`<i class="${css.txStatus} ${css.call}">call</i>`
-  } else if (tx.status === '0x0') {
-    return yo`<i class="${css.txStatus} ${css.failed} fas fa-times-circle"></i>`
-  } else {
-    return yo`<i class="${css.txStatus} ${css.notavailable} fas fa-circle-thin" title='Status not available' ></i>`
-  }
+  // if (tx.status === '0x1') {
+  //   return yo`<i class="${css.txStatus} ${css.succeeded} fas fa-check-circle"></i>`
+  // }
+  // if (type === 'call' || type === 'unknownCall') {
+  //   return yo`<i class="${css.txStatus} ${css.call}">call</i>`
+  // } else if (tx.status === '0x0') {
+  //   return yo`<i class="${css.txStatus} ${css.failed} fas fa-times-circle"></i>`
+  // } else {
+  //   return yo`<i class="${css.txStatus} ${css.notavailable} fas fa-circle-thin" title='Status not available' ></i>`
+  // }
+
+  return yo`<i class="${css.txStatus} ${css.succeeded} fas fa-check-circle"></i>`
 }
 
 function context (self, opts) {
@@ -296,8 +298,8 @@ function context (self, opts) {
   var from = opts.from ? helper.shortenHexData(opts.from) : ''
   var to = opts.to
   if (data.tx.to) to = to + ' ' + helper.shortenHexData(data.tx.to)
-  var val = data.tx.value
-  var hash = data.tx.hash ? helper.shortenHexData(data.tx.hash) : ''
+  var val = data.tx.trx.operations[0][1].value.amount
+  var hash = data.tx.id ? helper.shortenHexData(data.tx.id) : ''
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
   var logs = data.logs && data.logs.decoded && data.logs.decoded.length ? data.logs.decoded.length : 0
   var block = data.tx.blockNumber || ''
@@ -323,7 +325,7 @@ function context (self, opts) {
           <span class='${css.tx}'>[block:${block} txIndex:${i}]</span>
           <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</div>
-          <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} wei</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>logs:</span> ${logs}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>hash:</span> ${hash}</div>
@@ -364,21 +366,18 @@ function txDetails (e, tx, data, obj) {
     log.removeChild(arrow)
     log.appendChild(arrowUp)
     table = createTable({
-      hash: data.tx.hash,
+      hash: data.tx.id,
       status: data.receipt ? data.receipt.status : null,
       isCall: data.tx.isCall,
-      contractAddress: data.tx.contractAddress,
+      contractAddress: data.resolvedData.address,
       data: data.tx,
       from,
       to,
-      gas: data.tx.gas,
       input: data.tx.input,
       'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
       'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
       logs: data.logs,
-      val: data.tx.value,
-      transactionCost: data.tx.transactionCost,
-      executionCost: data.tx.executionCost
+      val: data.tx.trx.operations[0][1].value.amount,
     })
     tx.appendChild(table)
   }

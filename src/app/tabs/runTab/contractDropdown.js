@@ -123,8 +123,6 @@ class ContractDropdownUI {
   }
 
   createInstance (args) {
-    console.log('CREATE INSTACE')
-    console.log(args)
     var selectedContract = this.getSelectedContract()
 
     if (selectedContract.bytecodeObject.length === 0) {
