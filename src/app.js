@@ -32,8 +32,8 @@ const CompilersArtefacts = require('./app/compiler/compiler-artefacts')
 const CompileTab = require('./app/tabs/compile-tab')
 const SettingsTab = require('./app/tabs/settings-tab')
 const AnalysisTab = require('./app/tabs/analysis-tab')
-const DebuggerTab = require('./app/tabs/debugger-tab')
-const TestTab = require('./app/tabs/test-tab')
+// const DebuggerTab = require('./app/tabs/debugger-tab')
+// const TestTab = require('./app/tabs/test-tab')
 const RunTab = require('./app/tabs/run-tab')
 const FilePanel = require('./app/panels/file-panel')
 const Editor = require('./app/editor/editor')
@@ -320,19 +320,19 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     mainview
   )
   let analysis = new AnalysisTab(registry)
-  let debug = new DebuggerTab()
-  let test = new TestTab(
-    registry.get('filemanager').api,
-    filePanel,
-    compileTab,
-    appManager
-  )
+//   let debug = new DebuggerTab()
+//   let test = new TestTab(
+//     registry.get('filemanager').api,
+//     filePanel,
+//     compileTab,
+//     appManager
+//   )
 
   appManager.register([
     compileTab,
     run,
     // debug,
-    analysis,
+    analysis
     // test,
     // filePanel.remixdHandle,
     // ...appManager.registeredPlugins()
@@ -341,16 +341,13 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   await appManager.activate(['contentImport', 'theme', 'sourceHighlighters', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'udapp', 'network', 'offsetToLineColumnConverter'])
   await appManager.activate(['mainPanel'])
   await appManager.activate(['menuicons', 'home', 'sidePanel', 'pluginManager', 'fileExplorers', 'settings'])
-  
-
-  
 
   // Set workspace after initial activation
   if (Array.isArray(workspace)) {
-	await appManager.activate(workspace)
+    await appManager.activate(workspace)
   } else {
-	await appManager.activate(['solidity', 'run', 'solidityStaticAnalysis'])
-  }  
+    await appManager.activate(['solidity', 'run', 'solidityStaticAnalysis'])
+  }
 
   // Load and start the service who manager layout and frame
   const framingService = new FramingService(sidePanel, menuicons, mainview, this._components.resizeFeature)

@@ -5,7 +5,7 @@ const allPrograms = [
 //   {'swarmgw': 'This library can be used to upload/download files to Swarm via https://swarm-gateways.net/.'},
   {'echojslib': 'The echojslib library is a collection of modules which contain specific functionality for the ethereum ecosystem'}
 ]
- 
+
 const allCommands = [
 //   {'remix.debug(hash)': 'Start debugging a transaction.'},
 //   {'remix.debugHelp()': 'Display help message for debugging'},
@@ -52,7 +52,7 @@ const allCommands = [
 //   {'web3.eth.Contract(jsonInterface[, address][, options])': 'The web3.eth.Contract object makes it easy to interact with smart contracts on the ethereum blockchain.'},
 //   {'web3.eth.accounts.create([entropy]);': 'The web3.eth.accounts contains functions to generate Ethereum accounts and sign transactions and data.'},
 
-   {'echojslib.echo.api': 'API module for interacting with the Echo network.'},
+   {'echojslib.echo.api': 'API module for interacting with the Echo network.'}
 ]
 
 module.exports = {

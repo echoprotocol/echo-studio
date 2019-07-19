@@ -2,15 +2,15 @@
 var yo = require('yo-yo')
 var javascriptserialize = require('javascript-serialize')
 var jsbeautify = require('js-beautify')
-var ethers = require('ethers')
+// var ethers = require('ethers')
 var type = require('component-type')
 var vm = require('vm')
 var EventManager = require('../../lib/events')
-var Web3 = require('web3')
-var swarmgw = require('swarmgw')()
+// var Web3 = require('web3')
+// var swarmgw = require('swarmgw')()
 
 var CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
-var executionContext = require('../../execution-context')
+// var executionContext = require('../../execution-context')
 var AutoCompletePopup = require('../ui/auto-complete-popup')
 var TxLogger = require('../../app/ui/txLogger')
 
@@ -420,13 +420,10 @@ class Terminal extends Plugin {
         <li>Checking transactions details and start debugging.</li>
         <li>Running JavaScript scripts. The following libraries are accessible:
           <ul class=${css2.ul}>
-            <li><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.0.0</a></li>
-            <li><a target="_blank" href="https://docs.ethers.io/ethers.js/html/">ethers.js</a> </li>
-            <li><a target="_blank" href="https://www.npmjs.com/package/swarmgw">swarmgw</a> </li>
-            <li>remix (run remix.help() for more info)</li>
+            <li><a target="_blank" href="https://github.com/echoprotocol/echojs-lib">echojslib</a></li>            
           </ul>
         </li>
-        <li>Executing common command to interact with the Remix interface (see list of commands above). Note that these commands can also be included and run from a JavaScript script.</li>
+        <li>Executing common command to interact with the Studio interface (see list of commands above). Note that these commands can also be included and run from a JavaScript script.</li>
         <li>Use exports/.register(key, obj)/.remove(key)/.clear() to register and reuse object across script executions.</li>
       </ul>
       </div>
@@ -679,7 +676,7 @@ class Terminal extends Plugin {
 }
 
 function domTerminalFeatures (self, scopedCommands) {
-  return {	
+  return {
     // swarmgw,
     // ethers,
     // remix: self._components.cmdInterpreter,

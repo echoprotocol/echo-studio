@@ -68,16 +68,15 @@ export class TabProxy {
 
     appManager.event.on('deactivate', (name) => {
       this.removeTab(name)
-	})
-	
-	appManager.event.on('ensureActivated', (name) => {
-		if (name === 'home') {
-		  // if someone force activation of home, we switch to it
-		  this.event.emit('switchApp', name)
-		  this._view.filetabs.activateTab(name)
-		}
-	  })
+    })
 
+    appManager.event.on('ensureActivated', (name) => {
+      if (name === 'home') {
+        // if someone force activation of home, we switch to it
+        this.event.emit('switchApp', name)
+        this._view.filetabs.activateTab(name)
+      }
+    })
   }
 
   switchTab (tabName) {
