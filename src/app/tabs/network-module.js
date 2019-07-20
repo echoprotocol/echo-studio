@@ -17,9 +17,9 @@ export class NetworkModule extends Plugin {
   constructor () {
     super(profile)
     // TODO: See with remix-lib to make sementic coherent
-    executionContext.event.register('contextChanged', (provider) => {
-      this.events.emit('providerChanged', provider)
-    })
+    // executionContext.event.register('contextChanged', (provider) => {
+    //   this.events.emit('providerChanged', provider)
+    // })
     /*
     // Events that could be implemented later
     executionContext.event.register('removeProvider', (provider) => {

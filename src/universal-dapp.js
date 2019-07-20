@@ -125,22 +125,6 @@ module.exports = class UniversalDApp extends Plugin {
     return new Promise((resolve, reject) => {
       const provider = executionContext.getProvider();
       switch (provider) {
-        case 'web3': {
-          if (this._deps.config.get('settings/personal-mode')) {
-            return executionContext.web3().personal.getListAccounts((error, accounts) => {
-              if (cb) cb(error, accounts)
-              if (error) return reject(error)
-              resolve(accounts)
-            })
-          } else {
-            executionContext.web3().eth.getAccounts((error, accounts) => {
-              if (cb) cb(error, accounts)
-              if (error) return reject(error)
-              resolve(accounts)
-            })
-          }
-        }
-          break
         case 'injected': {
           executionContext.echojslib().extension.getAccounts().then((accounts) => {
             if (cb) cb(null, accounts)
@@ -165,9 +149,9 @@ module.exports = class UniversalDApp extends Plugin {
   }
   
   getAccountBalances (accountId, cb) {
-    executionContext.echojslib().echo.api.getFullAccounts([accountId])
+    executionContext.getEchoApi().getFullAccounts([accountId])
     .then((results) => {
-
+      console.log(results)
       if (!results || !results[0]) {
         return cb('Unknown account id')
       }
@@ -177,6 +161,8 @@ module.exports = class UniversalDApp extends Plugin {
 
       if (!balancesArray.length) {
         return cb(null, [{
+          precision: 8,
+          symbol: 'ECHO',
           amount: '0',
           assetType: '1.3.0'
         }])
@@ -184,13 +170,13 @@ module.exports = class UniversalDApp extends Plugin {
 
       Promise.all(balancesArray.map((balanceObject) => {
         return new Promise((resolve) => {
-          executionContext.echojslib().echo.api.getObject(balanceObject.objectId)
+          executionContext.getEchoApi().getObject(balanceObject.objectId)
           .then((result) => ({
             amount: result.balance,
             assetType: balanceObject.assetType
           }))
           .then((result) => {
-            executionContext.echojslib().echo.api.getObject(result.assetType)
+            executionContext.getEchoApi().getObject(result.assetType)
             .then((assetResult) => resolve({
               ...result,
               symbol: assetResult.symbol,
@@ -216,7 +202,7 @@ module.exports = class UniversalDApp extends Plugin {
       return cb('No accounts?')
     }
 
-    executionContext.echojslib().echo.api.getAccountBalances(address, ['1.3.0'], true)
+    executionContext.getEchoApi().getAccountBalances(address, ['1.3.0'], true)
     .then((result) => {
       const [item] = result
       cb(null, new BN(item.amount).toString(10))
