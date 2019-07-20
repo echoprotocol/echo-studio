@@ -18,6 +18,7 @@ class SettingsUI {
 
     this.settings.event.register('connectToNetwork', (name, id) => {
       this.netUI.innerHTML = `${name} (${id || '-'}) network`
+      this._clearAccountsAndAssets()
       this.fillAccountsList()
     })
 
@@ -49,7 +50,7 @@ class SettingsUI {
           Environment
         </div>
         <div class=${css.environment}>
-          <select id="selectExEnvOptions" onchange=${() => {  }} class="form-control ${css.select}">
+          <select id="selectExEnvOptions" class="form-control ${css.select}">
             <option id="injected-mode"
               title="Execution environment has been provided by Bridge or similar provider."
               value="injected" name="executionContext"> Injected Bridge
@@ -79,8 +80,8 @@ class SettingsUI {
           Account
         </div>
         <div class=${css.account}>
-          <select name="txorigin" class="form-control ${css.select}" id="txorigin" onchange=${() => { 
-            this.updateNetwork()
+          <select name="txorigin" class="form-control ${css.select}" id="txorigin" onchange=${() => {
+            this.fillAccountsList()
           }}></select>
           ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
           <i id="remixRunSignMsg" class="fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
@@ -132,7 +133,7 @@ class SettingsUI {
 
     setInterval(() => {
       this.updateNetwork()
-    }, 5000)
+    }, 10000)
 
     this.el = el
 
@@ -199,7 +200,7 @@ class SettingsUI {
     settings.insertBefore(wifInput, toInsertAfterNode.nextSibling);
   }
 
-  removeWifInput() {
+  removeWifInput () {
     const settings = document.querySelector(`.${css.settings}`);
     const nodeToDelete = document.querySelector('#wifBlock');
 
@@ -213,14 +214,13 @@ class SettingsUI {
     const provider = this.settings.getProvider()
 
     if (!this.settings.isExternalEchoConnected() || provider !== 'echojslib') {
-      this.removeWifInput();
+      this.removeWifInput()
     } else if (!document.querySelector('#wifBlock')){
-      this.setWifInput();
+      this.setWifInput()
     }
 
     this.selectExEnv.value = provider
     this.event.trigger('clearInstance', [])
-    this.updateNetwork()
   }
 
   signMessage () {
@@ -269,40 +269,24 @@ class SettingsUI {
   }
 
   updateNetwork () {
-    if (!this.settings.isInjectedEchojslib()) {
-      this.settings.updateNetwork((err, {id, name} = {}) => {
-        if (err) {
-          this.netUI.innerHTML = 'can\'t detect network '
-          return
-        }
-        this.netUI.innerHTML = `${name} (${id || '-'}) network`
-        this.fillAccountsList()
-      })
-    } else {
+    if (this.settings.isInjectedEchojslib()) {
       this.fillAccountsList()
+    } else {
+      this.updateAccountBalances()
     }
   }
 
   async getInfoByWif() {
-    console.log('ON CHANGE ')
     try {
       const wifInput = document.querySelector('#wifInput');
       const wif = wifInput.value;
-      console.log(`WIF: ${value}`);
-
-      const isValidWif = this.settings.validateWif(wif);
-      console.log('===00')
-      console.log(isValidWif)
-      console.log('===00')
 
       const info = await this.settings.getInfoByWif(wif);
-      console.log('info:')
 
       let txOrigin = this.el.querySelector('#txorigin')
+      txOrigin.appendChild(yo`<option value="${info[0][0]}" >${info[0][0]}</option>`)
+      this.updateAccountBalances()
 
-          txOrigin.appendChild(yo`<option value="${info[0][0]}" >${info[0][0]}</option>`)
-
-      console.log(info);
     } catch (error) {
       console.log(error)
     }
@@ -310,16 +294,20 @@ class SettingsUI {
 
   // TODO: unclear what's the goal of accountListCallId, feels like it can be simplified
   fillAccountsList () {
+    if (!this.el) return
     this.accountListCallId++
     let callid = this.accountListCallId
     let txOrigin = this.el.querySelector('#txorigin')
     this.settings.getAccounts((err, accounts) => {
-      if (this.accountListCallId > callid) return
+      if (this.accountListCallId > callid || !accounts.length) return
       this.accountListCallId++
       if (err) { addTooltip(`Cannot get account list: ${err}`) }
       for (let loadedaddress in this.loadedAccounts) {
         if (accounts.findIndex((account) => account.id === loadedaddress) === -1) {
-          txOrigin.removeChild(txOrigin.querySelector('option[value="' + loadedaddress + '"]'))
+          const rmElement = txOrigin.querySelector('option[value="' + loadedaddress + '"]')
+          if (rmElement) {
+            txOrigin.removeChild(rmElement)
+          }
           delete this.loadedAccounts[loadedaddress]
         }
       }
@@ -369,6 +357,15 @@ class SettingsUI {
        }
       )
     })
+  }
+
+  _clearAccountsAndAssets () {
+    let accountEl = this.el.querySelector('#txorigin')
+    let assetsEl = this.el.querySelector('#assets')
+    accountEl.innerHTML = ''
+    assetsEl.innerHTML = ''
+    this.loadedAccounts = {}
+    this.loadAssetTypes = {}
   }
 
 }
