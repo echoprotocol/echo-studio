@@ -88,8 +88,12 @@ class Settings {
     return executionContext.getProvider() === 'injected'
   }
 
-  isExternalEchoConnected() {
+  isExternalEchoConnected () {
     return executionContext.isExternalEchoConnected()
+  }
+
+  isGotExtensionAccess () {
+    return executionContext.isGotExtensionAccess()
   }
 
   signMessage (message, account, passphrase, cb) {
