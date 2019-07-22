@@ -203,7 +203,6 @@ module.exports = class UniversalDApp extends Plugin {
     * @param {Function} callback    - callback.
     */
   createContract (data, confirmationCb, continueCb, promptCb, callback) {
-    console.log(data)
     this.runTx({data: data, useCall: false}, confirmationCb, continueCb, promptCb, (error, txResult) => {
       // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
       callback(error, txResult)
@@ -333,7 +332,6 @@ module.exports = class UniversalDApp extends Plugin {
       },
       function runTransaction (asset, fromAddress, value, next) {
         var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, timestamp: args.data.timestamp, asset, wif: args.data.wif }
-        console.log(tx)
         var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
         var timestamp = Date.now()
         if (tx.timestamp) {

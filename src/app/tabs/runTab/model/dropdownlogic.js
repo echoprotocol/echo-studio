@@ -121,7 +121,11 @@ class DropdownLogic {
       data.contractName = selectedContract.name
       data.linkReferences = selectedContract.bytecodeLinkReferences
       data.contractABI = selectedContract.abi
-      data.wif = document.querySelector('#wifInput').value
+
+      const wifInput = document.querySelector('#wifInput')
+      if (wifInput) {
+        data.wif = wifInput.value
+      }
     }
 
     var confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {

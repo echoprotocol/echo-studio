@@ -353,7 +353,7 @@ class SettingsUI {
 
       results.forEach((element) => {
         const { amount, assetType, precision, symbol } = element
-        const value = `${assetType} (${helper.coinBalanceNormalizer(amount, precision)} ${symbol} )`
+        const value = `${assetType} (${helper.coinBalanceNormalizer(amount, precision)} ${symbol})`
         if (!this.loadedAccounts[assetType]) {
           assetsEl.appendChild(yo`<option value="${element.assetType}">${value}</option>`)
           this.loadAssetTypes[assetType] = 1
