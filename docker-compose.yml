@@ -2,8 +2,8 @@ version: '3'
 
 services:
   echo-studio:
-    image: registry-gitlab.pixelplex.by/690-echo-studio/echo-studio
-    container_name: "registry-gitlab.pixelplex.by/690-echo-studio/echo-studio"
+    image: registry-gitlab.pixelplex.by/690-echo-studio/echo-studio:latest
+    container_name: "690.echo-studio.echo-studio"
     ports:
       - 0.0.0.0:26900:8080
     command: [sh, -c, "npm run setupremix && npm run build && npm start"]
@@ -17,8 +17,8 @@ services:
       - echo-studio-tools
 
   echo-studio-tools:
-    image: registry-gitlab.pixelplex.by/690-echo-studio/echo-studio-tools
-    container_name: "registry-gitlab.pixelplex.by/690-echo-studio/echo-studio-tools"
+    image: registry-gitlab.pixelplex.by/690-echo-studio/echo-studio-tools:latest
+    container_name: "690.echo-studio.echo-studio-tools"
     volumes:
       - studio_volume:/app/remix
 
