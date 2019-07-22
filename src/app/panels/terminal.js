@@ -6,11 +6,9 @@ var ethers = require('ethers')
 var type = require('component-type')
 var vm = require('vm')
 var EventManager = require('../../lib/events')
-var Web3 = require('web3')
 var swarmgw = require('swarmgw')()
 
 var CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
-var executionContext = require('../../execution-context')
 var AutoCompletePopup = require('../ui/auto-complete-popup')
 var TxLogger = require('../../app/ui/txLogger')
 
@@ -683,7 +681,7 @@ function domTerminalFeatures (self, scopedCommands) {
     swarmgw,
     ethers,
     remix: self._components.cmdInterpreter,
-    web3: new Web3(executionContext.web3().currentProvider),
+    // web3: new Web3(executionContext.web3().currentProvider),
     console: {
       log: function () { scopedCommands.log.apply(scopedCommands, arguments) },
       info: function () { scopedCommands.info.apply(scopedCommands, arguments) },

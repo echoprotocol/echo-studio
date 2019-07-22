@@ -55,6 +55,16 @@ var css = csjs`
     align-items: center;
     width: 90%;
   }
+  .wif {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  .asset {
+    display: flex;
+    align-items: center;
+    width: 70%;
+  }
   .col2 {
     border-radius: 3px;
   }
@@ -233,6 +243,14 @@ var css = csjs`
     margin-right: 10px;
     width: 100px;
     font-size: 0.8rem;
+  }
+  .wifInput {
+    margin-right: 10px;
+    width: 150px;
+    font-size: 0.8rem;
+  }
+  .wifButton {
+    border-radius: 3px;
   }
   .gasNvalUnit {
     /* transform: scale(0.7); */

@@ -73,7 +73,7 @@ class Recorder {
       if (error) return console.log(error)
       if (call) return
 
-      var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
+      var address = txResult.result.contractAddress
       if (!address) return // not a contract creation
       address = this.addressToString(address)
       // save back created addresses for the convertion from tokens to real adresses
@@ -259,7 +259,7 @@ class Recorder {
             console.error(err)
             logCallBack(err + '. Execution failed at ' + index)
           } else {
-            var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
+            var address = txResult.result.contractAddress
             if (address) {
               address = self.addressToString(address)
               // save back created addresses for the convertion from tokens to real adresses

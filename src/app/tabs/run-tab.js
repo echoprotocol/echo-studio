@@ -196,8 +196,6 @@ class RunTab extends ViewPlugin {
   render () {
     this.onActivationInternal()
     executionContext.init(this.config)
-    executionContext.stopListenOnLastBlock()
-    executionContext.listenOnLastBlock()
     this.udapp.resetEnvironment()
     this.renderInstanceContainer()
     this.renderSettings(this.udapp)
