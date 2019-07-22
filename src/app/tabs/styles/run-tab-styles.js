@@ -213,6 +213,10 @@ var css = csjs`
   .network {
     margin-left: 8px;
     pointer-events: none;
+    width: 50%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .networkItem {
     margin-right: 5px;
@@ -246,18 +250,8 @@ var css = csjs`
   }
   .wifInput {
     margin-right: 10px;
-<<<<<<< HEAD
     width: 90%;
-    font-size: 0.8rem;
   }
-=======
-    width: 150px;
-    font-size: 0.8rem;
-  }
-  .wifButton {
-    border-radius: 3px;
-  }
->>>>>>> develop
   .gasNvalUnit {
     /* transform: scale(0.7); */
     /* transform-origin: left; */
