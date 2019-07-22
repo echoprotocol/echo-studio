@@ -18,7 +18,8 @@ class SettingsUI {
     this.settings.event.register('connectToNetwork', (name, id) => {
       this.netUI.innerHTML = `${name} (${id || '-'}) network`
       this._clearAccountsAndAssets()
-      this.fillAccountsList()
+      this.updateNetwork()
+      this.restartUpdatingInterval()
     })
 
     this.settings.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
@@ -38,6 +39,8 @@ class SettingsUI {
     this.accountListCallId = 0
     this.loadedAccounts = {}
     this.loadAssetTypes = {}
+
+    this.updatingInterval = null;
   }
 
   render () {
@@ -123,13 +126,21 @@ class SettingsUI {
       this.setFinalContext()
     })
 
-    setInterval(() => {
-      this.updateNetwork()
-    }, 10000)
+    this.restartUpdatingInterval()
 
     this.el = el
 
     return el
+  }
+
+  restartUpdatingInterval () {
+    if (this.updatingInterval) {
+      clearInterval(this.updatingInterval)
+    }
+
+    this.updatingInterval = setInterval(() => {
+      this.updateNetwork()
+    }, 10000)
   }
 
   setDropdown (selectExEnv) {
@@ -278,6 +289,7 @@ class SettingsUI {
       txOrigin.appendChild(yo`<option value="${info[0][0]}" >${info[0][0]}</option>`)
       this.updateAccountBalances()
     } catch (error) {
+      console.warn(error)
     }
   }
 
@@ -301,9 +313,9 @@ class SettingsUI {
         }
       }
       for (let i in accounts) {
-        let {id} = accounts[i]
+        let {id, name} = accounts[i]
         if (!this.loadedAccounts[id]) {
-          txOrigin.appendChild(yo`<option value="${id}" >${id}</option>`)
+          txOrigin.appendChild(yo`<option value="${id}" >${id} ${name ? `(${name})` : null}</option>`)
           this.loadedAccounts[id] = 1
         }
       }

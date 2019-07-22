@@ -49,20 +49,6 @@ class Settings {
     return this.udapp.getAccountBalances(accountId, cb)
   }
 
-  updateNetwork (cb) {
-    this.networkcallid++
-    ((callid) => {
-      executionContext.detectNetwork((err, { id, name } = {}) => {
-        if (this.networkcallid > callid) return
-        this.networkcallid++
-        if (err) {
-          return cb(err)
-        }
-        cb(null, {id, name})
-      })
-    })(this.networkcallid)
-  }
-
   // newAccount (passphraseCb, cb) {
   //   return this.udapp.newAccount('', passphraseCb, cb)
   // }

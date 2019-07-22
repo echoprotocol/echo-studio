@@ -1,6 +1,5 @@
 var async = require('async')
 var ethJSUtil = require('ethereumjs-util')
-var BN = ethJSUtil.BN
 var remixLib = require('remix-lib')
 var TxRunner = remixLib.execution.txRunner
 var txHelper = remixLib.execution.txHelper
@@ -150,7 +149,6 @@ module.exports = class UniversalDApp extends Plugin {
   getAccountBalances (accountId, cb) {
     executionContext.getEchoApi().getFullAccounts([accountId])
     .then((results) => {
-      console.log(results)
       if (!results || !results[0]) {
         return cb('Unknown account id')
       }
@@ -191,33 +189,6 @@ module.exports = class UniversalDApp extends Plugin {
       .then((result) => {
         return cb(null, result)
       })
-    })
-  }
-
-  getBalance (address, cb) {
-    address = ethJSUtil.stripHexPrefix(address)
-
-    if (!this.accounts) {
-      return cb('No accounts?')
-    }
-
-    executionContext.getEchoApi().getAccountBalances(address, ['1.3.0'], true)
-    .then((result) => {
-      const [item] = result
-      cb(null, new BN(item.amount).toString(10))
-    })
-    .catch((error) => {
-      cb(error)
-    })
-  }
-
-  getBalanceInEther (address, callback) {
-    this.getBalance(address, (error, balance) => {
-      if (error) {
-        callback(error)
-      } else {
-        callback(null, executionContext.web3().fromWei(balance, 'ether'))
-      }
     })
   }
 
