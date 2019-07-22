@@ -50,6 +50,13 @@ class RunTab extends ViewPlugin {
   onActivationInternal () {
     this.udappUI = new UniversalDAppUI(this.udapp, this.logCallback)
     this.udapp.resetAPI({
+      getWifNode: (cb) => {
+        try {
+          cb(null, $('#wifInput'))
+        } catch (error) {
+          return cb(error)
+        }
+      },
       getAddress: (cb) => {
         cb(null, $('#txorigin').val())
       },
@@ -66,6 +73,9 @@ class RunTab extends ViewPlugin {
       },
       getAsset: (cb) => {
         const asset = $('#assets').val()
+        if (!asset) {
+          return cb('Asset is not found.')
+        }
         cb(null, asset.split(' ')[0])
       }
     })

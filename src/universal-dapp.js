@@ -143,7 +143,18 @@ module.exports = class UniversalDApp extends Plugin {
   }
 
   validateWif (wif) {
-    return executionContext.echojslib().validators.isHex(wif)
+    try {
+      const valueFromWif = executionContext.echojslib().PrivateKey.fromWif(wif)
+
+      if (!valueFromWif) {
+        return false
+      }
+    } catch (error) {
+      console.warn(error)
+      return false
+    }
+
+    return true
   }
 
   getAccountBalances (accountId, cb) {
@@ -291,6 +302,25 @@ module.exports = class UniversalDApp extends Plugin {
   runTx (args, confirmationCb, continueCb, promptCb, cb) {
     const self = this
     async.waterfall([
+      function checkForWif (next) {
+        if (self.transactionContextAPI.getWifNode) {
+          self.transactionContextAPI.getWifNode(function (err, wifNode) {
+            if (err) {
+              return next(err)
+            }
+            if (wifNode) {
+              const wif = wifNode.val()
+              if (!wif) {
+                return next('Please enter wif')
+              }
+              if (!self.validateWif(wif)) {
+                return next('Your WIF is invalid!')
+              }
+              next(null)
+            }
+          })
+        }
+      },
       function queryValue (next) {
         if (args.value) {
           return next(null, args.value)
