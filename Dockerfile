@@ -15,4 +15,4 @@ RUN git config --global http.sslverify "false"
 
 COPY ./ /app/remix-ide/
 RUN npm config set unsafe-perm true
-RUN npm install
+RUN NODE_ENV=development npm install
