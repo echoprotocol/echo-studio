@@ -2,7 +2,6 @@ const yo = require('yo-yo')
 const remixLib = require('remix-lib')
 const EventManager = remixLib.EventManager
 const css = require('../styles/run-tab-styles')
-const copyToClipboard = require('../../ui/copy-to-clipboard')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
 const addTooltip = require('../../ui/tooltip')
 const helper = require('../../../lib/helper.js')
@@ -40,7 +39,7 @@ class SettingsUI {
     this.loadedAccounts = {}
     this.loadAssetTypes = {}
 
-    this.updatingInterval = null;
+    this.updatingInterval = null
   }
 
   render () {

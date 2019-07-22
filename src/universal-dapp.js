@@ -1,5 +1,4 @@
 var async = require('async')
-var ethJSUtil = require('ethereumjs-util')
 var remixLib = require('remix-lib')
 var TxRunner = remixLib.execution.txRunner
 var txHelper = remixLib.execution.txHelper
