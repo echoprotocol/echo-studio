@@ -25,7 +25,7 @@ class CompilerContainer {
       allversions: null,
       selectedVersion: null,
       defaultVersion: 'soljson-' + DEFAULT_VERSION, // this default version is defined: in makeMockCompiler (for browser test) and in package.json (downloadsolc_root) for the builtin compiler
-      baseurl: 'https://690-echo-studio.pixelplex-test.by/bin/list.json'
+      baseurl: 'https://690-echo-studio.pixelplex-test.by/bin'
     }
   }
 
