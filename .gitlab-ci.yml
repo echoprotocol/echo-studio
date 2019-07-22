@@ -7,8 +7,8 @@ build:
   script:
     - docker login  -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker pull registry-gitlab.pixelplex.by/690-echo-studio/echo-studio-tools:latest
-    - docker build --build-arg NODE_APP_INSTANCE=master -t 690.echo-studio.echo-studio . --no-cache
-    - docker push 690.echo-studio.echo-studio
+    - docker build --build-arg NODE_APP_INSTANCE=master -t registry-gitlab.pixelplex.by/690-echo-studio/echo-studio . --no-cache
+    - docker push registry-gitlab.pixelplex.by/690-echo-studio/echo-studio
 
   only:
     - develop

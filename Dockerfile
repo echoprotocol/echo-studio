@@ -8,7 +8,8 @@ ENV NODE_APP_INSTANCE=$NODE_APP_INSTANCE
 
 WORKDIR /app/remix-ide/
 
-RUN apk update && apk add bash
+RUN apk update && apk add bash && apk add --virtual build-dependencies
+RUN apk add build-base
 RUN apk add git python
 RUN git config --global http.sslverify "false"
 
