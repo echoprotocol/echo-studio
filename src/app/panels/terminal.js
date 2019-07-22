@@ -6,11 +6,9 @@ var ethers = require('ethers')
 var type = require('component-type')
 var vm = require('vm')
 var EventManager = require('../../lib/events')
-var Web3 = require('web3')
 var swarmgw = require('swarmgw')()
 
 var CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
-var executionContext = require('../../execution-context')
 var AutoCompletePopup = require('../ui/auto-complete-popup')
 var TxLogger = require('../../app/ui/txLogger')
 

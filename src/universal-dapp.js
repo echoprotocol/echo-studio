@@ -1,8 +1,5 @@
 var async = require('async')
-var ethJSUtil = require('ethereumjs-util')
-var BN = ethJSUtil.BN
 var remixLib = require('remix-lib')
-var crypto = require('crypto')
 var TxRunner = remixLib.execution.txRunner
 var txHelper = remixLib.execution.txHelper
 var EventManager = remixLib.EventManager
@@ -140,25 +137,25 @@ module.exports = class UniversalDApp extends Plugin {
     })
   }
 
-  getInfo(wif, cb) {
+  getInfo (wif, cb) {
     const pb = executionContext.echojslib().PrivateKey.fromWif(wif).toPublicKey().toPublicKeyString()
-    return executionContext.echoConnection().api.getKeyReferences([pb]);
+    return executionContext.echoConnection().api.getKeyReferences([pb])
   }
 
-  validateWif(wif) {
+  validateWif (wif) {
     return executionContext.echojslib().validators.isHex(wif)
   }
-  
+
   getAccountBalances (accountId, cb) {
     executionContext.getEchoApi().getFullAccounts([accountId])
     .then((results) => {
-      console.log(results)
       if (!results || !results[0]) {
         return cb('Unknown account id')
       }
 
       const { balances } = results[0]
       const balancesArray = Object.keys(balances).map((assetType) => ({assetType, objectId: balances[assetType]}))
+<<<<<<< HEAD
 
       if (!balancesArray.length) {
         return cb(null, [{
@@ -212,14 +209,42 @@ module.exports = class UniversalDApp extends Plugin {
       cb(error)
     })
   }
+=======
+>>>>>>> develop
 
-  getBalanceInEther (address, callback) {
-    this.getBalance(address, (error, balance) => {
-      if (error) {
-        callback(error)
-      } else {
-        callback(null, executionContext.web3().fromWei(balance, 'ether'))
+      if (!balancesArray.length) {
+        return cb(null, [{
+          precision: 8,
+          symbol: 'ECHO',
+          amount: '0',
+          assetType: '1.3.0'
+        }])
       }
+
+      Promise.all(balancesArray.map((balanceObject) => {
+        return new Promise((resolve) => {
+          executionContext.getEchoApi().getObject(balanceObject.objectId)
+          .then((result) => ({
+            amount: result.balance,
+            assetType: balanceObject.assetType
+          }))
+          .then((result) => {
+            executionContext.getEchoApi().getObject(result.assetType)
+            .then((assetResult) => resolve({
+              ...result,
+              symbol: assetResult.symbol,
+              precision: assetResult.precision
+            }))
+          })
+          .catch(() => resolve({
+            amount: null,
+            assetType: balanceObject.assetType
+          }))
+        })
+      }))
+      .then((result) => {
+        return cb(null, result)
+      })
     })
   }
 
@@ -257,7 +282,11 @@ module.exports = class UniversalDApp extends Plugin {
   }
 
   context () {
+<<<<<<< HEAD
     return 'blockchain';
+=======
+    return 'blockchain'
+>>>>>>> develop
   }
 
   getABI (contract) {
@@ -349,7 +378,11 @@ module.exports = class UniversalDApp extends Plugin {
 
           if (err) return next(err)
           if (!address) return next('No accounts available')
+<<<<<<< HEAD
           next(null, address, value)
+=======
+          next(null, address, value, gasLimit)
+>>>>>>> develop
         })
       },
       function getAsset (fromAddress, value, next) {

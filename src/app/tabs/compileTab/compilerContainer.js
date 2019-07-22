@@ -6,6 +6,7 @@ const addTooltip = require('../../ui/tooltip')
 const semver = require('semver')
 
 var css = require('../styles/compile-tab-styles')
+const DEFAULT_VERSION = 'v0.4.24+commit.5206c759.js'
 
 class CompilerContainer {
 
@@ -23,8 +24,8 @@ class CompilerContainer {
       timeout: 300,
       allversions: null,
       selectedVersion: null,
-      defaultVersion: 'soljson-v0.5.1+commit.c8a2cb62.js', // this default version is defined: in makeMockCompiler (for browser test) and in package.json (downloadsolc_root) for the builtin compiler
-      baseurl: 'https://solc-bin.ethereum.org/bin'
+      defaultVersion: 'soljson-' + DEFAULT_VERSION, // this default version is defined: in makeMockCompiler (for browser test) and in package.json (downloadsolc_root) for the builtin compiler
+      baseurl: 'https://690-echo-studio.pixelplex-test.by/bin'
     }
   }
 
@@ -299,6 +300,7 @@ class CompilerContainer {
       }
       url = `${this.data.baseurl}/${this.data.selectedVersion}`
     }
+
     const isFirefox = typeof InstallTrigger !== 'undefined'
     if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
       // Workers cannot load js on "file:"-URLs and we get a
@@ -313,7 +315,7 @@ class CompilerContainer {
   }
 
   _updateLanguageSelector () {
-    if (semver.lt(this._retrieveVersion(), 'v0.5.7+commit.6da8b019.js')) {
+    if (semver.lt(this._retrieveVersion(), DEFAULT_VERSION)) {
       this._view.languageSelector.setAttribute('disabled', '')
       this._view.languageSelector.value = 'Solidity'
       this.compileTabLogic.setLanguage('Solidity')

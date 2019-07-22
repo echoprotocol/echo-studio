@@ -1,9 +1,7 @@
-const $ = require('jquery')
 const yo = require('yo-yo')
 const remixLib = require('remix-lib')
 const EventManager = remixLib.EventManager
 const css = require('../styles/run-tab-styles')
-const copyToClipboard = require('../../ui/copy-to-clipboard')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
 const addTooltip = require('../../ui/tooltip')
 const helper = require('../../../lib/helper.js')
@@ -19,7 +17,8 @@ class SettingsUI {
     this.settings.event.register('connectToNetwork', (name, id) => {
       this.netUI.innerHTML = `${name} (${id || '-'}) network`
       this._clearAccountsAndAssets()
-      this.fillAccountsList()
+      this.updateNetwork()
+      this.restartUpdatingInterval()
     })
 
     this.settings.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
@@ -39,6 +38,8 @@ class SettingsUI {
     this.accountListCallId = 0
     this.loadedAccounts = {}
     this.loadAssetTypes = {}
+
+    this.updatingInterval = null
   }
 
   render () {
@@ -83,7 +84,6 @@ class SettingsUI {
           <select name="txorigin" class="form-control ${css.select}" id="txorigin" onchange=${() => {
             this.fillAccountsList()
           }}></select>
-          ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
           <i id="remixRunSignMsg" class="fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
         </div>
       </div>
@@ -105,12 +105,6 @@ class SettingsUI {
         <div class="${css.col1_1}">Value</div>
         <div class="${css.gasValueContainer}">
           <input type="text" class="form-control ${css.gasNval} ${css.col2}" id="value" value="0" title="Enter the value and choose the unit">
-          <select name="unit" class="form-control p-1 ${css.gasNvalUnit} ${css.col2_2}" id="unit">
-            <option data-unit="wei">wei</option>
-            <option data-unit="gwei">gwei</option>
-            <option data-unit="finney">finney</option>
-            <option data-unit="ether">ether</option>
-          </select>
         </div>
       </d
     `
@@ -131,13 +125,21 @@ class SettingsUI {
       this.setFinalContext()
     })
 
-    setInterval(() => {
-      this.updateNetwork()
-    }, 10000)
+    this.restartUpdatingInterval()
 
     this.el = el
 
     return el
+  }
+
+  restartUpdatingInterval () {
+    if (this.updatingInterval) {
+      clearInterval(this.updatingInterval)
+    }
+
+    this.updatingInterval = setInterval(() => {
+      this.updateNetwork()
+    }, 10000)
   }
 
   setDropdown (selectExEnv) {
@@ -183,9 +185,9 @@ class SettingsUI {
 
   }
 
-  setWifInput() {
-    const settings = document.querySelector(`.${css.settings}`);
-    const toInsertAfterNode = settings.childNodes[1];
+  setWifInput () {
+    const settings = document.querySelector(`.${css.settings}`)
+    const toInsertAfterNode = settings.childNodes[1]
 
     const wifInput = yo`
       <div class="${css.crow}" id="wifBlock">
@@ -197,12 +199,12 @@ class SettingsUI {
         </div>
       </div>
     `
-    settings.insertBefore(wifInput, toInsertAfterNode.nextSibling);
+    settings.insertBefore(wifInput, toInsertAfterNode.nextSibling)
   }
 
   removeWifInput () {
-    const settings = document.querySelector(`.${css.settings}`);
-    const nodeToDelete = document.querySelector('#wifBlock');
+    const settings = document.querySelector(`.${css.settings}`)
+    const nodeToDelete = document.querySelector('#wifBlock')
 
     if (nodeToDelete) {
       settings.removeChild(nodeToDelete)
@@ -215,7 +217,7 @@ class SettingsUI {
 
     if (!this.settings.isExternalEchoConnected() || provider !== 'echojslib') {
       this.removeWifInput()
-    } else if (!document.querySelector('#wifBlock')){
+    } else if (!document.querySelector('#wifBlock')) {
       this.setWifInput()
     }
 
@@ -279,22 +281,21 @@ class SettingsUI {
   async getInfoByWif() {
     try {
       const txOrigin = this.el.querySelector('#txorigin')
-      const assets = this.el.querySelector('#assets')
 
-      txOrigin.innerHTML = ''
-      assets.innerHTML = ''
+      this._clearAccountsAndAssets()
 
-      const wifInput = document.querySelector('#wifInput');
-      const wif = wifInput.value;
-      const isValidWif = this.settings.validateWif(wif);
+      const wifInput = document.querySelector('#wifInput')
+      const wif = wifInput.value
+      const isValidWif = this.settings.validateWif(wif)
 
       if (isValidWif) {
         const info = await this.settings.getInfoByWif(wif)
         
         txOrigin.appendChild(yo`<option value="${info[0][0]}" >${info[0][0]}</option>`)
-        this.updateAccountBalances();
+        this.updateAccountBalances()
       }
     } catch (error) {
+      console.warn(error)
     }
   }
 
@@ -318,9 +319,9 @@ class SettingsUI {
         }
       }
       for (let i in accounts) {
-        let {id} = accounts[i]
+        let {id, name} = accounts[i]
         if (!this.loadedAccounts[id]) {
-          txOrigin.appendChild(yo`<option value="${id}" >${id}</option>`)
+          txOrigin.appendChild(yo`<option value="${id}" >${id} ${name ? `(${name})` : null}</option>`)
           this.loadedAccounts[id] = 1
         }
       }
@@ -338,7 +339,6 @@ class SettingsUI {
 
     let accountId = accountEl.options[accountEl.selectedIndex].value
     this.settings.getAccountBalances(accountId, (err, results) => {
-
       if (err) {
         console.warn(err)
         return
@@ -360,8 +360,7 @@ class SettingsUI {
         } else {
           assetsEl.querySelector('option[value="' + assetType + '"]').innerHTML = value
         }
-       }
-      )
+      })
     })
   }
 
