@@ -4,7 +4,6 @@ var txHelper = remixLib.execution.txHelper
 var txFormat = remixLib.execution.txFormat
 var executionContext = remixLib.execution.executionContext
 var typeConversion = remixLib.execution.typeConversion
-var txExecution = remixLib.execution.txExecution
 var CompilerAbstract = require('../../../compiler/compiler-abstract')
 var EventManager = remixLib.EventManager
 

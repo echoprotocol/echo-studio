@@ -1,4 +1,3 @@
-const $ = require('jquery')
 const yo = require('yo-yo')
 const remixLib = require('remix-lib')
 const EventManager = remixLib.EventManager
@@ -180,12 +179,11 @@ class SettingsUI {
     })
 
     selectExEnv.value = this.settings.getProvider()
-
   }
 
-  setWifInput() {
-    const settings = document.querySelector(`.${css.settings}`);
-    const toInsertAfterNode = settings.childNodes[0];
+  setWifInput () {
+    const settings = document.querySelector(`.${css.settings}`)
+    const toInsertAfterNode = settings.childNodes[0]
 
     const wifInput = yo`
       <div class="${css.crow}" id="wifBlock">
@@ -197,12 +195,12 @@ class SettingsUI {
         </div>
       </div>
     `
-    settings.insertBefore(wifInput, toInsertAfterNode.nextSibling);
+    settings.insertBefore(wifInput, toInsertAfterNode.nextSibling)
   }
 
   removeWifInput () {
-    const settings = document.querySelector(`.${css.settings}`);
-    const nodeToDelete = document.querySelector('#wifBlock');
+    const settings = document.querySelector(`.${css.settings}`)
+    const nodeToDelete = document.querySelector('#wifBlock')
 
     if (nodeToDelete) {
       settings.removeChild(nodeToDelete)
@@ -215,7 +213,7 @@ class SettingsUI {
 
     if (!this.settings.isExternalEchoConnected() || provider !== 'echojslib') {
       this.removeWifInput()
-    } else if (!document.querySelector('#wifBlock')){
+    } else if (!document.querySelector('#wifBlock')) {
       this.setWifInput()
     }
 
@@ -276,17 +274,16 @@ class SettingsUI {
     }
   }
 
-  async getInfoByWif() {
+  async getInfoByWif () {
     try {
-      const wifInput = document.querySelector('#wifInput');
-      const wif = wifInput.value;
+      const wifInput = document.querySelector('#wifInput')
+      const wif = wifInput.value
 
-      const info = await this.settings.getInfoByWif(wif);
+      const info = await this.settings.getInfoByWif(wif)
 
       let txOrigin = this.el.querySelector('#txorigin')
       txOrigin.appendChild(yo`<option value="${info[0][0]}" >${info[0][0]}</option>`)
       this.updateAccountBalances()
-
     } catch (error) {
     }
   }
@@ -331,7 +328,6 @@ class SettingsUI {
 
     let accountId = accountEl.options[accountEl.selectedIndex].value
     this.settings.getAccountBalances(accountId, (err, results) => {
-
       if (err) {
         console.warn(err)
         return
@@ -353,8 +349,7 @@ class SettingsUI {
         } else {
           assetsEl.querySelector('option[value="' + assetType + '"]').innerHTML = value
         }
-       }
-      )
+      })
     })
   }
 

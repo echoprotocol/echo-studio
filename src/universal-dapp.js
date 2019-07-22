@@ -2,7 +2,6 @@ var async = require('async')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 var remixLib = require('remix-lib')
-var crypto = require('crypto')
 var TxRunner = remixLib.execution.txRunner
 var txHelper = remixLib.execution.txHelper
 var EventManager = remixLib.EventManager
@@ -123,7 +122,7 @@ module.exports = class UniversalDApp extends Plugin {
 
   getAccounts (cb) {
     return new Promise((resolve, reject) => {
-      const provider = executionContext.getProvider();
+      const provider = executionContext.getProvider()
       switch (provider) {
         case 'injected': {
           executionContext.echojslib().extension.getAccounts().then((accounts) => {
@@ -139,15 +138,15 @@ module.exports = class UniversalDApp extends Plugin {
     })
   }
 
-  getInfo(wif, cb) {
+  getInfo (wif, cb) {
     const pb = executionContext.echojslib().PrivateKey.fromWif(wif).toPublicKey().toPublicKeyString()
-    return executionContext.echoConnection().api.getKeyReferences([pb]);
+    return executionContext.echoConnection().api.getKeyReferences([pb])
   }
 
-  validateWif(wif) {
+  validateWif (wif) {
     return executionContext.echojslib().validators.isHex(wif)
   }
-  
+
   getAccountBalances (accountId, cb) {
     executionContext.getEchoApi().getFullAccounts([accountId])
     .then((results) => {
@@ -190,7 +189,7 @@ module.exports = class UniversalDApp extends Plugin {
         })
       }))
       .then((result) => {
-        return cb(null, result);
+        return cb(null, result)
       })
     })
   }
@@ -255,7 +254,7 @@ module.exports = class UniversalDApp extends Plugin {
   }
 
   context () {
-    return 'blockchain';
+    return 'blockchain'
   }
 
   getABI (contract) {
@@ -382,5 +381,3 @@ module.exports = class UniversalDApp extends Plugin {
     ], cb)
   }
 }
-
-

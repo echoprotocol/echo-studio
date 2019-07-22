@@ -121,8 +121,8 @@ class CompilerContainer {
   render () {
     this.compileTabLogic.compiler.event.register('compilerLoaded', (version) => this.setVersionText(version))
     this.fetchAllVersion((allversions, selectedVersion) => {
-    this.data.allversions = allversions
-    this.data.selectedVersion = selectedVersion	  
+      this.data.allversions = allversions
+      this.data.selectedVersion = selectedVersion
       if (this._view.versionSelector) this._updateVersionSelector()
     })
 
@@ -299,7 +299,7 @@ class CompilerContainer {
         return console.log('loading ' + this.data.selectedVersion + ' not allowed')
       }
       url = `${this.data.baseurl}/${this.data.selectedVersion}`
-	}
+    }
 
     const isFirefox = typeof InstallTrigger !== 'undefined'
     if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
@@ -336,7 +336,7 @@ class CompilerContainer {
       if (event.type !== 'error') {
         try {
           const data = JSON.parse(json)
-		      allversions = data.builds.slice().reverse()
+          allversions = data.builds.slice().reverse()
           selectedVersion = this.data.defaultVersion
           if (this.queryParams.get().version) selectedVersion = this.queryParams.get().version
         } catch (e) {

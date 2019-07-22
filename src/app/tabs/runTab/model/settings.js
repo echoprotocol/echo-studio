@@ -68,15 +68,15 @@ class Settings {
   // }
 
   getAccounts (cb) {
-    return this.udapp.getAccounts(cb);
+    return this.udapp.getAccounts(cb)
   }
 
-  getInfoByWif(wif) {
-    return this.udapp.getInfo(wif);
+  getInfoByWif (wif) {
+    return this.udapp.getInfo(wif)
   }
 
-  validateWif(wif) {
-    return this.udapp.validateWif(wif);
+  validateWif (wif) {
+    return this.udapp.validateWif(wif)
   }
 
   isEchojslibProvider () {
