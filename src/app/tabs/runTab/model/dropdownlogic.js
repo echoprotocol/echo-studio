@@ -1,4 +1,3 @@
-var ethJSUtil = require('ethereumjs-util')
 var remixLib = require('remix-lib')
 var txHelper = remixLib.execution.txHelper
 var txFormat = remixLib.execution.txFormat
@@ -37,12 +36,10 @@ class DropdownLogic {
   }
 
   loadContractFromAddress (address, confirmCb, cb) {
-    if (!ethJSUtil.isValidAddress(address)) {
+    if (!executionContext.echojslib().validators.isContractId(address)) {
       return cb('Invalid address.')
     }
-    if (/[a-f]/.test(address) && /[A-F]/.test(address) && !ethJSUtil.isValidChecksumAddress(address)) {
-      return cb('Invalid checksum address.')
-    }
+
     if (/.(.abi)$/.exec(this.config.get('currentFile'))) {
       confirmCb(() => {
         var abi
@@ -121,6 +118,7 @@ class DropdownLogic {
       data.contractName = selectedContract.name
       data.linkReferences = selectedContract.bytecodeLinkReferences
       data.contractABI = selectedContract.abi
+      data.wif = document.querySelector('#wifInput').value
     }
 
     var confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
@@ -184,11 +182,12 @@ class DropdownLogic {
         if (error) {
           return finalCb(`creation of ${selectedContract.name} errored: ${error}`)
         }
-        if (txResult.result.status && txResult.result.status === '0x0') {
-          return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
-        }
-        var address = txResult.result.contractAddress
-        finalCb(null, selectedContract, address)
+        // if (txResult.result.status && txResult.result.status === '0x0') {
+        //   return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
+        // }
+        var contractResult = txResult[0].contractResult
+
+        finalCb(null, selectedContract, contractResult)
       }
     )
   }
@@ -264,7 +263,6 @@ class DropdownLogic {
     if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
       return txFormat.buildData(selectedContract.name, selectedContract.object, this.compilersArtefacts['__last'].getData().contracts, true, constructor, args, (error, data) => {
         if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
-
         statusCb(`creation of ${selectedContract.name} pending...`)
         this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, cb)
       }, statusCb, (data, runTxCallback) => {

@@ -50,26 +50,33 @@ class RunTab extends ViewPlugin {
   onActivationInternal () {
     this.udappUI = new UniversalDAppUI(this.udapp, this.logCallback)
     this.udapp.resetAPI({
+      getWifNode: (cb) => {
+        try {
+          cb(null, $('#wifInput'))
+        } catch (error) {
+          return cb(error)
+        }
+      },
       getAddress: (cb) => {
         cb(null, $('#txorigin').val())
       },
       getValue: (cb) => {
         try {
           var number = document.querySelector('#value').value
-          var select = document.getElementById('unit')
-          var index = select.selectedIndex
-          var selectedUnit = select.querySelectorAll('option')[index].dataset.unit
-          var unit = 'ether' // default
-          if (['ether', 'finney', 'gwei', 'wei'].indexOf(selectedUnit) >= 0) {
-            unit = selectedUnit
-          }
-          cb(null, executionContext.web3().toWei(number, unit))
+          cb(null, number)
         } catch (e) {
           cb(e)
         }
       },
       getGasLimit: (cb) => {
         cb(null, $('#gasLimit').val())
+      },
+      getAsset: (cb) => {
+        const asset = $('#assets').val()
+        if (!asset) {
+          return cb('Asset is not found.')
+        }
+        cb(null, asset.split(' ')[0])
       }
     })
   }
@@ -80,8 +87,7 @@ class RunTab extends ViewPlugin {
     var el = yo`
     <div class="list-group list-group-flush">
       ${this.settingsUI.render()}
-      ${this.contractDropdownUI.render()}
-      ${this.recorderCard.render()}
+      ${this.contractDropdownUI.render()}      
       ${this.instanceContainer}
     </div>
     `

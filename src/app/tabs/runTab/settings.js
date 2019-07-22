@@ -2,6 +2,7 @@ const yo = require('yo-yo')
 const remixLib = require('remix-lib')
 const EventManager = remixLib.EventManager
 const css = require('../styles/run-tab-styles')
+const copyToClipboard = require('../../ui/copy-to-clipboard')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
 const addTooltip = require('../../ui/tooltip')
 const helper = require('../../../lib/helper.js')
@@ -54,7 +55,7 @@ class SettingsUI {
           <select id="selectExEnvOptions" class="form-control ${css.select}">
             <option id="injected-mode"
               title="Execution environment has been provided by Bridge or similar provider."
-              value="injected" name="executionContext"> Injected Bridge
+              value="injected" name="executionContext"> Echo Bridge
             </option>
             <option id="echojslib-mode"
               title="Execution environment connects to node at localhost (or via ыыы if available), transactions will be sent to the network and can cause loss of money or worse!
@@ -62,7 +63,7 @@ class SettingsUI {
               value="echojslib" name="executionContext"> Echojslib Provider
             </option>
           </select>
-          <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.infoDeployAction} fas fa-info"></i></a>
+          <a href="https://github.com/echoprotocol" target="_blank"><i class="${css.infoDeployAction} fas fa-info"></i></a>
         </div>
       </div>
     `
@@ -84,11 +85,11 @@ class SettingsUI {
           <select name="txorigin" class="form-control ${css.select}" id="txorigin" onchange=${() => {
             this.fillAccountsList()
           }}></select>
-          <i id="remixRunSignMsg" class="fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
+          ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
         </div>
       </div>
     `
-
+    // <i id="remixRunSignMsg" class="fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
     const assetEl = yo`
       <div class="${css.crow}">
         <div class="${css.col1_1}">
@@ -279,14 +280,20 @@ class SettingsUI {
 
   async getInfoByWif () {
     try {
+      const txOrigin = this.el.querySelector('#txorigin')
+
+      this._clearAccountsAndAssets()
+
       const wifInput = document.querySelector('#wifInput')
       const wif = wifInput.value
+      const isValidWif = this.settings.validateWif(wif)
 
-      const info = await this.settings.getInfoByWif(wif)
+      if (isValidWif) {
+        const info = await this.settings.getInfoByWif(wif)
 
-      let txOrigin = this.el.querySelector('#txorigin')
-      txOrigin.appendChild(yo`<option value="${info[0][0]}" >${info[0][0]}</option>`)
-      this.updateAccountBalances()
+        txOrigin.appendChild(yo`<option value="${info[0][0]}" >${info[0][0]}</option>`)
+        this.updateAccountBalances()
+      }
     } catch (error) {
       console.warn(error)
     }
