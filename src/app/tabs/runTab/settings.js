@@ -82,7 +82,6 @@ class SettingsUI {
           <select name="txorigin" class="form-control ${css.select}" id="txorigin" onchange=${() => {
             this.fillAccountsList()
           }}></select>
-          ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
           <i id="remixRunSignMsg" class="fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
         </div>
       </div>
@@ -183,7 +182,7 @@ class SettingsUI {
 
   setWifInput () {
     const settings = document.querySelector(`.${css.settings}`)
-    const toInsertAfterNode = settings.childNodes[0]
+    const toInsertAfterNode = settings.childNodes[1]
 
     const wifInput = yo`
       <div class="${css.crow}" id="wifBlock">
