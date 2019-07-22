@@ -11,7 +11,6 @@ var css = require('../../universal-dapp-styles')
 var MultiParamManager = require('./multiParamManager')
 var remixLib = require('remix-lib')
 var typeConversion = remixLib.execution.typeConversion
-var txExecution = remixLib.execution.txExecution
 var txFormat = remixLib.execution.txFormat
 
 var executionContext = require('../../execution-context')
