@@ -81,12 +81,11 @@ class SettingsUI {
         <div class="${css.col1_1}">
           Account
         </div>
-        <div class=${css.account}>
-          <select name="txorigin" class="form-control ${css.select}" id="txorigin" onchange=${() => {
-            this.fillAccountsList()
-          }}></select>
-          ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
+            <div class=${css.account}>
+                  <select name="txorigin" class="form-control ${css.select}" id="txorigin"></select>
+                  ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
         </div>
+
       </div>
     `
     // <i id="remixRunSignMsg" class="fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
@@ -289,9 +288,8 @@ class SettingsUI {
       const isValidWif = this.settings.validateWif(wif)
 
       if (isValidWif) {
-        const info = await this.settings.getInfoByWif(wif)
-
-        txOrigin.appendChild(yo`<option value="${info[0][0]}" >${info[0][0]}</option>`)
+        const { accountId, name } = await this.settings.getInfoByWif(wif)
+        txOrigin.appendChild(yo`<option value="${accountId}" >${accountId} (${name})</option>`)
         this.updateAccountBalances()
       }
     } catch (error) {
@@ -321,7 +319,7 @@ class SettingsUI {
       for (let i in accounts) {
         let {id, name} = accounts[i]
         if (!this.loadedAccounts[id]) {
-          txOrigin.appendChild(yo`<option value="${id}" >${id} ${name ? `(${name})` : null}</option>`)
+          txOrigin.appendChild(yo`<option value="${id}" >${id} (${name})</option>`)
           this.loadedAccounts[id] = 1
         }
       }

@@ -137,9 +137,12 @@ module.exports = class UniversalDApp extends Plugin {
     })
   }
 
-  getInfo (wif, cb) {
+  async getInfo (wif) {
     const pb = executionContext.echojslib().PrivateKey.fromWif(wif).toPublicKey().toPublicKeyString()
-    return executionContext.echoConnection().api.getKeyReferences([pb])
+    const [[accountId]] = await executionContext.getEchoApi().getKeyReferences([pb])
+    const [info] = await executionContext.getEchoApi().getFullAccounts([accountId])
+    const { name } = info
+    return { accountId, name }
   }
 
   validateWif (wif) {
