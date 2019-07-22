@@ -251,7 +251,6 @@ var css = csjs`
   .wifInput {
     margin-right: 10px;
     width: 90%;
-    font-size: 0.8rem;
   }
   .gasNvalUnit {
     /* transform: scale(0.7); */
