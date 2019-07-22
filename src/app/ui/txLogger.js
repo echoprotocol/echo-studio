@@ -364,6 +364,7 @@ function txDetails (e, tx, data, obj) {
   } else {
     log.removeChild(arrow)
     log.appendChild(arrowUp)
+
     table = createTable({
       txId: data.tx.id,
       status: data.resolvedData ? data.resolvedData.status : null,
@@ -376,7 +377,7 @@ function txDetails (e, tx, data, obj) {
       gasUsed: data.resolvedData.gasUsed,
       input: data.tx.input,
       'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
-      'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
+      'decoded output': data.tx ? JSON.stringify(typeConversion.stringify(data.tx), null, '\t') : ' - ',
       logs: data.logs,
       val: data.tx.trx.operations[0][1].value.amount,
     })
