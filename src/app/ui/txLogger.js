@@ -190,10 +190,10 @@ function debug (e, data, self) {
 function log (self, tx, receipt) {
   var resolvedTransaction = self.txListener.resolvedTransaction(tx.id)
   if (resolvedTransaction) {
-    var compiledContracts = null
-    if (self._deps.compilersArtefacts['__last']) {
-      compiledContracts = self._deps.compilersArtefacts['__last'].getContracts()
-    }
+    // var compiledContracts = null
+    // if (self._deps.compilersArtefacts['__last']) {
+    //   compiledContracts = self._deps.compilersArtefacts['__last'].getContracts()
+    // }
     // self.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, (error, logs) => {
     //   if (!error) {
     self.logKnownTX({ tx: tx, receipt: receipt, resolvedData: resolvedTransaction })
@@ -384,7 +384,7 @@ function txDetails (e, tx, data, obj) {
       'decoded output': data.tx ? JSON.stringify(typeConversion.stringify(data.tx), null, '\t') : ' - ',
       'contract result': data.resolvedData && data.resolvedData.contractResult && data.resolvedData.contractResult ? JSON.stringify(typeConversion.stringify(data.resolvedData.contractResult), null, '\t') : ' - ',
       logs: data.logs,
-      val: data.tx.trx.operations[0][1].value.amount,
+      val: data.tx.trx.operations[0][1].value.amount
     })
 
     tx.appendChild(table)
@@ -424,7 +424,7 @@ function createTable (opts) {
       </td>
     </tr>
   `
-  table.appendChild(transactionId)  
+  table.appendChild(transactionId)
 
   var contractId = yo`
     <tr class="${css.tr}">
@@ -550,14 +550,14 @@ function createTable (opts) {
   }
 
   if (opts['contract result']) {
-    var outputDecoded = yo`
+    var contractResult = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> contract result </td>
       <td class="${css.td}" id="decodedoutput" >${opts['contract result']}
         ${copyToClipboard(() => opts['contract result'])}
       </td>
     </tr>`
-    table.appendChild(outputDecoded)
+    table.appendChild(contractResult)
   }
 
   var stringified = ' - '

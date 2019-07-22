@@ -66,7 +66,7 @@ class RunTab extends ViewPlugin {
       },
       getAsset: (cb) => {
         const asset = $('#assets').val()
-        cb(null, asset.split(' ')[0])  
+        cb(null, asset.split(' ')[0])
       }
     })
   }

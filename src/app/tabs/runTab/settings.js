@@ -2,6 +2,7 @@ const yo = require('yo-yo')
 const remixLib = require('remix-lib')
 const EventManager = remixLib.EventManager
 const css = require('../styles/run-tab-styles')
+const copyToClipboard = require('../../ui/copy-to-clipboard')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
 const addTooltip = require('../../ui/tooltip')
 const helper = require('../../../lib/helper.js')
@@ -84,11 +85,11 @@ class SettingsUI {
           <select name="txorigin" class="form-control ${css.select}" id="txorigin" onchange=${() => {
             this.fillAccountsList()
           }}></select>
-          <i id="remixRunSignMsg" class="fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
+          ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
         </div>
       </div>
     `
-
+    // <i id="remixRunSignMsg" class="fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
     const assetEl = yo`
       <div class="${css.crow}">
         <div class="${css.col1_1}">
@@ -182,7 +183,6 @@ class SettingsUI {
     })
 
     selectExEnv.value = this.settings.getProvider()
-
   }
 
   setWifInput () {
@@ -278,7 +278,7 @@ class SettingsUI {
     }
   }
 
-  async getInfoByWif() {
+  async getInfoByWif () {
     try {
       const txOrigin = this.el.querySelector('#txorigin')
 
@@ -290,7 +290,7 @@ class SettingsUI {
 
       if (isValidWif) {
         const info = await this.settings.getInfoByWif(wif)
-        
+
         txOrigin.appendChild(yo`<option value="${info[0][0]}" >${info[0][0]}</option>`)
         this.updateAccountBalances()
       }

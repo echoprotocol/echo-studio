@@ -192,8 +192,9 @@ class DropdownLogic {
         // if (txResult.result.status && txResult.result.status === '0x0') {
         //   return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
         // }
-        var id = txResult[0].id
-        finalCb(null, selectedContract, id)
+        var contractResult = txResult[0].contractResult
+
+        finalCb(null, selectedContract, contractResult)
       }
     )
   }
@@ -268,7 +269,6 @@ class DropdownLogic {
     }
     if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
       return txFormat.buildData(selectedContract.name, selectedContract.object, this.compilersArtefacts['__last'].getData().contracts, true, constructor, args, (error, data) => {
-
         if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
         statusCb(`creation of ${selectedContract.name} pending...`)
         this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, cb)
