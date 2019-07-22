@@ -155,62 +155,6 @@ module.exports = class UniversalDApp extends Plugin {
 
       const { balances } = results[0]
       const balancesArray = Object.keys(balances).map((assetType) => ({assetType, objectId: balances[assetType]}))
-<<<<<<< HEAD
-
-      if (!balancesArray.length) {
-        return cb(null, [{
-          precision: 8,
-          symbol: 'ECHO',
-          amount: '0',
-          assetType: '1.3.0'
-        }])
-      }
-
-      Promise.all(balancesArray.map((balanceObject) => {
-        return new Promise((resolve) => {
-          executionContext.getEchoApi().getObject(balanceObject.objectId)
-          .then((result) => ({
-            amount: result.balance,
-            assetType: balanceObject.assetType
-          }))
-          .then((result) => {
-            executionContext.getEchoApi().getObject(result.assetType)
-            .then((assetResult) => resolve({
-              ...result,
-              symbol: assetResult.symbol,
-              precision: assetResult.precision
-            }))
-          })
-          .catch(() => resolve({
-            amount: null,
-            assetType: balanceObject.assetType
-          }))
-        })
-      }))
-      .then((result) => {
-        return cb(null, result);
-      })
-    })
-  }
-
-  getBalance (address, cb) {
-    address = ethJSUtil.stripHexPrefix(address)
-
-    if (!this.accounts) {
-      return cb('No accounts?')
-    }
-
-    executionContext.getEchoApi().getAccountBalances(address, ['1.3.0'], true)
-    .then((result) => {
-      const [item] = result
-      cb(null, new BN(item.amount).toString(10))
-    })
-    .catch((error) => {
-      cb(error)
-    })
-  }
-=======
->>>>>>> develop
 
       if (!balancesArray.length) {
         return cb(null, [{
@@ -282,11 +226,7 @@ module.exports = class UniversalDApp extends Plugin {
   }
 
   context () {
-<<<<<<< HEAD
-    return 'blockchain';
-=======
     return 'blockchain'
->>>>>>> develop
   }
 
   getABI (contract) {
@@ -378,11 +318,7 @@ module.exports = class UniversalDApp extends Plugin {
 
           if (err) return next(err)
           if (!address) return next('No accounts available')
-<<<<<<< HEAD
           next(null, address, value)
-=======
-          next(null, address, value, gasLimit)
->>>>>>> develop
         })
       },
       function getAsset (fromAddress, value, next) {
