@@ -55,7 +55,7 @@ class SettingsUI {
           <select id="selectExEnvOptions" class="form-control ${css.select}">
             <option id="injected-mode"
               title="Execution environment has been provided by Bridge or similar provider."
-              value="injected" name="executionContext"> Injected Bridge
+              value="injected" name="executionContext"> Echo Bridge
             </option>
             <option id="echojslib-mode"
               title="Execution environment connects to node at localhost (or via ыыы if available), transactions will be sent to the network and can cause loss of money or worse!
@@ -63,7 +63,7 @@ class SettingsUI {
               value="echojslib" name="executionContext"> Echojslib Provider
             </option>
           </select>
-          <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.infoDeployAction} fas fa-info"></i></a>
+          <a href="https://github.com/echoprotocol" target="_blank"><i class="${css.infoDeployAction} fas fa-info"></i></a>
         </div>
       </div>
     `
