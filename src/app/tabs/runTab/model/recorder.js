@@ -70,8 +70,6 @@ class Recorder {
     })
 
     this.udapp.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
-      console.log('transactionExecuted event')
-      console.log(!!error)
       if (error) return console.log(error)
       if (call) return
       var id = txResult[0].id

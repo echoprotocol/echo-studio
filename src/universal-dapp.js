@@ -120,7 +120,7 @@ module.exports = class UniversalDApp extends Plugin {
 
   getAccounts (cb) {
     return new Promise((resolve, reject) => {
-      const provider = executionContext.getProvider();
+      const provider = executionContext.getProvider()
       switch (provider) {
         case 'injected': {
           executionContext.echojslib().extension.getAccounts().then((accounts) => {
@@ -132,7 +132,7 @@ module.exports = class UniversalDApp extends Plugin {
             return reject(error)
           })
         }
-        break
+          break
       }
     })
   }
@@ -359,5 +359,4 @@ module.exports = class UniversalDApp extends Plugin {
     ], cb)
   }
 }
-
 

@@ -159,14 +159,14 @@ class ContractDropdownUI {
       return this.logCallback(msg)
     }
 
-    var finalCb = (error, contractObject, address) => {
+    var finalCb = (error, contractObject, contractResult) => {
       this.event.trigger('clearInstance')
 
       if (error) {
         return this.logCallback(error)
       }
 
-      this.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
+      this.event.trigger('newContractInstanceAdded', [contractObject, contractResult, contractObject.name])
     }
 
     if (selectedContract.isOverSizeLimit()) {
