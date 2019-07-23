@@ -121,6 +121,7 @@ class MultiParamManager {
     this.basicInputField.setAttribute('title', this.inputs)
 
     var onClick = (domEl) => {
+      console.log('contract action onClick')
       this.clickCallBack(this.funABI.inputs, this.basicInputField.value)
     }
 // TODO: if this is a lookup only make this button btn-info
