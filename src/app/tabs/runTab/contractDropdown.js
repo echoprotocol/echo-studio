@@ -165,8 +165,8 @@ class ContractDropdownUI {
       if (error) {
         return this.logCallback(error)
       }
-
-      this.event.trigger('newContractInstanceAdded', [contractObject, contractResult, contractObject.name])
+      var address = `1.14.${parseInt(contractResult[1].exec_res.new_address.slice(2), 16)}`
+      this.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
     }
 
     if (selectedContract.isOverSizeLimit()) {

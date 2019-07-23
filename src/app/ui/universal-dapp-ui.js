@@ -60,8 +60,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   var instance = yo`<div class="instance ${css.instance} ${css.hidesub}" id="instance${address}"></div>`
   var context = self.udapp.context()
 
-  // var shortAddress = helper.shortenAddress(address)
-  const contractAddress = `1.14.${parseInt(address[1].exec_res.new_address.slice(2), 16)}`
+  const contractAddress = address
   var title = yo`
     <div class="${css.title} alert alert-secondary p-2">
       <button class="btn ${css.titleExpander}" onclick="${(e) => { toggleClass(e) }}">
@@ -252,12 +251,14 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
         }
         if (args.funABI.type === 'fallback') data.dataHex = value
         self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {
+          console.log('callFunction callback')
           if (!error) {
             if (lookupOnly) {
               var decoded = decodeResponseToTreeView(ethJSUtil.toBuffer(txResult.result), args.funABI)
               outputCb(decoded)
             }
           } else {
+            console.log('callFunction callback error')
             self.logCallback(`${logMsg} errored: ${error} `)
           }
         })
@@ -273,6 +274,8 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
   }
 
   var multiParamManager = new MultiParamManager(lookupOnly, args.funABI, (valArray, inputsValues, domEl) => {
+    console.log('CALL STARTS')
+    console.log(inputsValues)
     clickButton(valArray, inputsValues, domEl)
   }, self.udapp.getInputs(args.funABI))
 

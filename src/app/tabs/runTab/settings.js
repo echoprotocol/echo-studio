@@ -81,9 +81,11 @@ class SettingsUI {
         <div class="${css.col1_1}">
           Account
         </div>
-            <div class=${css.account}>
-                  <select name="txorigin" class="form-control ${css.select}" id="txorigin"></select>
-                  ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
+        <div class=${css.account}>
+          <select name="txorigin" class="form-control ${css.select}" id="txorigin" onchange=${() => {
+            this.fillAccountsList()
+          }}></select>
+          ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
         </div>
 
       </div>
@@ -168,7 +170,7 @@ class SettingsUI {
       let context = selectExEnv.options[selectExEnv.selectedIndex].value
       this.settings.changeExecutionContext(context, () => {
         modalDialogCustom.confirm('External node request', 'Are you sure you want to connect to an echo node?', () => {
-          modalDialogCustom.prompt('External node request', 'Echo Provider Endpoint', 'wss://testnet.echo-dev.io/ws', (target) => {
+          modalDialogCustom.prompt('External node request', 'Echo Provider Endpoint', 'wss://devnet.echo-dev.io/ws', (target) => {
             this.settings.setProviderFromEndpoint(target, context, (alertMsg) => {
               if (alertMsg) {
                 modalDialogCustom.alert(alertMsg)
