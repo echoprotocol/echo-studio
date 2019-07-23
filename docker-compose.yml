@@ -6,8 +6,8 @@ services:
     container_name: "690.echo-studio.echo-studio"
     ports:
       - 0.0.0.0:26900:8080
-#    command: [sh, -c, "cd node_modules/.bin/browserify && ls && npm run setupremix && npm run build && npm start"]
-    command: [sh, -c, "npm run setupremix && npm run build && npm start"]
+    command: [sh, -c, "cd node_modules/.bin/browserify && ls && npm run setupremix && npm run build && npm start"]
+#    command: [sh, -c, "npm start"]
     environment:
       - NODE_ENV=production
       - NODE_APP_INSTANCE=$NODE_APP_INSTANCE
