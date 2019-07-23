@@ -15,18 +15,6 @@ class SettingsUI {
     this.event = new EventManager()
     this._components = {}
 
-    this.settings.event.register('connectToNetwork', (name, id) => {
-      this.netUI.innerHTML = `${name} (${id || '-'}) network`
-      this._clearAccountsAndAssets()
-      this.updateNetwork()
-      this.restartUpdatingInterval()
-    })
-
-    this.settings.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
-      if (error) return
-      if (!lookupOnly) this.el.querySelector('#value').value = '0'
-      this.updateAccountBalances()
-    })
     this._components = {
       registry: globalRegistry,
       networkModule: networkModule
@@ -41,6 +29,42 @@ class SettingsUI {
     this.loadAssetTypes = {}
 
     this.updatingInterval = null
+
+    this._initEventListeners()
+  }
+
+  _initEventListeners () {
+    this.settings.event.register('connectToNetwork', (name, id) => {
+      this.netUI.innerHTML = `${name} (${id || '-'}) network`
+      this._clearAccountsAndAssets()
+      this.updateNetwork()
+      this.restartUpdatingInterval()
+    })
+
+    this.settings.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
+      if (error) return
+      if (!lookupOnly) this.el.querySelector('#value').value = '0'
+      this.updateAccountBalances()
+    })
+
+    this.settings.event.register('switchAccount', (account) => {
+      let txOrigin = this.el.querySelector('#txorigin')
+      let {id, name} = account
+      if (!this.loadedAccounts[id]) {
+        txOrigin.appendChild(yo`<option value="${id}" >${id} (${name})</option>`)
+        this.loadedAccounts[id] = 1
+      }
+    })
+
+    this.settings.event.register('updateAccount', (data) => {
+      console.log(data)
+      // let txOrigin = this.el.querySelector('#txorigin')
+      // let {id, name} = account
+      // if (!this.loadedAccounts[id]) {
+      //   txOrigin.appendChild(yo`<option value="${id}" >${id} (${name})</option>`)
+        // this.loadedAccounts[id] = 1
+      // }
+    })
   }
 
   render () {
@@ -82,7 +106,12 @@ class SettingsUI {
           Account
         </div>
             <div class=${css.account}>
-                  <select name="txorigin" class="form-control ${css.select}" id="txorigin"></select>
+                  <select name="txorigin" class="form-control ${css.select}" id="txorigin" onchange=${
+                  (event) => {
+                    const { value } = event.target
+                    console.log(event.target.value)
+                    this.settings.subscribeToAccountUpdating(value)
+                  }}></select>
                   ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
         </div>
 
