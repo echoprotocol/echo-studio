@@ -256,11 +256,10 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
         console.log(data)
         self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {
           console.log('callFunction callback')
+          console.log(txResult)
           if (!error) {
-            if (lookupOnly) {
-              var decoded = decodeResponseToTreeView(ethJSUtil.toBuffer(txResult.result), args.funABI)
-              outputCb(decoded)
-            }
+            var decoded = decodeResponseToTreeView(txResult, args.funABI)
+            outputCb(decoded)
           } else {
             console.log('callFunction callback error')
             self.logCallback(`${logMsg} errored: ${error} `)
