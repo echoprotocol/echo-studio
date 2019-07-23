@@ -311,14 +311,17 @@ module.exports = class UniversalDApp extends Plugin {
             if (err) {
               return next(err)
             }
+            console.log(wifNode)
             if (wifNode) {
-              const wif = wifNode.val()
+              const wif = wifNode
               if (!wif) {
                 return next('Please enter wif')
               }
               if (!self.validateWif(wif)) {
                 return next('Your WIF is invalid!')
               }
+              next(null)
+            } else {
               next(null)
             }
           })
