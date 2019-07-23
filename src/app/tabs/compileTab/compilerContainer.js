@@ -142,8 +142,7 @@ class CompilerContainer {
       </select>`
     this._view.languageSelector = yo`
       <select onchange="${this.onchangeLanguage.bind(this)}" class="custom-select" id="compilierLanguageSelector" title="Available since v0.5.7">
-        <option>Solidity</option>
-        <option>Yul</option>
+        <option>Solidity</option>        
       </select>`
     this._view.version = yo`<span id="version"></span>`
 
@@ -196,7 +195,7 @@ class CompilerContainer {
                 ${this._view.languageSelector}
               </div>
             </div>
-            <div class="row w-100 no-gutters">
+            <div style="display: none;" class="row w-100 no-gutters">
               <div class="col-sm-4">
                 <label class="${css.compilerLabel} input-group-text pl-0 border-0" for="evmVersionSelector">EVM Version</label>
               </div>
