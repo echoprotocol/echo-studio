@@ -118,6 +118,7 @@ class DropdownLogic {
       data.contractName = selectedContract.name
       data.linkReferences = selectedContract.bytecodeLinkReferences
       data.contractABI = selectedContract.abi
+      data.contractMethod = executionContext.echojslib().constants.OPERATIONS_IDS.CREATE_CONTRACT
 
       const wifInput = document.querySelector('#wifInput')
       if (wifInput) {

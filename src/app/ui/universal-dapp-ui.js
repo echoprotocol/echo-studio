@@ -252,17 +252,20 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
         }
         if (args.funABI.type === 'fallback') data.dataHex = value
         if (args.txId) data.txId = args.txId
+        data.contractMethod = executionContext.echojslib().constants.OPERATIONS_IDS.CALL_CONTRACT
         console.log('buildData')
         console.log(data)
         self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {
           console.log('callFunction callback')
           console.log(txResult)
-          if (!error) {
-            var decoded = decodeResponseToTreeView(txResult, args.funABI)
-            outputCb(decoded)
-          } else {
-            console.log('callFunction callback error')
-            self.logCallback(`${logMsg} errored: ${error} `)
+          if (typeof txResult === 'string') {
+            if (!error) {
+              var decoded = decodeResponseToTreeView(txResult, args.funABI)
+              outputCb(decoded)
+            } else {
+              console.log('callFunction callback error')
+              self.logCallback(`${logMsg} errored: ${error} `)
+            }
           }
         })
       } else {

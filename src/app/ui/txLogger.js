@@ -171,6 +171,7 @@ class TxLogger {
     })
 
     this.txListener.event.register('newCall', (tx) => {
+      console.log('emit newCall')
       log(this, tx, null)
     })
 
@@ -192,6 +193,7 @@ function log (self, tx, receipt) {
   var resolvedTransaction = self.txListener.resolvedTransaction(tx.id)
   console.log('LOG, tx:')
   console.log(tx)
+  console.log(1231231231231)
   if (resolvedTransaction) {
     // var compiledContracts = null
     // if (self._deps.compilersArtefacts['__last']) {
@@ -209,7 +211,11 @@ function log (self, tx, receipt) {
 }
 
 function renderKnownTransaction (self, data) {
+  console.log('renderKnownTransaction renderKnownTransaction renderKnownTransactions')
+  console.log(data)
   var from = data.tx.trx.operations[0][1].registrar
+  console.log('wdwedwedwedew')
+  console.log(data.resolvedData.contractAddress)
   var to = `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`
   var contractName = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var obj = {from, to, contractName}
@@ -300,6 +306,8 @@ function checkTxStatus (tx, type) {
 }
 
 function context (self, opts) {
+  console.log('CONTEXT')
+  console.log(opts)
   var data = opts.data || ''
   var from = opts.from ? opts.from : ''
   var to = opts.to

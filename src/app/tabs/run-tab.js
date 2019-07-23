@@ -52,7 +52,7 @@ class RunTab extends ViewPlugin {
     this.udapp.resetAPI({
       getWifNode: (cb) => {
         try {
-          cb(null, $('#wifInput').val())
+          cb(null, document.querySelector('#wifInput'))
         } catch (error) {
           return cb(error)
         }
