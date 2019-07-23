@@ -367,6 +367,7 @@ module.exports = class UniversalDApp extends Plugin {
       },
       function runTransaction (asset, fromAddress, value, next) {
         console.log('runTransaction')
+        console.log(args)
         var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, timestamp: args.data.timestamp, asset, wif: args.data.wif }
         var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
         var timestamp = Date.now()
@@ -380,7 +381,7 @@ module.exports = class UniversalDApp extends Plugin {
             console.log('rawRun callback')
             console.log(`isErr: ${!!error}`)
             let eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
-            self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
+            self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, args.data.txId ? args.data.txId : null, timestamp, payLoad])
 
             if (error && (typeof (error) !== 'string')) {
               if (error.message) error = error.message
