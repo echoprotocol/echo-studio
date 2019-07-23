@@ -28,8 +28,6 @@ class SettingsUI {
     this.loadedAccounts = {}
     this.loadAssetTypes = {}
 
-    this.updatingInterval = null
-
     this._initEventListeners()
   }
 
@@ -37,14 +35,14 @@ class SettingsUI {
     this.settings.event.register('connectToNetwork', (name, id) => {
       this.netUI.innerHTML = `${name} (${id || '-'}) network`
       this._clearAccountsAndAssets()
-      this.updateNetwork()
-      this.restartUpdatingInterval()
+      if (this.settings.isInjectedEchojslib()) {
+        this.fillAccountsList()
+      }
     })
 
     this.settings.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
       if (error) return
       if (!lookupOnly) this.el.querySelector('#value').value = '0'
-      this.updateAccountBalances()
     })
 
     this.settings.event.register('switchAccount', (account) => {
@@ -57,13 +55,13 @@ class SettingsUI {
     })
 
     this.settings.event.register('updateAccount', (data) => {
-      console.log(data)
-      // let txOrigin = this.el.querySelector('#txorigin')
-      // let {id, name} = account
-      // if (!this.loadedAccounts[id]) {
-      //   txOrigin.appendChild(yo`<option value="${id}" >${id} (${name})</option>`)
-        // this.loadedAccounts[id] = 1
-      // }
+      const { id } = data
+      let accountEl = this.el.querySelector('#txorigin')
+      let accountId = accountEl.options[accountEl.selectedIndex].value
+
+      if (accountId === id) {
+        this.updateAccountBalances(accountId)
+      }
     })
   }
 
@@ -109,7 +107,7 @@ class SettingsUI {
                   <select name="txorigin" class="form-control ${css.select}" id="txorigin" onchange=${
                   (event) => {
                     const { value } = event.target
-                    console.log(event.target.value)
+                    this.updateAccountBalances(value)
                     this.settings.subscribeToAccountUpdating(value)
                   }}></select>
                   ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
@@ -154,21 +152,9 @@ class SettingsUI {
       this.setFinalContext()
     })
 
-    this.restartUpdatingInterval()
-
     this.el = el
 
     return el
-  }
-
-  restartUpdatingInterval () {
-    if (this.updatingInterval) {
-      clearInterval(this.updatingInterval)
-    }
-
-    this.updatingInterval = setInterval(() => {
-      this.updateNetwork()
-    }, 10000)
   }
 
   setDropdown (selectExEnv) {
@@ -298,14 +284,6 @@ class SettingsUI {
     })
   }
 
-  updateNetwork () {
-    if (this.settings.isInjectedEchojslib()) {
-      this.fillAccountsList()
-    } else {
-      this.updateAccountBalances()
-    }
-  }
-
   async getInfoByWif () {
     try {
       const txOrigin = this.el.querySelector('#txorigin')
@@ -315,14 +293,14 @@ class SettingsUI {
       const wifInput = document.querySelector('#wifInput')
       const wif = wifInput.value
       const isValidWif = this.settings.validateWif(wif)
-
       if (isValidWif) {
         const { accountId, name } = await this.settings.getInfoByWif(wif)
         txOrigin.appendChild(yo`<option value="${accountId}" >${accountId} (${name})</option>`)
-        this.updateAccountBalances()
+        this.updateAccountBalances(accountId)
+        this.settings.subscribeToAccountUpdating(accountId)
       }
     } catch (error) {
-      console.warn(error)
+      console.error(error)
     }
   }
 
@@ -354,10 +332,12 @@ class SettingsUI {
       }
       txOrigin.setAttribute('value', accounts[0].id)
       this.updateAccountBalances()
+      this.settings.subscribeToAccountUpdating(accounts[0].id)
     })
   }
 
   updateAccountBalances () {
+
     if (!this.el) return
     let accountEl = this.el.querySelector('#txorigin')
     if (accountEl.selectedIndex === -1) return
@@ -365,6 +345,7 @@ class SettingsUI {
     assetsEl.innerHTML = ''
 
     let accountId = accountEl.options[accountEl.selectedIndex].value
+
     this.settings.getAccountBalances(accountId, (err, results) => {
       if (err) {
         console.warn(err)
