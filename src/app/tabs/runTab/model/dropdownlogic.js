@@ -186,8 +186,9 @@ class DropdownLogic {
         //   return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
         // }
         var contractResult = txResult[0].contractResult
+        var txId = txResult[0].id
 
-        finalCb(null, selectedContract, contractResult)
+        finalCb(null, selectedContract, contractResult, txId)
       }
     )
   }

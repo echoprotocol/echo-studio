@@ -135,6 +135,7 @@ class TxLogger {
     }
 
     this.logKnownTX = this.terminal.registerCommand('knownTransaction', (args, cmds, append) => {
+      console.log('logKnownTX')
       var data = args[0]
       var el
       if (data.tx.isCall) {
@@ -189,6 +190,8 @@ function debug (e, data, self) {
 
 function log (self, tx, receipt) {
   var resolvedTransaction = self.txListener.resolvedTransaction(tx.id)
+  console.log('LOG, tx:')
+  console.log(tx)
   if (resolvedTransaction) {
     // var compiledContracts = null
     // if (self._deps.compilersArtefacts['__last']) {
@@ -227,14 +230,16 @@ function renderKnownTransaction (self, data) {
 }
 
 function renderCall (self, data) {
-  var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
+  console.log('renderCall')
+  console.log(data)
+  var to = data.tx.to
   var from = data.tx.from ? data.tx.from : ' - '
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
   var obj = {from, to}
   var txType = 'call'
   var tx = yo`
-    <span id="tx${data.tx.hash}">
-      <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
+    <span id="tx${data.tx.id}">
+      <div class="${css.log}" onclick=${e => callTxDetails(e, tx, data, obj)}>
         ${checkTxStatus(data.tx, txType)}
         <span class=${css.txLog}>
           <span class=${css.tx}>[call]</span>
@@ -353,6 +358,7 @@ module.exports = TxLogger
 // helpers
 
 function txDetails (e, tx, data, obj) {
+  console.log(`txDetails tx.id: ${ tx.id}`)
   var table = document.querySelector(`#${tx.id} [class^="txTable"]`)
   var from = obj.from
   var contractName = obj.contractName
@@ -385,6 +391,43 @@ function txDetails (e, tx, data, obj) {
       'contract result': data.resolvedData && data.resolvedData.contractResult && data.resolvedData.contractResult ? JSON.stringify(typeConversion.stringify(data.resolvedData.contractResult), null, '\t') : ' - ',
       logs: data.logs,
       val: data.tx.trx.operations[0][1].value.amount
+    })
+
+    tx.appendChild(table)
+  }
+}
+
+function callTxDetails (e, tx, data, obj) {
+  console.log(`txDetails tx.id: ${ tx.id}`)
+  console.log(tx)
+  console.log(data)
+  var table = document.querySelector(`#${tx.id} [class^="txTable"]`)
+  var from = obj.from
+  var contractName = obj.contractName
+  var log = document.querySelector(`#${tx.id} [class^='log']`)
+  var arrow = document.querySelector(`#${tx.id} [class^='arrow']`)
+  var arrowUp = yo`<i class="${css.arrow} fas fa-angle-up"></i>`
+  var arrowDown = yo`<i class="${css.arrow} fas fa-angle-down"></i>`
+  if (table && table.parentNode) {
+    tx.removeChild(table)
+    log.removeChild(arrow)
+    log.appendChild(arrowDown)
+  } else {
+    log.removeChild(arrow)
+    log.appendChild(arrowUp)
+
+    table = createTable({
+      contract: contractName,
+      txId: data.tx.id,
+      status: data.resolvedData ? data.resolvedData.status : null,
+      isCall: data.tx.isCall,
+      contractAddress: data.resolvedData.address,
+      contractId: `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`,
+      data: data.tx,
+      from,
+      to: `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`,
+      input: data.tx.input,
+      'decoded output': data.tx ? JSON.stringify(typeConversion.stringify(data.tx), null, '\t') : ' - ',
     })
 
     tx.appendChild(table)
@@ -449,7 +492,7 @@ function createTable (opts) {
   var toHash
   var data = opts.data  // opts.data = data.tx
   if (data.to) {
-    toHash = opts.to + ' ' + data.to
+    toHash = data.to
   } else {
     toHash = opts.to
   }

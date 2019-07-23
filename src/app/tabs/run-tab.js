@@ -142,8 +142,8 @@ class RunTab extends ViewPlugin {
     this.contractDropdownUI.event.register('newContractABIAdded', (abi, address) => {
       this.instanceContainer.appendChild(udappUI.renderInstanceFromABI(abi, address, address))
     })
-    this.contractDropdownUI.event.register('newContractInstanceAdded', (contractObject, address, value) => {
-      this.instanceContainer.appendChild(udappUI.renderInstance(contractObject, address, value))
+    this.contractDropdownUI.event.register('newContractInstanceAdded', (contractObject, address, value, txId) => {
+      this.instanceContainer.appendChild(udappUI.renderInstance(contractObject, address, value, txId))
     })
   }
 
