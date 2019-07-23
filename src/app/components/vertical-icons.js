@@ -222,7 +222,7 @@ export class VerticalIcons extends Plugin {
       }}"
       plugin="home" title="Home"
     >
-       Echo Studio 
+       ES
     </div>`
 
     this.iconKind['fileexplorer'] = yo`
@@ -291,7 +291,8 @@ const css = csjs`
       margin-left: -5px;
       cursor: pointer;
       font-weight: bold;
-      text-align: center;
+	  text-align: center;
+	  font-size: 35px;
   }
   .homeIcon svg path {
     fill: var(--primary);
