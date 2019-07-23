@@ -142,8 +142,7 @@ class CompilerContainer {
       </select>`
     this._view.languageSelector = yo`
       <select onchange="${this.onchangeLanguage.bind(this)}" class="custom-select" id="compilierLanguageSelector" title="Available since v0.5.7">
-        <option>Solidity</option>
-        <option>Yul</option>
+        <option>Solidity</option>        
       </select>`
     this._view.version = yo`<span id="version"></span>`
 
