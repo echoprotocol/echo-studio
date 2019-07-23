@@ -154,7 +154,7 @@ class Terminal extends Plugin {
           </div>
           ${self._view.pendingTxCount}
           <div class=${css.verticalLine}></div>
-          <div class="form-check">
+          <div class="form-check" style="display: none;">
             <input
               id="listenNetworkCheck"
               onchange=${listenOnNetwork}

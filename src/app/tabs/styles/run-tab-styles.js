@@ -55,6 +55,16 @@ var css = csjs`
     align-items: center;
     width: 90%;
   }
+  .wif {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  .asset {
+    display: flex;
+    align-items: center;
+    width: 70%;
+  }
   .col2 {
     border-radius: 3px;
   }
@@ -203,6 +213,10 @@ var css = csjs`
   .network {
     margin-left: 8px;
     pointer-events: none;
+    width: 50%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .networkItem {
     margin-right: 5px;
@@ -233,6 +247,14 @@ var css = csjs`
     margin-right: 10px;
     width: 100px;
     font-size: 0.8rem;
+  }
+  .wifInput {
+    margin-right: 10px;
+    width: 90%;
+<<<<<<< HEAD
+    font-size: 0.8rem;
+=======
+>>>>>>> 52b9d74b463853a5535a179980bf2263e433fce6
   }
   .gasNvalUnit {
     /* transform: scale(0.7); */

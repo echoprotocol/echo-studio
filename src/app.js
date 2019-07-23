@@ -216,9 +216,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // workaround for Electron support
   if (!isElectron()) {
     // Oops! Accidentally trigger refresh or bookmark.
-    window.onbeforeunload = function () {
-      return 'Are you sure you want to leave?'
-    }
+    // window.onbeforeunload = function () {
+    //   return 'Are you sure you want to leave?'
+    // }
   }
 
   // APP_MANAGER

@@ -5,13 +5,11 @@ var $ = require('jquery')
 var yo = require('yo-yo')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
-var helper = require('../../lib/helper')
 var copyToClipboard = require('./copy-to-clipboard')
 var css = require('../../universal-dapp-styles')
 var MultiParamManager = require('./multiParamManager')
 var remixLib = require('remix-lib')
 var typeConversion = remixLib.execution.typeConversion
-var txExecution = remixLib.execution.txExecution
 var txFormat = remixLib.execution.txFormat
 
 var executionContext = require('../../execution-context')
@@ -58,11 +56,11 @@ UniversalDAppUI.prototype.renderInstance = function (contract, address, contract
 // this returns a DOM element
 UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address, contractName) {
   var self = this
-  address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
+  // address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   var instance = yo`<div class="instance ${css.instance} ${css.hidesub}" id="instance${address}"></div>`
   var context = self.udapp.context()
 
-  var shortAddress = helper.shortenAddress(address)
+  const contractAddress = address
   var title = yo`
     <div class="${css.title} alert alert-secondary p-2">
       <button class="btn ${css.titleExpander}" onclick="${(e) => { toggleClass(e) }}">
@@ -71,7 +69,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
       <div class="input-group ${css.nameNbuts}">
         <div class="${css.titleText} input-group-prepend">
           <span class="input-group-text ${css.spanTitleText}">
-            ${contractName} at ${shortAddress} (${context})
+            ${contractName} at ${contractAddress} (${context})
           </span>
         </div>
         <div class="btn-group">
@@ -254,16 +252,8 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
         if (args.funABI.type === 'fallback') data.dataHex = value
         self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {
           if (!error) {
-            var isVM = executionContext.isVM()
-            if (isVM) {
-              var vmError = txExecution.checkVMError(txResult)
-              if (vmError.error) {
-                self.logCallback(`${logMsg} errored: ${vmError.message} `)
-                return
-              }
-            }
             if (lookupOnly) {
-              var decoded = decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI)
+              var decoded = decodeResponseToTreeView(ethJSUtil.toBuffer(txResult.result), args.funABI)
               outputCb(decoded)
             }
           } else {

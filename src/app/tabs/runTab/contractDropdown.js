@@ -159,13 +159,13 @@ class ContractDropdownUI {
       return this.logCallback(msg)
     }
 
-    var finalCb = (error, contractObject, address) => {
+    var finalCb = (error, contractObject, contractResult) => {
       this.event.trigger('clearInstance')
 
       if (error) {
         return this.logCallback(error)
       }
-
+      var address = `1.14.${parseInt(contractResult[1].exec_res.new_address.slice(2), 16)}`
       this.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
     }
 

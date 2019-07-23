@@ -188,17 +188,17 @@ function debug (e, data, self) {
 }
 
 function log (self, tx, receipt) {
-  var resolvedTransaction = self.txListener.resolvedTransaction(tx.hash)
+  var resolvedTransaction = self.txListener.resolvedTransaction(tx.id)
   if (resolvedTransaction) {
-    var compiledContracts = null
-    if (self._deps.compilersArtefacts['__last']) {
-      compiledContracts = self._deps.compilersArtefacts['__last'].getContracts()
-    }
-    self.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, (error, logs) => {
-      if (!error) {
-        self.logKnownTX({ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs })
-      }
-    })
+    // var compiledContracts = null
+    // if (self._deps.compilersArtefacts['__last']) {
+    //   compiledContracts = self._deps.compilersArtefacts['__last'].getContracts()
+    // }
+    // self.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, (error, logs) => {
+    //   if (!error) {
+    self.logKnownTX({ tx: tx, receipt: receipt, resolvedData: resolvedTransaction })
+    //   }
+    // })
   } else {
     // contract unknown - just displaying raw tx.
     self.logUnknownTX({ tx: tx, receipt: receipt })
@@ -206,15 +206,16 @@ function log (self, tx, receipt) {
 }
 
 function renderKnownTransaction (self, data) {
-  var from = data.tx.from
-  var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
-  var obj = {from, to}
+  var from = data.tx.trx.operations[0][1].registrar
+  var to = `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`
+  var contractName = data.resolvedData.contractName + '.' + data.resolvedData.fn
+  var obj = {from, to, contractName}
   var txType = 'knownTx'
   var tx = yo`
-    <span id="tx${data.tx.hash}">
+    <span id="tx${data.tx.id}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
         ${checkTxStatus(data.receipt, txType)}
-        ${context(self, {from, to, data})}
+        ${context(self, {contractName, from, to, data})}
         <div class=${css.buttons}>
           <button class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
@@ -279,29 +280,33 @@ function renderEmptyBlock (self, data) {
 }
 
 function checkTxStatus (tx, type) {
-  if (tx.status === '0x1') {
-    return yo`<i class="${css.txStatus} ${css.succeeded} fas fa-check-circle"></i>`
-  }
-  if (type === 'call' || type === 'unknownCall') {
-    return yo`<i class="${css.txStatus} ${css.call}">call</i>`
-  } else if (tx.status === '0x0') {
-    return yo`<i class="${css.txStatus} ${css.failed} fas fa-times-circle"></i>`
-  } else {
-    return yo`<i class="${css.txStatus} ${css.notavailable} fas fa-circle-thin" title='Status not available' ></i>`
-  }
+  // if (tx.status === '0x1') {
+  //   return yo`<i class="${css.txStatus} ${css.succeeded} fas fa-check-circle"></i>`
+  // }
+  // if (type === 'call' || type === 'unknownCall') {
+  //   return yo`<i class="${css.txStatus} ${css.call}">call</i>`
+  // } else if (tx.status === '0x0') {
+  //   return yo`<i class="${css.txStatus} ${css.failed} fas fa-times-circle"></i>`
+  // } else {
+  //   return yo`<i class="${css.txStatus} ${css.notavailable} fas fa-circle-thin" title='Status not available' ></i>`
+  // }
+
+  return yo`<i class="${css.txStatus} ${css.succeeded} fas fa-check-circle"></i>`
 }
 
 function context (self, opts) {
   var data = opts.data || ''
-  var from = opts.from ? helper.shortenHexData(opts.from) : ''
+  var from = opts.from ? opts.from : ''
   var to = opts.to
+  var contractName = opts.contractName
   if (data.tx.to) to = to + ' ' + helper.shortenHexData(data.tx.to)
-  var val = data.tx.value
-  var hash = data.tx.hash ? helper.shortenHexData(data.tx.hash) : ''
+  var val = data.tx.trx.operations[0][1].value.amount
+  var hash = data.tx.id ? helper.shortenHexData(data.tx.id) : ''
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
-  var logs = data.logs && data.logs.decoded && data.logs.decoded.length ? data.logs.decoded.length : 0
-  var block = data.tx.blockNumber || ''
-  var i = data.tx.transactionIndex
+  // var logs = data.logs && data.logs.decoded && data.logs.decoded.length ? data.logs.decoded.length : 0
+  var logs = data.resolvedData.logs
+  var block = data.tx.block_num || ''
+  var i = data.tx.id
   var value = val ? typeConversion.toInt(val) : 0
   if (executionContext.getProvider() === 'vm') {
     return yo`
@@ -320,13 +325,12 @@ function context (self, opts) {
     return yo`
       <div>
         <span class=${css.txLog}>
-          <span class='${css.tx}'>[block:${block} txIndex:${i}]</span>
+          <span class='${css.tx}'>[block:${block} txId:${i}]</span>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>contract:</span> ${contractName}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</div>
-          <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} wei</div>
-          <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>logs:</span> ${logs}</div>
-          <div class=${css.txItem}><span class=${css.txItemTitle}>hash:</span> ${hash}</div>
         </span>
       </div>`
   } else {
@@ -351,7 +355,7 @@ module.exports = TxLogger
 function txDetails (e, tx, data, obj) {
   var table = document.querySelector(`#${tx.id} [class^="txTable"]`)
   var from = obj.from
-  var to = obj.to
+  var contractName = obj.contractName
   var log = document.querySelector(`#${tx.id} [class^='log']`)
   var arrow = document.querySelector(`#${tx.id} [class^='arrow']`)
   var arrowUp = yo`<i class="${css.arrow} fas fa-angle-up"></i>`
@@ -363,23 +367,26 @@ function txDetails (e, tx, data, obj) {
   } else {
     log.removeChild(arrow)
     log.appendChild(arrowUp)
+
     table = createTable({
-      hash: data.tx.hash,
-      status: data.receipt ? data.receipt.status : null,
+      contract: contractName,
+      txId: data.tx.id,
+      status: data.resolvedData ? data.resolvedData.status : null,
       isCall: data.tx.isCall,
-      contractAddress: data.tx.contractAddress,
+      contractAddress: data.resolvedData.address,
+      contractId: `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`,
       data: data.tx,
       from,
-      to,
-      gas: data.tx.gas,
+      to: `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`,
+      gasUsed: data.resolvedData.gasUsed,
       input: data.tx.input,
       'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
-      'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
+      'decoded output': data.tx ? JSON.stringify(typeConversion.stringify(data.tx), null, '\t') : ' - ',
+      'contract result': data.resolvedData && data.resolvedData.contractResult && data.resolvedData.contractResult ? JSON.stringify(typeConversion.stringify(data.resolvedData.contractResult), null, '\t') : ' - ',
       logs: data.logs,
-      val: data.tx.value,
-      transactionCost: data.tx.transactionCost,
-      executionCost: data.tx.executionCost
+      val: data.tx.trx.operations[0][1].value.amount
     })
+
     tx.appendChild(table)
   }
 }
@@ -399,30 +406,35 @@ function createTable (opts) {
     }
     table.appendChild(yo`
       <tr class="${css.tr}">
+        <td class="${css.td}"> contract </td>
+        <td class="${css.td}">${opts.contract}${msg}</td>
+      </tr>`)
+    table.appendChild(yo`
+      <tr class="${css.tr}">
         <td class="${css.td}"> status </td>
         <td class="${css.td}">${opts.status}${msg}</td>
       </tr>`)
   }
 
-  var transactionHash = yo`
+  var transactionId = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> transaction hash </td>
-      <td class="${css.td}">${opts.hash}
-        ${copyToClipboard(() => opts.hash)}
+      <td class="${css.td}"> transaction id </td>
+      <td class="${css.td}">${opts.txId}
+        ${copyToClipboard(() => opts.txId)}
       </td>
     </tr>
   `
-  table.appendChild(transactionHash)
+  table.appendChild(transactionId)
 
-  var contractAddress = yo`
+  var contractId = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> contract address </td>
-      <td class="${css.td}">${opts.contractAddress}
-        ${copyToClipboard(() => opts.contractAddress)}
+      <td class="${css.td}"> contract id </td>
+      <td class="${css.td}">${opts.contractId}
+        ${copyToClipboard(() => opts.contractId)}
       </td>
     </tr>
   `
-  if (opts.contractAddress) table.appendChild(contractAddress)
+  if (opts.contractId) table.appendChild(contractId)
 
   var from = yo`
     <tr class="${css.tr}">
@@ -450,6 +462,16 @@ function createTable (opts) {
     </tr>
   `
   if (opts.to) table.appendChild(to)
+
+  var gasUsed = yo`
+    <tr class="${css.tr}">
+      <td class="${css.td}"> gas used </td>
+      <td class="${css.td}">${opts.gasUsed}
+        ${copyToClipboard(() => opts.gasUsed)}
+      </td>
+    </tr>
+  `
+  if (opts.gasUsed) table.appendChild(gasUsed)
 
   var gas = yo`
     <tr class="${css.tr}">
@@ -519,12 +541,23 @@ function createTable (opts) {
   if (opts['decoded output']) {
     var outputDecoded = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> decoded output </td>
+      <td class="${css.td}"> output </td>
       <td class="${css.td}" id="decodedoutput" >${opts['decoded output']}
         ${copyToClipboard(() => opts['decoded output'])}
       </td>
     </tr>`
     table.appendChild(outputDecoded)
+  }
+
+  if (opts['contract result']) {
+    var contractResult = yo`
+    <tr class="${css.tr}">
+      <td class="${css.td}"> contract result </td>
+      <td class="${css.td}" id="decodedoutput" >${opts['contract result']}
+        ${copyToClipboard(() => opts['contract result'])}
+      </td>
+    </tr>`
+    table.appendChild(contractResult)
   }
 
   var stringified = ' - '

@@ -1,10 +1,8 @@
-var ethJSUtil = require('ethereumjs-util')
 var remixLib = require('remix-lib')
 var txHelper = remixLib.execution.txHelper
 var txFormat = remixLib.execution.txFormat
 var executionContext = remixLib.execution.executionContext
 var typeConversion = remixLib.execution.typeConversion
-var txExecution = remixLib.execution.txExecution
 var CompilerAbstract = require('../../../compiler/compiler-abstract')
 var EventManager = remixLib.EventManager
 
@@ -38,12 +36,10 @@ class DropdownLogic {
   }
 
   loadContractFromAddress (address, confirmCb, cb) {
-    if (!ethJSUtil.isValidAddress(address)) {
+    if (!executionContext.echojslib().validators.isContractId(address)) {
       return cb('Invalid address.')
     }
-    if (/[a-f]/.test(address) && /[A-F]/.test(address) && !ethJSUtil.isValidChecksumAddress(address)) {
-      return cb('Invalid checksum address.')
-    }
+
     if (/.(.abi)$/.exec(this.config.get('currentFile'))) {
       confirmCb(() => {
         var abi
@@ -116,16 +112,13 @@ class DropdownLogic {
     return executionContext.web3().eth.getGasPrice(cb)
   }
 
-  isVM () {
-    return executionContext.isVM()
-  }
-
   // TODO: check if selectedContract and data can be joined
   createContract (selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, finalCb) {
     if (data) {
       data.contractName = selectedContract.name
       data.linkReferences = selectedContract.bytecodeLinkReferences
       data.contractABI = selectedContract.abi
+      data.wif = document.querySelector('#wifInput').value
     }
 
     var confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
@@ -189,18 +182,12 @@ class DropdownLogic {
         if (error) {
           return finalCb(`creation of ${selectedContract.name} errored: ${error}`)
         }
-        var isVM = executionContext.isVM()
-        if (isVM) {
-          var vmError = txExecution.checkVMError(txResult)
-          if (vmError.error) {
-            return finalCb(vmError.message)
-          }
-        }
-        if (txResult.result.status && txResult.result.status === '0x0') {
-          return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
-        }
-        var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
-        finalCb(null, selectedContract, address)
+        // if (txResult.result.status && txResult.result.status === '0x0') {
+        //   return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
+        // }
+        var contractResult = txResult[0].contractResult
+
+        finalCb(null, selectedContract, contractResult)
       }
     )
   }
@@ -276,7 +263,6 @@ class DropdownLogic {
     if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
       return txFormat.buildData(selectedContract.name, selectedContract.object, this.compilersArtefacts['__last'].getData().contracts, true, constructor, args, (error, data) => {
         if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
-
         statusCb(`creation of ${selectedContract.name} pending...`)
         this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, cb)
       }, statusCb, (data, runTxCallback) => {

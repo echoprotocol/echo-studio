@@ -1,4 +1,3 @@
-const $ = require('jquery')
 const yo = require('yo-yo')
 const remixLib = require('remix-lib')
 const EventManager = remixLib.EventManager
@@ -16,6 +15,13 @@ class SettingsUI {
     this.event = new EventManager()
     this._components = {}
 
+    this.settings.event.register('connectToNetwork', (name, id) => {
+      this.netUI.innerHTML = `${name} (${id || '-'}) network`
+      this._clearAccountsAndAssets()
+      this.updateNetwork()
+      this.restartUpdatingInterval()
+    })
+
     this.settings.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
       if (error) return
       if (!lookupOnly) this.el.querySelector('#value').value = '0'
@@ -30,25 +36,11 @@ class SettingsUI {
       config: this._components.registry.get('config').api
     }
 
-    this._deps.config.events.on('settings/personal-mode_changed', this.onPersonalChange.bind(this))
-
-    setInterval(() => {
-      this.updateAccountBalances()
-    }, 10 * 1000)
-
     this.accountListCallId = 0
     this.loadedAccounts = {}
-  }
+    this.loadAssetTypes = {}
 
-  updateAccountBalances () {
-    if (!this.el) return
-    var accounts = $(this.el.querySelector('#txorigin')).children('option')
-    accounts.each((index, account) => {
-      this.settings.getAccountBalanceForAddress(account.value, (err, balance) => {
-        if (err) return
-        account.innerText = helper.shortenAddress(account.value, balance)
-      })
-    })
+    this.updatingInterval = null
   }
 
   render () {
@@ -60,22 +52,18 @@ class SettingsUI {
           Environment
         </div>
         <div class=${css.environment}>
-          <select id="selectExEnvOptions" onchange=${() => { this.updateNetwork() }} class="form-control ${css.select}">
-            <option id="vm-mode"
-              title="Execution environment does not connect to any node, everything is local and in memory only."
-              value="vm" name="executionContext"> JavaScript VM
-            </option>
+          <select id="selectExEnvOptions" class="form-control ${css.select}">
             <option id="injected-mode"
-              title="Execution environment has been provided by Metamask or similar provider."
-              value="injected" name="executionContext"> Injected Web3
+              title="Execution environment has been provided by Bridge or similar provider."
+              value="injected" name="executionContext"> Echo Bridge
             </option>
-            <option id="web3-mode"
-              title="Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!
+            <option id="echojslib-mode"
+              title="Execution environment connects to node at localhost (or via ыыы if available), transactions will be sent to the network and can cause loss of money or worse!
               If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http."
-              value="web3" name="executionContext"> Web3 Provider
+              value="echojslib" name="executionContext"> Echojslib Provider
             </option>
           </select>
-          <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.infoDeployAction} fas fa-info"></i></a>
+          <a href="https://github.com/echoprotocol" target="_blank"><i class="${css.infoDeployAction} fas fa-info"></i></a>
         </div>
       </div>
     `
@@ -92,22 +80,24 @@ class SettingsUI {
       <div class="${css.crow}">
         <div class="${css.col1_1}">
           Account
-          <span id="remixRunPlusWraper" title="Create a new account" onload=${this.updatePlusButton.bind(this)}>
-            <i id="remixRunPlus" class="fas fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${this.newAccount.bind(this)}"></i>
-          </span>
         </div>
         <div class=${css.account}>
-          <select name="txorigin" class="form-control ${css.select}" id="txorigin"></select>
+          <select name="txorigin" class="form-control ${css.select}" id="txorigin" onchange=${() => {
+            this.fillAccountsList()
+          }}></select>
           ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
-          <i id="remixRunSignMsg" class="fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
         </div>
       </div>
     `
-
-    const gasPriceEl = yo`
+    // <i id="remixRunSignMsg" class="fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
+    const assetEl = yo`
       <div class="${css.crow}">
-        <div class="${css.col1_1}">Gas limit</div>
-        <input type="number" class="form-control ${css.gasNval} ${css.col2}" id="gasLimit" value="3000000">
+        <div class="${css.col1_1}">
+          Asset
+        </div>
+        <div class=${css.asset}>
+          <select name="assets" class="form-control ${css.select}" id="assets" ></select>
+        </div>
       </div>
     `
 
@@ -116,14 +106,8 @@ class SettingsUI {
         <div class="${css.col1_1}">Value</div>
         <div class="${css.gasValueContainer}">
           <input type="text" class="form-control ${css.gasNval} ${css.col2}" id="value" value="0" title="Enter the value and choose the unit">
-          <select name="unit" class="form-control p-1 ${css.gasNvalUnit} ${css.col2_2}" id="unit">
-            <option data-unit="wei">wei</option>
-            <option data-unit="gwei">gwei</option>
-            <option data-unit="finney">finney</option>
-            <option data-unit="ether">ether</option>
-          </select>
         </div>
-      </div>
+      </d
     `
 
     const el = yo`
@@ -131,11 +115,10 @@ class SettingsUI {
         ${environmentEl}
         ${networkEl}
         ${accountEl}
-        ${gasPriceEl}
+        ${assetEl}
         ${valueEl}
       </div>
     `
-
     var selectExEnv = environmentEl.querySelector('#selectExEnvOptions')
     this.setDropdown(selectExEnv)
 
@@ -143,14 +126,21 @@ class SettingsUI {
       this.setFinalContext()
     })
 
-    setInterval(() => {
-      this.updateNetwork()
-    }, 5000)
+    this.restartUpdatingInterval()
 
     this.el = el
 
-    this.fillAccountsList()
     return el
+  }
+
+  restartUpdatingInterval () {
+    if (this.updatingInterval) {
+      clearInterval(this.updatingInterval)
+    }
+
+    this.updatingInterval = setInterval(() => {
+      this.updateNetwork()
+    }, 10000)
   }
 
   setDropdown (selectExEnv) {
@@ -178,14 +168,13 @@ class SettingsUI {
     selectExEnv.addEventListener('change', (event) => {
       let context = selectExEnv.options[selectExEnv.selectedIndex].value
       this.settings.changeExecutionContext(context, () => {
-        modalDialogCustom.confirm('External node request', 'Are you sure you want to connect to an ethereum node?', () => {
-          modalDialogCustom.prompt('External node request', 'Web3 Provider Endpoint', 'http://localhost:8545', (target) => {
+        modalDialogCustom.confirm('External node request', 'Are you sure you want to connect to an echo node?', () => {
+          modalDialogCustom.prompt('External node request', 'Echo Provider Endpoint', 'wss://testnet.echo-dev.io/ws', (target) => {
             this.settings.setProviderFromEndpoint(target, context, (alertMsg) => {
               if (alertMsg) {
                 modalDialogCustom.alert(alertMsg)
               }
-              this.setFinalContext()
-            })
+            }, this.setFinalContext.bind(this))
           }, this.setFinalContext.bind(this))
         }, this.setFinalContext.bind(this))
       }, (alertMsg) => {
@@ -196,66 +185,44 @@ class SettingsUI {
     selectExEnv.value = this.settings.getProvider()
   }
 
+  setWifInput () {
+    const settings = document.querySelector(`.${css.settings}`)
+    const toInsertAfterNode = settings.childNodes[1]
+
+    const wifInput = yo`
+      <div class="${css.crow}" id="wifBlock">
+        <div class="${css.col1_1}">
+          WIF
+        </div>
+        <div class=${css.wif}>
+          <input type="text" oninput=${() => { this.getInfoByWif() }} class="form-control ${css.wifInput} ${css.col2}" id="wifInput" title="Enter the value and choose the unit">
+        </div>
+      </div>
+    `
+    settings.insertBefore(wifInput, toInsertAfterNode.nextSibling)
+  }
+
+  removeWifInput () {
+    const settings = document.querySelector(`.${css.settings}`)
+    const nodeToDelete = document.querySelector('#wifBlock')
+
+    if (nodeToDelete) {
+      settings.removeChild(nodeToDelete)
+    }
+  }
+
   setFinalContext () {
     // set the final context. Cause it is possible that this is not the one we've originaly selected
-    this.selectExEnv.value = this.settings.getProvider()
+    const provider = this.settings.getProvider()
+
+    if (!this.settings.isExternalEchoConnected() || provider !== 'echojslib') {
+      this.removeWifInput()
+    } else if (!document.querySelector('#wifBlock')) {
+      this.setWifInput()
+    }
+
+    this.selectExEnv.value = provider
     this.event.trigger('clearInstance', [])
-    this.updateNetwork()
-    this.updatePlusButton()
-  }
-
-  updatePlusButton () {
-    // enable/disable + button
-    let plusBtn = document.getElementById('remixRunPlus')
-    let plusTitle = document.getElementById('remixRunPlusWraper')
-    switch (this.selectExEnv.value) {
-      case 'injected': {
-        plusBtn.classList.add(css.disableMouseEvents)
-        plusTitle.title = "Unfortunately it's not possible to create an account using injected web3. Please create the account directly from your provider (i.e metamask or other of the same type)."
-      }
-        break
-      case 'vm': {
-        plusBtn.classList.remove(css.disableMouseEvents)
-        plusTitle.title = 'Create a new account'
-      }
-        break
-      case 'web3': {
-        this.onPersonalChange()
-      }
-        break
-      default:
-    }
-  }
-
-  onPersonalChange () {
-    let plusBtn = document.getElementById('remixRunPlus')
-    let plusTitle = document.getElementById('remixRunPlusWraper')
-    if (!this._deps.config.get('settings/personal-mode')) {
-      plusBtn.classList.add(css.disableMouseEvents)
-      plusTitle.title = 'Creating an account is possible only in Personal mode. Please go to Settings to enable it.'
-    } else {
-      plusBtn.classList.remove(css.disableMouseEvents)
-      plusTitle.title = 'Create a new account'
-    }
-  }
-
-  newAccount () {
-    this.settings.newAccount(
-      (cb) => {
-        modalDialogCustom.promptPassphraseCreation((error, passphrase) => {
-          if (error) {
-            return modalDialogCustom.alert(error)
-          }
-          cb(passphrase)
-        }, () => {})
-      },
-      (error, address) => {
-        if (error) {
-          return addTooltip('Cannot create an account: ' + error)
-        }
-        addTooltip(`account ${address} created`)
-      }
-    )
   }
 
   signMessage () {
@@ -266,7 +233,7 @@ class SettingsUI {
 
       var signMessageDialog = { 'title': 'Sign a message', 'text': 'Enter a message to sign', 'inputvalue': 'Message to sign' }
       var $txOrigin = this.el.querySelector('#txorigin')
-      if (!$txOrigin.selectedOptions[0] && (this.settings.isInjectedWeb3() || this.settings.isWeb3Provider())) {
+      if (!$txOrigin.selectedOptions[0] && (this.settings.isInjectedEchojslib() || this.settings.isEchojslibProvider())) {
         return addTooltip(`Account list is empty, please make sure the current provider is properly connected to remix`)
       }
 
@@ -290,7 +257,7 @@ class SettingsUI {
         }, false)
       }
 
-      if (this.settings.isWeb3Provider()) {
+      if (this.settings.isEchojslibProvider()) {
         return modalDialogCustom.promptPassphrase(
           'Passphrase to sign a message',
           'Enter your passphrase for this account to sign the message',
@@ -304,41 +271,106 @@ class SettingsUI {
   }
 
   updateNetwork () {
-    this.settings.updateNetwork((err, {id, name} = {}) => {
-      if (err) {
-        this.netUI.innerHTML = 'can\'t detect network '
-        return
+    if (this.settings.isInjectedEchojslib()) {
+      this.fillAccountsList()
+    } else {
+      this.updateAccountBalances()
+    }
+  }
+
+  async getInfoByWif () {
+    try {
+      const txOrigin = this.el.querySelector('#txorigin')
+
+      this._clearAccountsAndAssets()
+
+      const wifInput = document.querySelector('#wifInput')
+      const wif = wifInput.value
+      const isValidWif = this.settings.validateWif(wif)
+
+      if (isValidWif) {
+        const info = await this.settings.getInfoByWif(wif)
+
+        txOrigin.appendChild(yo`<option value="${info[0][0]}" >${info[0][0]}</option>`)
+        this.updateAccountBalances()
       }
-      let network = this._components.networkModule.getNetworkProvider
-      this.netUI.innerHTML = (network() !== 'vm') ? `${name} (${id || '-'}) network` : ''
-    })
-    this.fillAccountsList()
+    } catch (error) {
+      console.warn(error)
+    }
   }
 
   // TODO: unclear what's the goal of accountListCallId, feels like it can be simplified
   fillAccountsList () {
+    if (!this.el) return
     this.accountListCallId++
-    var callid = this.accountListCallId
-    var txOrigin = this.el.querySelector('#txorigin')
+    let callid = this.accountListCallId
+    let txOrigin = this.el.querySelector('#txorigin')
     this.settings.getAccounts((err, accounts) => {
-      if (this.accountListCallId > callid) return
+      if (this.accountListCallId > callid || !accounts.length) return
       this.accountListCallId++
       if (err) { addTooltip(`Cannot get account list: ${err}`) }
-      for (var loadedaddress in this.loadedAccounts) {
-        if (accounts.indexOf(loadedaddress) === -1) {
-          txOrigin.removeChild(txOrigin.querySelector('option[value="' + loadedaddress + '"]'))
+      for (let loadedaddress in this.loadedAccounts) {
+        if (accounts.findIndex((account) => account.id === loadedaddress) === -1) {
+          const rmElement = txOrigin.querySelector('option[value="' + loadedaddress + '"]')
+          if (rmElement) {
+            txOrigin.removeChild(rmElement)
+          }
           delete this.loadedAccounts[loadedaddress]
         }
       }
-      for (var i in accounts) {
-        var address = accounts[i]
-        if (!this.loadedAccounts[address]) {
-          txOrigin.appendChild(yo`<option value="${address}" >${address}</option>`)
-          this.loadedAccounts[address] = 1
+      for (let i in accounts) {
+        let {id, name} = accounts[i]
+        if (!this.loadedAccounts[id]) {
+          txOrigin.appendChild(yo`<option value="${id}" >${id} ${name ? `(${name})` : null}</option>`)
+          this.loadedAccounts[id] = 1
         }
       }
-      txOrigin.setAttribute('value', accounts[0])
+      txOrigin.setAttribute('value', accounts[0].id)
+      this.updateAccountBalances()
     })
+  }
+
+  updateAccountBalances () {
+    if (!this.el) return
+    let accountEl = this.el.querySelector('#txorigin')
+    if (accountEl.selectedIndex === -1) return
+    let assetsEl = this.el.querySelector('#assets')
+    assetsEl.innerHTML = ''
+
+    let accountId = accountEl.options[accountEl.selectedIndex].value
+    this.settings.getAccountBalances(accountId, (err, results) => {
+      if (err) {
+        console.warn(err)
+        return
+      }
+
+      for (let loadAssetType in this.loadAssetTypes) {
+        if (!results.find(({assetType}) => assetType === loadAssetType)) {
+          assetsEl.removeChild(assetsEl.querySelector('option[value="' + loadAssetType + '"]'))
+          delete this.loadedAccounts[loadAssetType]
+        }
+      }
+
+      results.forEach((element) => {
+        const { amount, assetType, precision, symbol } = element
+        const value = `${assetType} (${helper.coinBalanceNormalizer(amount, precision)} ${symbol} )`
+        if (!this.loadedAccounts[assetType]) {
+          assetsEl.appendChild(yo`<option value="${element.assetType}">${value}</option>`)
+          this.loadAssetTypes[assetType] = 1
+        } else {
+          assetsEl.querySelector('option[value="' + assetType + '"]').innerHTML = value
+        }
+      })
+    })
+  }
+
+  _clearAccountsAndAssets () {
+    let accountEl = this.el.querySelector('#txorigin')
+    let assetsEl = this.el.querySelector('#assets')
+    accountEl.innerHTML = ''
+    assetsEl.innerHTML = ''
+    this.loadedAccounts = {}
+    this.loadAssetTypes = {}
   }
 
 }

@@ -1,8 +1,5 @@
 var async = require('async')
-var ethJSUtil = require('ethereumjs-util')
-var BN = ethJSUtil.BN
 var remixLib = require('remix-lib')
-var crypto = require('crypto')
 var TxRunner = remixLib.execution.txRunner
 var txHelper = remixLib.execution.txHelper
 var EventManager = remixLib.EventManager
@@ -54,13 +51,6 @@ module.exports = class UniversalDApp extends Plugin {
 
   resetEnvironment () {
     this.accounts = {}
-    if (executionContext.isVM()) {
-      this._addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511', '0x56BC75E2D63100000')
-      this._addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c', '0x56BC75E2D63100000')
-      this._addAccount('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', '0x56BC75E2D63100000')
-      this._addAccount('d74aa6d18aa79a05f3473dd030a97d3305737cbc8337d940344345c1f6b72eea', '0x56BC75E2D63100000')
-      this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce', '0x56BC75E2D63100000')
-    }
     // TODO: most params here can be refactored away in txRunner
     this.txRunner = new TxRunner(this.accounts, {
       // TODO: only used to check value of doNotShowTransactionConfirmationAgain property
@@ -85,135 +75,131 @@ module.exports = class UniversalDApp extends Plugin {
     this.transactionContextAPI = transactionContextAPI
   }
 
-  /**
-   * Create a VM Account
-   * @param {{privateKey: string, balance: string}} newAccount The new account to create
-   */
-  createVMAccount (newAccount) {
-    const { privateKey, balance } = newAccount
-    if (executionContext.getProvider() !== 'vm') {
-      throw new Error('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
-    }
-    this._addAccount(privateKey, balance)
-    const privKey = Buffer.from(privateKey, 'hex')
-    return '0x' + ethJSUtil.privateToAddress(privKey).toString('hex')
-  }
+  // /**
+  //  * Create a VM Account
+  //  * @param {{privateKey: string, balance: string}} newAccount The new account to create
+  //  */
+  // createVMAccount (newAccount) {
+  //   const { privateKey, balance } = newAccount
+  //   if (executionContext.getProvider() !== 'vm') {
+  //     throw new Error('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
+  //   }
+  //   this._addAccount(privateKey, balance)
+  //   const privKey = Buffer.from(privateKey, 'hex')
+  //   return '0x' + ethJSUtil.privateToAddress(privKey).toString('hex')
+  // }
 
-  newAccount (password, passwordPromptCb, cb) {
-    if (!executionContext.isVM()) {
-      if (!this._deps.config.get('settings/personal-mode')) {
-        return cb('Not running in personal mode')
-      }
-      passwordPromptCb((passphrase) => {
-        executionContext.web3().personal.newAccount(passphrase, cb)
-      })
-    } else {
-      var privateKey
-      do {
-        privateKey = crypto.randomBytes(32)
-      } while (!ethJSUtil.isValidPrivate(privateKey))
-      this._addAccount(privateKey, '0x56BC75E2D63100000')
-      cb(null, '0x' + ethJSUtil.privateToAddress(privateKey).toString('hex'))
-    }
-  }
+  // newAccount (password, passwordPromptCb, cb) {
+  //   var privateKey
+  //   do {
+  //     privateKey = crypto.randomBytes(32)
+  //   } while (!ethJSUtil.isValidPrivate(privateKey))
+  //   this._addAccount(privateKey, '0x56BC75E2D63100000')
+  //   cb(null, '0x' + ethJSUtil.privateToAddress(privateKey).toString('hex'));
+  // }
 
-  _addAccount (privateKey, balance) {
-    if (!executionContext.isVM()) {
-      throw new Error('_addAccount() cannot be called in non-VM mode')
-    }
-
-    if (this.accounts) {
-      privateKey = Buffer.from(privateKey, 'hex')
-      const address = ethJSUtil.privateToAddress(privateKey)
-
-      // FIXME: we don't care about the callback, but we should still make this proper
-      let stateManager = executionContext.vm().stateManager
-      stateManager.getAccount(address, (error, account) => {
-        if (error) return console.log(error)
-        account.balance = balance || '0xf00000000000000001'
-        stateManager.putAccount(address, account, function cb (error) {
-          if (error) console.log(error)
-        })
-      })
-
-      this.accounts['0x' + address.toString('hex')] = { privateKey, nonce: 0 }
-    }
-  }
+  // _addAccount (privateKey, balance) {
+  //
+  //   if (this.accounts) {
+  //     privateKey = Buffer.from(privateKey, 'hex')
+  //     const address = ethJSUtil.privateToAddress(privateKey)
+  //
+  //     // FIXME: we don't care about the callback, but we should still make this proper
+  //     let stateManager = executionContext.vm().stateManager
+  //     stateManager.getAccount(address, (error, account) => {
+  //       if (error) return console.log(error)
+  //       account.balance = balance || '0xf00000000000000001'
+  //       stateManager.putAccount(address, account, function cb (error) {
+  //         if (error) console.log(error)
+  //       })
+  //     })
+  //
+  //     this.accounts['0x' + address.toString('hex')] = { privateKey, nonce: 0 }
+  //   }
+  // }
 
   getAccounts (cb) {
     return new Promise((resolve, reject) => {
       const provider = executionContext.getProvider()
       switch (provider) {
-        case 'vm': {
-          if (!this.accounts) {
-            if (cb) cb('No accounts?')
-            reject('No accounts?')
-            return
-          }
-          if (cb) cb(null, Object.keys(this.accounts))
-          resolve(Object.keys(this.accounts))
-        }
-          break
-        case 'web3': {
-          if (this._deps.config.get('settings/personal-mode')) {
-            return executionContext.web3().personal.getListAccounts((error, accounts) => {
-              if (cb) cb(error, accounts)
-              if (error) return reject(error)
-              resolve(accounts)
-            })
-          } else {
-            executionContext.web3().eth.getAccounts((error, accounts) => {
-              if (cb) cb(error, accounts)
-              if (error) return reject(error)
-              resolve(accounts)
-            })
-          }
-        }
-          break
         case 'injected': {
-          executionContext.web3().eth.getAccounts((error, accounts) => {
-            if (cb) cb(error, accounts)
-            if (error) return reject(error)
-            resolve(accounts)
+          executionContext.echojslib().extension.getAccounts().then((accounts) => {
+            if (cb) cb(null, accounts)
+            return resolve(accounts)
+          })
+          .catch((error) => {
+            if (cb) cb(error, [])
+            return reject(error)
           })
         }
+          break
       }
     })
   }
 
-  getBalance (address, cb) {
-    address = ethJSUtil.stripHexPrefix(address)
-
-    if (!executionContext.isVM()) {
-      executionContext.web3().eth.getBalance(address, (err, res) => {
-        if (err) {
-          cb(err)
-        } else {
-          cb(null, res.toString(10))
-        }
-      })
-    } else {
-      if (!this.accounts) {
-        return cb('No accounts?')
-      }
-
-      executionContext.vm().stateManager.getAccount(Buffer.from(address, 'hex'), (err, res) => {
-        if (err) {
-          cb('Account not found')
-        } else {
-          cb(null, new BN(res.balance).toString(10))
-        }
-      })
-    }
+  getInfo (wif, cb) {
+    const pb = executionContext.echojslib().PrivateKey.fromWif(wif).toPublicKey().toPublicKeyString()
+    return executionContext.echoConnection().api.getKeyReferences([pb])
   }
 
-  getBalanceInEther (address, callback) {
-    this.getBalance(address, (error, balance) => {
-      if (error) {
-        callback(error)
-      } else {
-        callback(null, executionContext.web3().fromWei(balance, 'ether'))
+  validateWif (wif) {
+    try {
+      const valueFromWif = executionContext.echojslib().PrivateKey.fromWif(wif)
+
+      if (!valueFromWif) {
+        return false
       }
+    } catch (error) {
+      console.warn(error)
+      return false
+    }
+
+    return true
+  }
+
+  getAccountBalances (accountId, cb) {
+    executionContext.getEchoApi().getFullAccounts([accountId])
+    .then((results) => {
+      if (!results || !results[0]) {
+        return cb('Unknown account id')
+      }
+
+      const { balances } = results[0]
+      const balancesArray = Object.keys(balances).map((assetType) => ({assetType, objectId: balances[assetType]}))
+
+      if (!balancesArray.length) {
+        return cb(null, [{
+          precision: 8,
+          symbol: 'ECHO',
+          amount: '0',
+          assetType: '1.3.0'
+        }])
+      }
+
+      Promise.all(balancesArray.map((balanceObject) => {
+        return new Promise((resolve) => {
+          executionContext.getEchoApi().getObject(balanceObject.objectId)
+          .then((result) => ({
+            amount: result.balance,
+            assetType: balanceObject.assetType
+          }))
+          .then((result) => {
+            executionContext.getEchoApi().getObject(result.assetType)
+            .then((assetResult) => resolve({
+              ...result,
+              symbol: assetResult.symbol,
+              precision: assetResult.precision
+            }))
+          })
+          .catch(() => resolve({
+            amount: null,
+            assetType: balanceObject.assetType
+          }))
+        })
+      }))
+      .then((result) => {
+        return cb(null, result)
+      })
     })
   }
 
@@ -250,7 +236,7 @@ module.exports = class UniversalDApp extends Plugin {
   }
 
   context () {
-    return (executionContext.isVM() ? 'memory' : 'blockchain')
+    return 'blockchain'
   }
 
   getABI (contract) {
@@ -304,7 +290,6 @@ module.exports = class UniversalDApp extends Plugin {
    * @param {Function} callback    - callback.
    */
   silentRunTx (tx, cb) {
-    if (!executionContext.isVM()) return cb('Cannot silently send transaction through a web3 provider')
     this.txRunner.rawRun(
       tx,
       (network, tx, gasEstimation, continueTxExecution, cancelCb) => { continueTxExecution() },
@@ -317,30 +302,43 @@ module.exports = class UniversalDApp extends Plugin {
   runTx (args, confirmationCb, continueCb, promptCb, cb) {
     const self = this
     async.waterfall([
-      function getGasLimit (next) {
-        if (self.transactionContextAPI.getGasLimit) {
-          return self.transactionContextAPI.getGasLimit(next)
+      function checkForWif (next) {
+        if (self.transactionContextAPI.getWifNode) {
+          self.transactionContextAPI.getWifNode(function (err, wifNode) {
+            if (err) {
+              return next(err)
+            }
+            if (wifNode) {
+              const wif = wifNode.val()
+              if (!wif) {
+                return next('Please enter wif')
+              }
+              if (!self.validateWif(wif)) {
+                return next('Your WIF is invalid!')
+              }
+              next(null)
+            }
+          })
         }
-        next(null, 3000000)
       },
-      function queryValue (gasLimit, next) {
+      function queryValue (next) {
         if (args.value) {
-          return next(null, args.value, gasLimit)
+          return next(null, args.value)
         }
         if (args.useCall || !self.transactionContextAPI.getValue) {
-          return next(null, 0, gasLimit)
+          return next(null, 0)
         }
         self.transactionContextAPI.getValue(function (err, value) {
-          next(err, value, gasLimit)
+          next(err, value)
         })
       },
-      function getAccount (value, gasLimit, next) {
+      function getAccount (value, next) {
         if (args.from) {
-          return next(null, args.from, value, gasLimit)
+          return next(null, args.from, value)
         }
         if (self.transactionContextAPI.getAddress) {
           return self.transactionContextAPI.getAddress(function (err, address) {
-            next(err, address, value, gasLimit)
+            next(err, address, value)
           })
         }
         self.getAccounts(function (err, accounts) {
@@ -348,14 +346,21 @@ module.exports = class UniversalDApp extends Plugin {
 
           if (err) return next(err)
           if (!address) return next('No accounts available')
-          if (executionContext.isVM() && !self.accounts[address]) {
-            return next('Invalid account selected')
-          }
-          next(null, address, value, gasLimit)
+          next(null, address, value)
         })
       },
-      function runTransaction (fromAddress, value, gasLimit, next) {
-        var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, gasLimit: gasLimit, timestamp: args.data.timestamp }
+      function getAsset (fromAddress, value, next) {
+        if (args.asset) {
+          return next(null, args.from, value)
+        }
+        if (self.transactionContextAPI.getAsset) {
+          return self.transactionContextAPI.getAsset(function (err, asset) {
+            next(err, asset, fromAddress, value)
+          })
+        }
+      },
+      function runTransaction (asset, fromAddress, value, next) {
+        var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, timestamp: args.data.timestamp, asset, wif: args.data.wif }
         var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
         var timestamp = Date.now()
         if (tx.timestamp) {
@@ -381,3 +386,4 @@ module.exports = class UniversalDApp extends Plugin {
     ], cb)
   }
 }
+

@@ -1,4 +1,3 @@
-var ethJSUtil = require('ethereumjs-util')
 var Personal = require('web3-eth-personal')
 var remixLib = require('remix-lib')
 const addTooltip = require('../../../ui/tooltip')
@@ -27,6 +26,10 @@ class Settings {
       this.event.trigger('removeProvider', [name])
     })
 
+    executionContext.event.register('connectToNetwork', (name, id) => {
+      this.event.trigger('connectToNetwork', [name, id])
+    })
+
     this.networkcallid = 0
   }
 
@@ -34,66 +37,54 @@ class Settings {
     return executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
   }
 
-  setProviderFromEndpoint (target, context, cb) {
-    return executionContext.setProviderFromEndpoint(target, context, cb)
+  setProviderFromEndpoint (target, context, infoCb, cb) {
+    return executionContext.setProviderFromEndpoint(target, context, infoCb, cb)
   }
 
   getProvider () {
     return executionContext.getProvider()
   }
 
-  getAccountBalanceForAddress (address, cb) {
-    return this.udapp.getBalanceInEther(address, cb)
+  getAccountBalances (accountId, cb) {
+    return this.udapp.getAccountBalances(accountId, cb)
   }
 
-  updateNetwork (cb) {
-    this.networkcallid++
-    ((callid) => {
-      executionContext.detectNetwork((err, { id, name } = {}) => {
-        if (this.networkcallid > callid) return
-        this.networkcallid++
-        if (err) {
-          return cb(err)
-        }
-        cb(null, {id, name})
-      })
-    })(this.networkcallid)
-  }
-
-  newAccount (passphraseCb, cb) {
-    return this.udapp.newAccount('', passphraseCb, cb)
-  }
+  // newAccount (passphraseCb, cb) {
+  //   return this.udapp.newAccount('', passphraseCb, cb)
+  // }
 
   getAccounts (cb) {
     return this.udapp.getAccounts(cb)
   }
 
-  isWeb3Provider () {
-    var isVM = executionContext.isVM()
-    var isInjected = executionContext.getProvider() === 'injected'
-    return (!isVM && !isInjected)
+  getInfoByWif (wif) {
+    return this.udapp.getInfo(wif)
   }
 
-  isInjectedWeb3 () {
+  validateWif (wif) {
+    return this.udapp.validateWif(wif)
+  }
+
+  isEchojslibProvider () {
+    var isInjected = executionContext.getProvider() === 'injected'
+    return !isInjected
+  }
+
+  isInjectedEchojslib () {
     return executionContext.getProvider() === 'injected'
   }
 
+  isExternalEchoConnected () {
+    return executionContext.isExternalEchoConnected()
+  }
+
+  isGotExtensionAccess () {
+    return executionContext.isGotExtensionAccess()
+  }
+
   signMessage (message, account, passphrase, cb) {
-    var isVM = executionContext.isVM()
     var isInjected = executionContext.getProvider() === 'injected'
 
-    if (isVM) {
-      const personalMsg = ethJSUtil.hashPersonalMessage(Buffer.from(message))
-      var privKey = this.udapp.accounts[account].privateKey
-      try {
-        var rsv = ethJSUtil.ecsign(personalMsg, privKey)
-        var signedData = ethJSUtil.toRpcSig(rsv.v, rsv.r, rsv.s)
-        cb(null, '0x' + personalMsg.toString('hex'), signedData)
-      } catch (e) {
-        cb(e.message)
-      }
-      return
-    }
     if (isInjected) {
       const hashedMsg = executionContext.web3().sha3(message)
       try {
