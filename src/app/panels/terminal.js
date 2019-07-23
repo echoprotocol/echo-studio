@@ -10,7 +10,7 @@ var EventManager = require('../../lib/events')
 // var swarmgw = require('swarmgw')()
 
 var CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
-// var executionContext = require('../../execution-context')
+var executionContext = require('../../execution-context')
 var AutoCompletePopup = require('../ui/auto-complete-popup')
 var TxLogger = require('../../app/ui/txLogger')
 
@@ -680,7 +680,7 @@ function domTerminalFeatures (self, scopedCommands) {
     // swarmgw,
     // ethers,
     // remix: self._components.cmdInterpreter,
-    // web3: new Web3(executionContext.web3().currentProvider),
+    echojslib: executionContext.echojslib(),
     console: {
       log: function () { scopedCommands.log.apply(scopedCommands, arguments) },
       info: function () { scopedCommands.info.apply(scopedCommands, arguments) },
