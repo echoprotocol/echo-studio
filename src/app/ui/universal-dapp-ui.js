@@ -253,19 +253,18 @@ UniversalDAppUI.prototype.getCallButton = function(args) {
         if (args.funABI.type === 'fallback') data.dataHex = value
         if (args.txId) data.txId = args.txId
         data.contractMethod = executionContext.echojslib().constants.OPERATIONS_IDS.CALL_CONTRACT
-        console.log('buildData')
+        data.contractName = args.contractName
+        data.methodName = args.funABI.name
+        console.log('DATA DATA DATA')
         console.log(data)
         self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {
-          console.log('callFunction callback')
-          console.log(txResult)
-          if (typeof txResult === 'string') {
             if (!error) {
-              var decoded = decodeResponseToTreeView(txResult, args.funABI)
-              outputCb(decoded)
+              if (typeof txResult === 'string') {
+                var decoded = decodeResponseToTreeView(txResult, args.funABI)
+                outputCb(decoded)
+              }
             } else {
-              console.log('callFunction callback error')
               self.logCallback(`${logMsg} errored: ${error} `)
-            }
           }
         })
       } else {
@@ -280,8 +279,6 @@ UniversalDAppUI.prototype.getCallButton = function(args) {
   }
 
   var multiParamManager = new MultiParamManager(lookupOnly, args.funABI, (valArray, inputsValues, domEl) => {
-    console.log('CALL STARTS')
-    console.log(inputsValues)
     clickButton(valArray, inputsValues, domEl)
   }, self.udapp.getInputs(args.funABI))
 

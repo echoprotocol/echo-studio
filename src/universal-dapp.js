@@ -233,6 +233,8 @@ module.exports = class UniversalDApp extends Plugin {
     */
   callFunction(to, data, funAbi, confirmationCb, continueCb, promptCb, callback) {
     this.runTx({to: to, data: data, useCall: funAbi.constant}, confirmationCb, continueCb, promptCb, (error, txResult) => {
+      console.log('CONSTANT:')
+      console.log(funAbi.constant)
       // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
       callback(error, txResult)
     })
@@ -389,8 +391,10 @@ module.exports = class UniversalDApp extends Plugin {
           function(error, result) {
             console.log('rawRun callback')
             console.log(`isErr: ${!!error}`)
-            let eventName = (tx.useCall || args.data.contractMethod === executionContext.echojslib().constants.OPERATIONS_IDS.CALL_CONTRACT ? 'callExecuted' : 'transactionExecuted')
-            self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, args.data.txId ? args.data.txId : null, timestamp, payLoad])
+            let eventName = (tx.useCall || args.data.contractMethod === executionContext.echojslib().constants.OPERATIONS_IDS.CALL_CONTRACT) ? 'callExecuted' : 'transactionExecuted'
+            console.log('PROVEROCHKA_____')
+            console.log(args.data.contractName, args.data.methodName)
+            self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, args.data.txId ? args.data.txId : null, args.data.contractName, args.data.methodName, timestamp, payLoad])
 
             if (error && (typeof (error) !== 'string')) {
               if (error.message) error = error.message
