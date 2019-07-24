@@ -360,19 +360,20 @@ module.exports = TxLogger
 
 function txDetails(e, tx, data, obj) {
   console.log(`txDetails tx.id: ${tx.id}`)
-  var table = document.querySelector(`#${tx.id} [class^="txTable"]`)
+  var table = tx.childNodes[1]
   var from = obj.from
   var contractName = obj.contractName
-  var log = document.querySelector(`#${tx.id} [class^='log']`)
-  var arrow = document.querySelector(`#${tx.id} [class^='arrow']`)
+  var log = tx.childNodes[0]
+  console.log(log)
+  console.log(log.lastChild)
   var arrowUp = yo`<i class="${css.arrow} fas fa-angle-up"></i>`
   var arrowDown = yo`<i class="${css.arrow} fas fa-angle-down"></i>`
   if (table && table.parentNode) {
     tx.removeChild(table)
-    log.removeChild(arrow)
+    log.removeChild(log.lastChild)
     log.appendChild(arrowDown)
   } else {
-    log.removeChild(arrow)
+    log.removeChild(log.lastChild)
     log.appendChild(arrowUp)
 
     table = createTable({
@@ -413,10 +414,10 @@ function callTxDetails(e, tx, data, obj) {
   console.log(arrowDown)
   if (table && table.parentNode) {
     tx.removeChild(table)
-    log.removeChild(arrow)
+    log.removeChild(log.lastChild)
     log.appendChild(arrowDown)
   } else {
-    log.removeChild(arrowDown)
+    log.removeChild(log.lastChild)
     log.appendChild(arrowUp)
 
     table = createTable({
