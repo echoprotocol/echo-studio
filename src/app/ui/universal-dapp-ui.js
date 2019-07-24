@@ -255,8 +255,6 @@ UniversalDAppUI.prototype.getCallButton = function(args) {
         data.contractMethod = executionContext.echojslib().constants.OPERATIONS_IDS.CALL_CONTRACT
         data.contractName = args.contractName
         data.methodName = args.funABI.name
-        console.log('DATA DATA DATA')
-        console.log(data)
         self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {
             if (!error) {
               if (typeof txResult === 'string') {

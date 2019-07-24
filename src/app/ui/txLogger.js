@@ -135,7 +135,6 @@ class TxLogger {
     }
 
     this.logKnownTX = this.terminal.registerCommand('knownTransaction', (args, cmds, append) => {
-      console.log('logKnownTX')
       var data = args[0]
       var el
       if (data.tx.isCall) {
@@ -171,8 +170,7 @@ class TxLogger {
     })
 
     this.txListener.event.register('newCall', (tx) => {
-      console.log('emit newCall')
-      log(this, tx, null)
+       log(this, tx, null)
     })
 
     this.terminal.updateJournal({ type: 'select', value: 'unknownTransaction' })
@@ -191,9 +189,6 @@ function debug(e, data, self) {
 
 function log(self, tx, receipt) {
   var resolvedTransaction = self.txListener.resolvedTransaction(tx.id)
-  console.log('LOG, tx:')
-  console.log(tx)
-  console.log(1231231231231)
   if (resolvedTransaction) {
     // var compiledContracts = null
     // if (self._deps.compilersArtefacts['__last']) {
@@ -211,11 +206,7 @@ function log(self, tx, receipt) {
 }
 
 function renderKnownTransaction(self, data) {
-  console.log('renderKnownTransaction renderKnownTransaction renderKnownTransactions')
-  console.log(data)
   var from = data.tx.trx.operations[0][1].registrar
-  console.log('wdwedwedwedew')
-  console.log(data.resolvedData.contractAddress)
   var to = `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`
   var contractName = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var obj = {from, to, contractName}
@@ -236,8 +227,6 @@ function renderKnownTransaction(self, data) {
 }
 
 function renderCall(self, data) {
-  console.log('renderCall')
-  console.log(data)
   var to = data.tx.to
   var from = data.tx.from ? data.tx.from : ' - '
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
@@ -299,8 +288,6 @@ function checkTxStatus(tx, type) {
 }
 
 function context(self, opts) {
-  console.log('CONTEXT')
-  console.log(opts)
   var data = opts.data || ''
   var from = opts.from ? opts.from : ''
   var to = opts.to
@@ -359,13 +346,10 @@ module.exports = TxLogger
 // helpers
 
 function txDetails(e, tx, data, obj) {
-  console.log(`txDetails tx.id: ${tx.id}`)
   var table = tx.childNodes[1]
   var from = obj.from
   var contractName = obj.contractName
   var log = tx.childNodes[0]
-  console.log(log)
-  console.log(log.lastChild)
   var arrowUp = yo`<i class="${css.arrow} fas fa-angle-up"></i>`
   var arrowDown = yo`<i class="${css.arrow} fas fa-angle-down"></i>`
   if (table && table.parentNode) {
@@ -400,18 +384,12 @@ function txDetails(e, tx, data, obj) {
 }
 
 function callTxDetails(e, tx, data, obj) {
-  console.log(`txDetails tx.id: ${tx.id}`)
-  console.log(tx)
-  console.log(data)
   var table = tx.childNodes[1]
   var from = obj.from
   var contractName = obj.contractName
   var log = tx.childNodes[0]
-  console.log(log)
-  console.log(table)
   var arrowUp = yo`<i class="${css.arrow} fas fa-angle-up"></i>`
   var arrowDown = yo`<i class="${css.arrow} fas fa-angle-down"></i>`
-  console.log(arrowDown)
   if (table && table.parentNode) {
     tx.removeChild(table)
     log.removeChild(log.lastChild)
