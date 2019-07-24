@@ -291,17 +291,10 @@ function renderEmptyBlock(self, data) {
 }
 
 function checkTxStatus(tx, type) {
-  // if (tx.status === '0x1') {
-  //   return yo`<i class="${css.txStatus} ${css.succeeded} fas fa-check-circle"></i>`
-  // }
-  // if (type === 'call' || type === 'unknownCall') {
-  //   return yo`<i class="${css.txStatus} ${css.call}">call</i>`
-  // } else if (tx.status === '0x0') {
-  //   return yo`<i class="${css.txStatus} ${css.failed} fas fa-times-circle"></i>`
-  // } else {
-  //   return yo`<i class="${css.txStatus} ${css.notavailable} fas fa-circle-thin" title='Status not available' ></i>`
-  // }
-
+  if (type === 'call' || type === 'unknownCall') {
+    return yo`<i class="${css.txStatus} ${css.call}">call</i>`
+  }
+  
   return yo`<i class="${css.txStatus} ${css.succeeded} fas fa-check-circle"></i>`
 }
 
@@ -409,19 +402,21 @@ function callTxDetails(e, tx, data, obj) {
   console.log(`txDetails tx.id: ${tx.id}`)
   console.log(tx)
   console.log(data)
-  var table = document.querySelector(`#${tx.id} [class^="txTable"]`)
+  var table = tx.childNodes[1]
   var from = obj.from
   var contractName = obj.contractName
-  var log = document.querySelector(`#${tx.id} [class^='log']`)
-  var arrow = document.querySelector(`#${tx.id} [class^='arrow']`)
+  var log = tx.childNodes[0]
+  console.log(log)
+  console.log(table)
   var arrowUp = yo`<i class="${css.arrow} fas fa-angle-up"></i>`
   var arrowDown = yo`<i class="${css.arrow} fas fa-angle-down"></i>`
+  console.log(arrowDown)
   if (table && table.parentNode) {
     tx.removeChild(table)
     log.removeChild(arrow)
     log.appendChild(arrowDown)
   } else {
-    log.removeChild(arrow)
+    log.removeChild(arrowDown)
     log.appendChild(arrowUp)
 
     table = createTable({
