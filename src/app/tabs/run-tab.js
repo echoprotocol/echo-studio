@@ -71,10 +71,17 @@ class RunTab extends ViewPlugin {
       getGasLimit: (cb) => {
         cb(null, $('#gasLimit').val())
       },
-      getAsset: (cb) => {
-        const asset = $('#assets').val()
+      getAmountAsset: (cb) => {
+        const asset = $('#amountassets').val()
         if (!asset) {
-          return cb('Asset is not found.')
+          return cb('Amount asset is not found.')
+        }
+        cb(null, asset.split(' ')[0])
+      },
+      getFeeAsset: (cb) => {
+        const asset = $('#feeassets').val()
+        if (!asset) {
+          return cb('Fee asset is not found.')
         }
         cb(null, asset.split(' ')[0])
       }

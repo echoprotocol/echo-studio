@@ -345,13 +345,10 @@ module.exports = class UniversalDApp extends Plugin {
         console.log('getAccount')
         console.log(wif)
         if (args.from) {
-          console.log(1)
           return next(null, args.from, value, wif)
         }
         if (self.transactionContextAPI.getAddress) {
-          console.log(2)
           return self.transactionContextAPI.getAddress(function(err, address) {
-            console.log(3)
             next(err, address, value, wif)
           })
         }
@@ -363,21 +360,32 @@ module.exports = class UniversalDApp extends Plugin {
           next(null, address, value, wif)
         })
       },
-      function getAsset(fromAddress, value, wif, next) {
-        console.log('getAsset')
-        if (args.asset) {
-          return next(null, args.from, value, wif)
+      function getAmountAsset(fromAddress, value, wif, next) {
+        console.log('getAmountAsset')
+        if (args.amountAsset) {
+          return next(null, args.amountAsset, args.from, value, wif)
         }
-        if (self.transactionContextAPI.getAsset) {
-          return self.transactionContextAPI.getAsset(function(err, asset) {
-            next(err, asset, fromAddress, value, wif)
+        if (self.transactionContextAPI.getAmountAsset) {
+          return self.transactionContextAPI.getAmountAsset(function(err, amountAsset) {
+            next(err, amountAsset, fromAddress, value, wif)
           })
         }
       },
-      function runTransaction(asset, fromAddress, value, wif, next) {
+      function getFeeAsset(amountAsset, fromAddress, value, wif, next) {
+        console.log('getFeeAsset')
+        if (args.feeAsset) {
+          return next(null, args.feeAsset, args.amountAsset, args.from, value, wif)
+        }
+        if (self.transactionContextAPI.getFeeAsset) {
+          return self.transactionContextAPI.getFeeAsset(function(err, feeAsset) {
+            next(err, feeAsset, amountAsset, fromAddress, value, wif)
+          })
+        }
+      },
+      function runTransaction(feeAsset, amountAsset, fromAddress, value, wif, next) {
         console.log('runTransaction')
         console.log(args)
-        var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, timestamp: args.data.timestamp, asset, wif, contractMethod: args.data.contractMethod }
+        var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, timestamp: args.data.timestamp, feeAsset, amountAsset, wif, contractMethod: args.data.contractMethod }
         var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
         var timestamp = Date.now()
         if (tx.timestamp) {
