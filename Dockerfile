@@ -13,7 +13,7 @@ RUN apk add build-base
 RUN apk add git python
 RUN git config --global http.sslverify "false"
 
-COPY ./ /app/remix-ide/
+COPY . /app/echo-studio/
 RUN npm config set unsafe-perm true
 RUN NODE_ENV=development npm install
 #RUN npm run setupremix && npm run build
