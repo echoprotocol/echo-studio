@@ -8,7 +8,7 @@ var modalDialog = require('../../ui/modaldialog')
 var MultiParamManager = require('../../ui/multiParamManager')
 
 class ContractDropdownUI {
-  constructor (dropdownLogic, logCallback) {
+  constructor(dropdownLogic, logCallback) {
     this.dropdownLogic = dropdownLogic
     this.logCallback = logCallback
     this.event = new EventManager()
@@ -16,7 +16,7 @@ class ContractDropdownUI {
     this.listenToEvents()
   }
 
-  listenToEvents () {
+  listenToEvents() {
     this.dropdownLogic.event.register('newlyCompiled', (success, data, source, compiler, compilerFullName) => {
       if (!document.querySelector(`.${css.contractNames.classNames[0]}`)) return
       var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
@@ -43,7 +43,7 @@ class ContractDropdownUI {
     this.dropdownLogic.event.register('currentFileChanged', this.changeCurrentFile.bind(this))
   }
 
-  render () {
+  render() {
     this.compFails = yo`<i title="No contract compiled yet or compilation failed. Please check the compile tab for more information." class="fas fa-times-circle ${css.errorIcon}" ></i>`
     var info = yo`<i class="fas fa-info ${css.infoDeployAction}" aria-hidden="true" title="*.sol files allows deploying and accessing contracts. *.abi files only allows accessing contracts."></i>`
 
@@ -76,7 +76,7 @@ class ContractDropdownUI {
     return el
   }
 
-  atAddressChanged (event) {
+  atAddressChanged(event) {
     if (!this.atAddressButtonInput.value) {
       this.atAddress.setAttribute('disabled', 'true')
     } else {
@@ -84,7 +84,7 @@ class ContractDropdownUI {
     }
   }
 
-  changeCurrentFile (currentFile) {
+  changeCurrentFile(currentFile) {
     if (!document.querySelector(`.${css.contractNames}`)) return
     document.querySelector(`.${css.contractNames}`).classList.remove(css.contractNamesError)
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
@@ -100,7 +100,7 @@ class ContractDropdownUI {
     }
   }
 
-  setInputParamsPlaceHolder () {
+  setInputParamsPlaceHolder() {
     this.createPanel.innerHTML = ''
     if (this.selectContractNames.selectedIndex < 0 || this.selectContractNames.children.length <= 0) {
       this.createPanel.innerHTML = 'No compiled contracts'
@@ -114,7 +114,7 @@ class ContractDropdownUI {
     this.createPanel.appendChild(createConstructorInstance.render())
   }
 
-  getSelectedContract () {
+  getSelectedContract() {
     var contract = this.selectContractNames.children[this.selectContractNames.selectedIndex]
     var contractName = contract.innerHTML
     var compilerAtributeName = contract.getAttribute('compiler')
@@ -122,7 +122,7 @@ class ContractDropdownUI {
     return this.dropdownLogic.getSelectedContract(contractName, compilerAtributeName)
   }
 
-  createInstance (args) {
+  createInstance(args) {
     var selectedContract = this.getSelectedContract()
 
     if (selectedContract.bytecodeObject.length === 0) {
@@ -187,7 +187,7 @@ class ContractDropdownUI {
     this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, statusCb, finalCb)
   }
 
-  loadFromAddress () {
+  loadFromAddress() {
     this.event.trigger('clearInstance')
 
     var address = this.atAddressButtonInput.value

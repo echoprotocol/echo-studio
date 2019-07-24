@@ -3,7 +3,7 @@ var csjs = require('csjs-inject')
 var EventManager = require('../../lib/events')
 
 module.exports = class Card {
-  constructor (api, events, opts) {
+  constructor(api, events, opts) {
     const self = this
     self._api = api
     self._events = events
@@ -11,7 +11,7 @@ module.exports = class Card {
     self._view = {}
     self.event = new EventManager()
   }
-  render () {
+  render() {
     const self = this
     if (self._view.el) return self._view.el
 
@@ -31,7 +31,7 @@ module.exports = class Card {
       <div class=${css.expandCollapseButton}>${self._view.expandCollapseButton}</div>
     </div>`
 
-    function trigger (el) {
+    function trigger(el) {
       var body = self._view.cardBody
       var status = self._view.statusBar
       if (el.classList) {

@@ -3,12 +3,12 @@ var css = require('./styles/plugin-tab-styles')
 
 class PluginTab {
 
-  constructor (json) {
+  constructor(json) {
     this.el = null
     this.data = { json }
   }
 
-  render () {
+  render() {
     if (this.el) return this.el
 
     this.el = yo`

@@ -27,24 +27,24 @@ const profile = {
 }
 
 export class RemixdHandle extends Plugin {
-  constructor (fileSystemExplorer, locahostProvider, appManager) {
+  constructor(fileSystemExplorer, locahostProvider, appManager) {
     super(profile)
     this.fileSystemExplorer = fileSystemExplorer
     this.locahostProvider = locahostProvider
     this.appManager = appManager
   }
 
-  deactivate () {
+  deactivate() {
     this.locahostProvider.close((error) => {
       if (error) console.log(error)
     })
   }
 
-  activate () {
+  activate() {
     this.connectToLocalhost()
   }
 
-  canceled () {
+  canceled() {
     this.appManager.ensureDeactivated('remixd')
   }
 
@@ -54,7 +54,7 @@ export class RemixdHandle extends Plugin {
     *
     * @param {String} txHash    - hash of the transaction
     */
-  connectToLocalhost () {
+  connectToLocalhost() {
     if (this.locahostProvider.isConnected()) {
       this.locahostProvider.close((error) => {
         if (error) console.log(error)
@@ -89,7 +89,7 @@ export class RemixdHandle extends Plugin {
   }
 }
 
-function remixdDialog () {
+function remixdDialog() {
   return yo`
     <div class=${css.dialog}>
       <div class=${css.dialogParagraph}>Interact with your file system from Remix. Click connect and find shared folder in the Remix file explorer (under localhost).

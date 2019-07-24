@@ -2,7 +2,7 @@
 var EventManager = require('../../lib/events')
 
 class BasicReadOnlyExplorer {
-  constructor (type) {
+  constructor(type) {
     this.event = new EventManager()
     this.files = {}
     this.paths = {}
@@ -12,22 +12,22 @@ class BasicReadOnlyExplorer {
     this.readonly = true
   }
 
-  close (cb) {
+  close(cb) {
     this.files = {}
     cb()
   }
 
-  init (cb) {
+  init(cb) {
     this.files = {}
   }
 
-  exists (path, cb) {
+  exists(path, cb) {
     if (!this.files) return cb(null, false)
     var unprefixedPath = this.removePrefix(path)
     cb(null, this.files[unprefixedPath] !== undefined)
   }
 
-  get (path, cb) {
+  get(path, cb) {
     if (this.normalizedNames[path]) path = this.normalizedNames[path] // ensure we actually use the normalized path from here
     var unprefixedPath = this.removePrefix(path)
     var content = this.files[unprefixedPath]
@@ -40,13 +40,13 @@ class BasicReadOnlyExplorer {
     return content
   }
 
-  set (path, content, cb) {
+  set(path, content, cb) {
     this.addReadOnly(path, content)
     if (cb) cb()
     return true
   }
 
-  addReadOnly (path, content, rawPath) {
+  addReadOnly(path, content, rawPath) {
     path = this.removePrefix(path)
     try { // lazy try to format JSON
       content = JSON.stringify(JSON.parse(content), null, '\t')
@@ -71,22 +71,22 @@ class BasicReadOnlyExplorer {
     return true
   }
 
-  isReadOnly (path) {
+  isReadOnly(path) {
     return true
   }
 
-  remove (path) {
+  remove(path) {
   }
 
-  rename (oldPath, newPath, isFolder) {
+  rename(oldPath, newPath, isFolder) {
     return true
   }
 
-  list () {
+  list() {
     return this.files
   }
 
-  resolveDirectory (path, callback) {
+  resolveDirectory(path, callback) {
     var self = this
     if (path[0] === '/') path = path.substring(1)
     if (!path) return callback(null, { [self.type]: { } })
@@ -94,7 +94,7 @@ class BasicReadOnlyExplorer {
     callback(null, this.paths[path])
   }
 
-  removePrefix (path) {
+  removePrefix(path) {
     return path.indexOf(this.type + '/') === 0 ? path.replace(this.type + '/', '') : path
   }
 }

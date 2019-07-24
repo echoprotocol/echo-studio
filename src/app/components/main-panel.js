@@ -20,11 +20,11 @@ const profile = {
 }
 
 export class MainPanel extends AbstractPanel {
-  constructor (options) {
+  constructor(options) {
     super(profile, options)
   }
 
-  render () {
+  render() {
     return yo`
       <div class=${css.pluginsContainer}>
         ${this.view}

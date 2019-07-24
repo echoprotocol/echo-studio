@@ -1,7 +1,7 @@
 const EventEmitter = require('events')
 
 class CreateContract extends EventEmitter {
-  command (inputParams) {
+  command(inputParams) {
     this.api.perform((done) => {
       createContract(this.api, inputParams, () => {
         done()
@@ -12,10 +12,10 @@ class CreateContract extends EventEmitter {
   }
 }
 
-function createContract (browser, inputParams, callback) {
+function createContract(browser, inputParams, callback) {
   browser.clickLaunchIcon('settings').clickLaunchIcon('run')
-    .setValue('div[class^="contractActionsContainerSingle"] input', inputParams, function () {
-      browser.click('#runTabView button[class^="instanceButton"]').pause(500).perform(function () { callback() })
+    .setValue('div[class^="contractActionsContainerSingle"] input', inputParams, function() {
+      browser.click('#runTabView button[class^="instanceButton"]').pause(500).perform(function() { callback() })
     })
 }
 

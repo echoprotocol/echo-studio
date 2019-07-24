@@ -4,7 +4,7 @@ var yo = require('yo-yo')
 var ButtonNavigator = require('./ButtonNavigator')
 var Slider = require('./Slider')
 
-function StepManager (stepManager) {
+function StepManager(stepManager) {
   this.event = new EventManager()
   this.stepManager = stepManager
   this.startSlider()
@@ -12,13 +12,13 @@ function StepManager (stepManager) {
   this.stepManager.event.register('stepChanged', this.updateStep.bind(this))
 }
 
-StepManager.prototype.startSlider = function () {
+StepManager.prototype.startSlider = function() {
   this.slider = new Slider()
   this.slider.event.register('sliderMoved', this.stepManager.jumpTo.bind(this.stepManager))
   this.stepManager.event.register('traceLengthChanged', this.slider.setSliderLength.bind(this.slider))
 }
 
-StepManager.prototype.startButtonNavigator = function () {
+StepManager.prototype.startButtonNavigator = function() {
   this.buttonNavigator = new ButtonNavigator()
 
   this.stepManager.event.register('revertWarning', this.buttonNavigator.resetWarning.bind(this.buttonNavigator))
@@ -33,14 +33,14 @@ StepManager.prototype.startButtonNavigator = function () {
   this.buttonNavigator.event.register('jumpPreviousBreakpoint', this.stepManager.jumpPreviousBreakpoint.bind(this.stepManager))
 }
 
-StepManager.prototype.updateStep = function (step, stepState, jumpOutDisabled) {
+StepManager.prototype.updateStep = function(step, stepState, jumpOutDisabled) {
   if (!this.slider) return
   this.slider.setValue(step)
   this.buttonNavigator.stepChanged(stepState, jumpOutDisabled)
   this.event.trigger('stepChanged', [step])
 }
 
-StepManager.prototype.remove = function () {
+StepManager.prototype.remove = function() {
   // used to stop listenning on event. bad and should be "refactored"
   this.slider.view = null
   this.slider = null
@@ -48,7 +48,7 @@ StepManager.prototype.remove = function () {
   this.buttonNavigator = null
 }
 
-StepManager.prototype.render = function () {
+StepManager.prototype.render = function() {
   return yo`<div>
         ${this.slider.render()}
         ${this.buttonNavigator.render()}

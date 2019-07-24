@@ -18,11 +18,11 @@ const profile = {
 
 export class HiddenPanel extends AbstractPanel {
 
-  constructor () {
+  constructor() {
     super(profile)
   }
 
-  render () {
+  render() {
     return yo`
       <div class=${css.pluginsContainer}>
         ${this.view}

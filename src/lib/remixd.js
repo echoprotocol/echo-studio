@@ -4,7 +4,7 @@ var modalDialog = require('../app/ui/modaldialog')
 var yo = require('yo-yo')
 
 class Remixd {
-  constructor (port) {
+  constructor(port) {
     this.event = new EventManager()
     this.port = port
     this.callbacks = {}
@@ -13,18 +13,18 @@ class Remixd {
     this.connected = false
   }
 
-  online () {
+  online() {
     return this.socket !== null
   }
 
-  close () {
+  close() {
     if (this.socket) {
       this.socket.close()
       this.socket = null
     }
   }
 
-  start (cb) {
+  start(cb) {
     if (this.socket) {
       try {
         this.socket.close()
@@ -74,8 +74,8 @@ class Remixd {
     })
   }
 
-  errored (event) {
-    function remixdDialog () {
+  errored(event) {
+    function remixdDialog() {
       return yo`<div>Connection to Remixd closed. Localhost connection not available anymore.</div>`
     }
     if (this.connected) {
@@ -86,7 +86,7 @@ class Remixd {
     this.event.trigger('errored', [event])
   }
 
-  call (service, fn, args, callback) {
+  call(service, fn, args, callback) {
     this.ensureSocket((error) => {
       if (error) return callback(error)
       if (this.socket && this.socket.readyState === this.socket.OPEN) {
@@ -99,7 +99,7 @@ class Remixd {
     })
   }
 
-  ensureSocket (cb) {
+  ensureSocket(cb) {
     if (this.socket) return cb(null, this.socket)
     this.start((error) => {
       if (error) {
@@ -110,7 +110,7 @@ class Remixd {
     })
   }
 
-  format (service, fn, args) {
+  format(service, fn, args) {
     var data = {
       id: this.callid,
       service: service,

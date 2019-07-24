@@ -2,14 +2,14 @@ const EventEmitter = require('events')
 const deepequal = require('deep-equal')
 
 class TestFunction extends EventEmitter {
-  command (fnFullName, txHash, log, expectedInput, expectedReturn, expectedEvent, callback) {
+  command(fnFullName, txHash, log, expectedInput, expectedReturn, expectedEvent, callback) {
     this.api.waitForElementPresent('.instance button[title="' + fnFullName + '"]')
-    .perform(function (client, done) {
-      client.execute(function () {
+    .perform(function(client, done) {
+      client.execute(function() {
         document.querySelector('#runTabView').scrollTop = document.querySelector('#runTabView').scrollHeight
-      }, [], function () {
+      }, [], function() {
         if (expectedInput) {
-          client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function () {})
+          client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function() {})
         }
         done()
       })
@@ -19,7 +19,7 @@ class TestFunction extends EventEmitter {
     .waitForElementPresent('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"]')
     .assert.containsText('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] span', log)
     .click('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] div[class^="log"]')
-    .perform(function (client, done) {
+    .perform(function(client, done) {
       if (expectedReturn) {
         client.getText('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] table[class^="txTable"] #decodedoutput', (result) => {
           console.log(result)

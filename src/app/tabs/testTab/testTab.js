@@ -3,11 +3,11 @@ var modalDialogCustom = require('../../ui/modal-dialog-custom')
 
 class TestTabLogic {
 
-  constructor (fileManager) {
+  constructor(fileManager) {
     this.fileManager = fileManager
   }
 
-  generateTestFile () {
+  generateTestFile() {
     var path = this.fileManager.currentPath()
     var fileProvider = this.fileManager.fileProviderOf(path)
     if (!fileProvider) return
@@ -18,7 +18,7 @@ class TestTabLogic {
     })
   }
 
-  async getTests (cb) {
+  async getTests(cb) {
     var path = this.fileManager.currentPath()
     if (!path) return cb(null, [])
     var provider = this.fileManager.fileProviderOf(path)
@@ -36,7 +36,7 @@ class TestTabLogic {
     cb(null, tests, path)
   }
 
-  generateTestContractSample () {
+  generateTestContractSample() {
     return `pragma solidity >=0.4.0 <0.6.0;
       import "remix_tests.sol"; // this import is automatically injected by Remix.
 

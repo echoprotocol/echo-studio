@@ -33,7 +33,7 @@ var css = csjs`
 module.exports = (event, items) => {
   event.preventDefault()
 
-  function hide (event, force) {
+  function hide(event, force) {
     if (container && container.parentElement && (force || (event.target !== container))) {
       container.parentElement.removeChild(container)
     }

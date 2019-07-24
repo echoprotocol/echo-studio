@@ -37,14 +37,14 @@ var EventManager = require('../../lib/events')
  */
 class TreeView {
 
-  constructor (opts) {
+  constructor(opts) {
     this.event = new EventManager()
     this.extractData = opts.extractData || this.extractDataDefault
     this.formatSelf = opts.formatSelf || this.formatSelfDefault
     this.view = null
   }
 
-  render (json, expand) {
+  render(json, expand) {
     var view = this.renderProperties(json, expand)
     if (!this.view) {
       this.view = view
@@ -52,13 +52,13 @@ class TreeView {
     return view
   }
 
-  update (json) {
+  update(json) {
     if (this.view) {
       yo.update(this.view, this.render(json))
     }
   }
 
-  renderObject (item, parent, key, expand, keyPath) {
+  renderObject(item, parent, key, expand, keyPath) {
     var data = this.extractData(item, parent, key)
     var children = (data.children || []).map((child, index) => {
       return this.renderObject(child.value, data, child.key, expand, keyPath + '/' + child.key)
@@ -66,7 +66,7 @@ class TreeView {
     return this.formatData(key, data, children, expand, keyPath)
   }
 
-  renderProperties (json, expand, key) {
+  renderProperties(json, expand, key) {
     key = key || ''
     var children = Object.keys(json).map((innerkey) => {
       return this.renderObject(json[innerkey], json, innerkey, expand, innerkey)
@@ -74,7 +74,7 @@ class TreeView {
     return yo`<ul key=${key} class="${css.ul_tv}">${children}</ul>`
   }
 
-  formatData (key, data, children, expand, keyPath) {
+  formatData(key, data, children, expand, keyPath) {
     var self = this
     var li = yo`<li key=${keyPath} class=${css.li_tv}></li>`
     var caret = yo`<div class="fas fa-caret-right caret ${css.caret_tv}"></div>`
@@ -88,26 +88,26 @@ class TreeView {
       var list = yo`<ul key=${keyPath} class=${css.ul_tv}>${children}</ul>`
       list.style.display = 'none'
       caret.className = list.style.display === 'none' ? `fas fa-caret-right caret ${css.caret_tv}` : `fas fa-caret-down caret ${css.caret_tv}`
-      label.onclick = function () {
+      label.onclick = function() {
         self.expand(keyPath)
       }
-      label.oncontextmenu = function (event) {
+      label.oncontextmenu = function(event) {
         self.event.trigger('nodeRightClick', [keyPath, data, label, event])
       }
       li.appendChild(list)
     } else {
       caret.style.visibility = 'hidden'
-      label.oncontextmenu = function (event) {
+      label.oncontextmenu = function(event) {
         self.event.trigger('leafRightClick', [keyPath, data, label, event])
       }
-      label.onclick = function (event) {
+      label.onclick = function(event) {
         self.event.trigger('leafClick', [keyPath, data, label, event])
       }
     }
     return li
   }
 
-  isExpanded (path) {
+  isExpanded(path) {
     var current = this.nodeAt(path)
     if (current) {
       return current.style.display !== 'none'
@@ -115,7 +115,7 @@ class TreeView {
     return false
   }
 
-  expand (path) {
+  expand(path) {
     var caret = this.caretAt(path)
     var node = this.nodeAt(path)
     if (node) {
@@ -125,26 +125,26 @@ class TreeView {
     }
   }
 
-  caretAt (path) {
+  caretAt(path) {
     var label = this.labelAt(path)
     if (label) {
       return label.querySelector('.caret')
     }
   }
 
-  itemAt (path) {
+  itemAt(path) {
     return this.view.querySelector(`li[key="${path}"]`)
   }
 
-  labelAt (path) {
+  labelAt(path) {
     return this.view.querySelector(`div[key="${path}"]`)
   }
 
-  nodeAt (path) {
+  nodeAt(path) {
     return this.view.querySelector(`ul[key="${path}"]`)
   }
 
-  updateNodeFromJSON (path, jsonTree, expand) {
+  updateNodeFromJSON(path, jsonTree, expand) {
     var newTree = this.renderProperties(jsonTree, expand, path)
     var current = this.nodeAt(path)
     if (current && current.parentElement) {
@@ -152,11 +152,11 @@ class TreeView {
     }
   }
 
-  formatSelfDefault (key, data) {
+  formatSelfDefault(key, data) {
     return yo`<label>${key}: ${data.self}</label>`
   }
 
-  extractDataDefault (item, parent, key) {
+  extractDataDefault(item, parent, key) {
     var ret = {}
     if (item instanceof Array) {
       ret.children = item.map((item, index) => {

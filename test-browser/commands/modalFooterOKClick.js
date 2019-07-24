@@ -1,9 +1,9 @@
 const EventEmitter = require('events')
 
 class ModalFooterOKClick extends EventEmitter {
-  command () {
+  command() {
     this.api.perform((client, done) => {
-      this.api.execute(function () {
+      this.api.execute(function() {
         document.querySelector('#modal-footer-ok').click()
       }, [], (result) => {
         done()

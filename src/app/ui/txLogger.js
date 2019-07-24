@@ -117,10 +117,10 @@ var css = csjs`
   *
   */
 class TxLogger {
-  constructor (eventsDecoder, txListener, terminal) {
+  constructor(eventsDecoder, txListener, terminal) {
     this.event = new EventManager()
     this.seen = {}
-    function filterTx (value, query) {
+    function filterTx(value, query) {
       if (value.length) {
         return helper.find(value, query)
       }
@@ -180,7 +180,7 @@ class TxLogger {
   }
 }
 
-function debug (e, data, self) {
+function debug(e, data, self) {
   e.stopPropagation()
   if (data.tx.isCall && data.tx.envMode !== 'vm') {
     modalDialog.alert('Cannot debug this call. Debugging calls is only possible in JavaScript VM mode.')
@@ -189,7 +189,7 @@ function debug (e, data, self) {
   }
 }
 
-function log (self, tx, receipt) {
+function log(self, tx, receipt) {
   var resolvedTransaction = self.txListener.resolvedTransaction(tx.id)
   console.log('LOG, tx:')
   console.log(tx)
@@ -210,7 +210,7 @@ function log (self, tx, receipt) {
   }
 }
 
-function renderKnownTransaction (self, data) {
+function renderKnownTransaction(self, data) {
   console.log('renderKnownTransaction renderKnownTransaction renderKnownTransactions')
   console.log(data)
   var from = data.tx.trx.operations[0][1].registrar
@@ -235,7 +235,7 @@ function renderKnownTransaction (self, data) {
   return tx
 }
 
-function renderCall (self, data) {
+function renderCall(self, data) {
   console.log('renderCall')
   console.log(data)
   var to = data.tx.to
@@ -263,7 +263,7 @@ function renderCall (self, data) {
   return tx
 }
 
-function renderUnknownTransaction (self, data) {
+function renderUnknownTransaction(self, data) {
   var from = data.tx.from
   var to = data.tx.to
   var obj = {from, to}
@@ -283,14 +283,14 @@ function renderUnknownTransaction (self, data) {
   return tx
 }
 
-function renderEmptyBlock (self, data) {
+function renderEmptyBlock(self, data) {
   return yo`
     <span class=${css.txLog}>
       <span class='${css.tx}'><div class=${css.txItem}>[<span class=${css.txItemTitle}>block:${data.block.number} - </span> 0 transactions]</span></span>
     </span>`
 }
 
-function checkTxStatus (tx, type) {
+function checkTxStatus(tx, type) {
   // if (tx.status === '0x1') {
   //   return yo`<i class="${css.txStatus} ${css.succeeded} fas fa-check-circle"></i>`
   // }
@@ -305,7 +305,7 @@ function checkTxStatus (tx, type) {
   return yo`<i class="${css.txStatus} ${css.succeeded} fas fa-check-circle"></i>`
 }
 
-function context (self, opts) {
+function context(self, opts) {
   console.log('CONTEXT')
   console.log(opts)
   var data = opts.data || ''
@@ -365,8 +365,8 @@ module.exports = TxLogger
 
 // helpers
 
-function txDetails (e, tx, data, obj) {
-  console.log(`txDetails tx.id: ${ tx.id}`)
+function txDetails(e, tx, data, obj) {
+  console.log(`txDetails tx.id: ${tx.id}`)
   var table = document.querySelector(`#${tx.id} [class^="txTable"]`)
   var from = obj.from
   var contractName = obj.contractName
@@ -405,8 +405,8 @@ function txDetails (e, tx, data, obj) {
   }
 }
 
-function callTxDetails (e, tx, data, obj) {
-  console.log(`txDetails tx.id: ${ tx.id}`)
+function callTxDetails(e, tx, data, obj) {
+  console.log(`txDetails tx.id: ${tx.id}`)
   console.log(tx)
   console.log(data)
   var table = document.querySelector(`#${tx.id} [class^="txTable"]`)
@@ -435,14 +435,14 @@ function callTxDetails (e, tx, data, obj) {
       from,
       to: `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`,
       input: data.tx.input,
-      'decoded output': data.tx ? JSON.stringify(typeConversion.stringify(data.tx), null, '\t') : ' - ',
+      'decoded output': data.tx ? JSON.stringify(typeConversion.stringify(data.tx), null, '\t') : ' - '
     })
 
     tx.appendChild(table)
   }
 }
 
-function createTable (opts) {
+function createTable(opts) {
   var table = yo`<table class="${css.txTable}" id="txTable"></table>`
   if (!opts.isCall) {
     var msg = ''

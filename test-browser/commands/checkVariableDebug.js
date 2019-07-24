@@ -2,7 +2,7 @@ const EventEmitter = require('events')
 const deepequal = require('deep-equal')
 
 class CreateContract extends EventEmitter {
-  command (id, debugValue) {
+  command(id, debugValue) {
     this.api.perform((done) => {
       checkDebug(this.api, id, debugValue, () => {
         done()
@@ -13,11 +13,11 @@ class CreateContract extends EventEmitter {
   }
 }
 
-function checkDebug (browser, id, debugValue, done) {
+function checkDebug(browser, id, debugValue, done) {
     // id is soliditylocals or soliditystate
-  browser.execute(function (id) {
+  browser.execute(function(id) {
     return document.querySelector('#' + id + ' .dropdownrawcontent').innerText
-  }, [id], function (result) {
+  }, [id], function(result) {
     console.log(id + ' ' + result.value)
     var value
     try {

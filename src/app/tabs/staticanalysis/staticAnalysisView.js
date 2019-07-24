@@ -9,7 +9,7 @@ var Renderer = require('../../ui/renderer')
 
 var EventManager = require('../../../lib/events')
 
-function staticAnalysisView (localRegistry, analysisModule) {
+function staticAnalysisView(localRegistry, analysisModule) {
   var self = this
   this.event = new EventManager()
   this.view = null
@@ -39,13 +39,13 @@ function staticAnalysisView (localRegistry, analysisModule) {
   })
 }
 
-staticAnalysisView.prototype.render = function () {
+staticAnalysisView.prototype.render = function() {
   var self = this
   var view = yo`
     <div class="${css.analysis}">
       <div class="${css.buttons}">
           <div class="${css.buttonsInner}">
-            <button class="${css.buttonRun} btn btn-sm btn-primary" onclick="${function () { self.run() }}" >Run</button>
+            <button class="${css.buttonRun} btn btn-sm btn-primary" onclick="${function() { self.run() }}" >Run</button>
             <label class="${css.label}" for="autorunstaticanalysis">
               <input id="autorunstaticanalysis"
                 type="checkbox"
@@ -57,7 +57,7 @@ staticAnalysisView.prototype.render = function () {
             <label class="${css.label}" for="checkAllEntries">
               <input id="checkAllEntries"
                 type="checkbox"
-                onclick="${function (event) { self.checkAll(event) }}"
+                onclick="${function(event) { self.checkAll(event) }}"
                 style="vertical-align:bottom"
                 checked="true"
               >
@@ -78,7 +78,7 @@ staticAnalysisView.prototype.render = function () {
   return view
 }
 
-staticAnalysisView.prototype.selectedModules = function () {
+staticAnalysisView.prototype.selectedModules = function() {
   if (!this.view) {
     return []
   }
@@ -90,7 +90,7 @@ staticAnalysisView.prototype.selectedModules = function () {
   return toRun
 }
 
-staticAnalysisView.prototype.run = function () {
+staticAnalysisView.prototype.run = function() {
   if (!this.view) {
     return
   }
@@ -100,9 +100,9 @@ staticAnalysisView.prototype.run = function () {
   var self = this
   if (this.lastCompilationResult && selected.length) {
     var warningCount = 0
-    this.runner.run(this.lastCompilationResult, selected, function (results) {
-      results.map(function (result, i) {
-        result.report.map(function (item, i) {
+    this.runner.run(this.lastCompilationResult, selected, function(results) {
+      results.map(function(result, i) {
+        result.report.map(function(item, i) {
           var location = ''
           if (item.location !== undefined) {
             var split = item.location.split(':')
@@ -132,7 +132,7 @@ staticAnalysisView.prototype.run = function () {
   }
 }
 
-staticAnalysisView.prototype.checkModule = function (event) {
+staticAnalysisView.prototype.checkModule = function(event) {
   let selected = this.view.querySelectorAll('[name="staticanalysismodule"]:checked')
   let checkAll = this.view.querySelector('[id="checkAllEntries"]')
   if (event.target.checked) {
@@ -142,7 +142,7 @@ staticAnalysisView.prototype.checkModule = function (event) {
   }
 }
 
-staticAnalysisView.prototype.checkAll = function (event) {
+staticAnalysisView.prototype.checkAll = function(event) {
   if (!this.view) {
     return
   }
@@ -151,7 +151,7 @@ staticAnalysisView.prototype.checkAll = function (event) {
   checkBoxes.forEach((checkbox) => { checkbox.checked = event.target.checked })
 }
 
-staticAnalysisView.prototype.renderModules = function () {
+staticAnalysisView.prototype.renderModules = function() {
   var self = this
   var groupedModules = utils.groupBy(preProcessModules(self.runner.modules()), 'categoryId')
   return Object.keys(groupedModules).map((categoryId, i) => {
@@ -166,7 +166,7 @@ staticAnalysisView.prototype.renderModules = function () {
             index=${item._index}
             checked="true"
             style="vertical-align:bottom"
-            onclick="${function (event) { self.checkModule(event) }}"
+            onclick="${function(event) { self.checkModule(event) }}"
             >
           ${item.name}
           ${item.description}
@@ -182,7 +182,7 @@ staticAnalysisView.prototype.renderModules = function () {
 
 module.exports = staticAnalysisView
 
-function preProcessModules (arr) {
+function preProcessModules(arr) {
   return arr.map((item, i) => {
     item['_index'] = i
     item.categoryDisplayName = item.category.displayName

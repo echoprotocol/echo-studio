@@ -82,7 +82,7 @@ const profile = {
 
 export class LandingPage extends ViewPlugin {
 
-  constructor (appManager, verticalIcons) {
+  constructor(appManager, verticalIcons) {
     super(profile)
     this.profile = profile
     this.appManager = appManager
@@ -90,8 +90,8 @@ export class LandingPage extends ViewPlugin {
     this.gistHandler = new GistHandler()
   }
 
-  render () {
-    let load = function (service, item, examples, info) {
+  render() {
+    let load = function(service, item, examples, info) {
       let compilerImport = new CompilerImport()
       let fileProviders = globalRegistry.get('fileproviders').api
       const msg = yo`

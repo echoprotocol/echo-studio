@@ -9,7 +9,7 @@ const addTooltip = require('../../ui/tooltip')
 
 class CompileTab {
 
-  constructor (queryParams, fileManager, editor, config, fileProviders) {
+  constructor(queryParams, fileManager, editor, config, fileProviders) {
     this.event = new EventEmitter()
     this.queryParams = queryParams
     this.compilerImport = new CompilerImport()
@@ -20,7 +20,7 @@ class CompileTab {
     this.fileProviders = fileProviders
   }
 
-  init () {
+  init() {
     this.optimize = this.queryParams.get().optimize
     this.optimize = this.optimize === 'true'
     this.queryParams.update({ optimize: this.optimize })
@@ -34,13 +34,13 @@ class CompileTab {
     this.compiler.setEvmVersion(this.evmVersion)
   }
 
-  setOptimize (newOptimizeValue) {
+  setOptimize(newOptimizeValue) {
     this.optimize = newOptimizeValue
     this.queryParams.update({ optimize: this.optimize })
     this.compiler.setOptimize(this.optimize)
   }
 
-  setEvmVersion (newEvmVersion) {
+  setEvmVersion(newEvmVersion) {
     this.evmVersion = newEvmVersion
     this.queryParams.update({ evmVersion: this.evmVersion })
     this.compiler.setEvmVersion(this.evmVersion)
@@ -50,7 +50,7 @@ class CompileTab {
    * Set the compiler to using Solidity or Yul (default to Solidity)
    * @params lang {'Solidity' | 'Yul'} ...
    */
-  setLanguage (lang) {
+  setLanguage(lang) {
     this.compiler.setLanguage(lang)
   }
 
@@ -58,7 +58,7 @@ class CompileTab {
    * Compile a specific file of the file manager
    * @param {string} target the path to the file to compile
    */
-  compileFile (target) {
+  compileFile(target) {
     if (!target) throw new Error('No target provided for compiliation')
     const provider = this.fileManager.fileProviderOf(target)
     if (!provider) throw new Error(`cannot compile ${target}. Does not belong to any explorer`)
@@ -73,7 +73,7 @@ class CompileTab {
     })
   }
 
-  runCompiler () {
+  runCompiler() {
     try {
       this.fileManager.saveCurrentFile()
       this.editor.clearAnnotations()
@@ -84,7 +84,7 @@ class CompileTab {
     }
   }
 
-  importExternal (url, cb) {
+  importExternal(url, cb) {
     this.compilerImport.import(url,
 
       // TODO: move to an event that is generated, the UI shouldn't be here
@@ -99,7 +99,7 @@ class CompileTab {
       })
   }
 
-  importFileCb (url, filecb) {
+  importFileCb(url, filecb) {
     if (url.indexOf('/remix_tests.sol') !== -1) return filecb(null, remixTests.assertLibCode)
 
     var provider = this.fileManager.fileProviderOf(url)

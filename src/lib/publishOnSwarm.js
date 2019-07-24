@@ -18,7 +18,7 @@ module.exports = (contract, fileManager, cb, swarmVerifiedPublishCallBack) => {
     return cb('No metadata')
   }
 
-  async.eachSeries(Object.keys(metadata.sources), function (fileName, cb) {
+  async.eachSeries(Object.keys(metadata.sources), function(fileName, cb) {
     // find hash
     var hash
     try {
@@ -39,13 +39,13 @@ module.exports = (contract, fileManager, cb, swarmVerifiedPublishCallBack) => {
       }
       cb()
     })
-  }, function (error) {
+  }, function(error) {
     if (error) {
       cb(error)
     } else {
       // publish the list of sources in order, fail if any failed
       var uploaded = []
-      async.eachSeries(sources, function (item, cb) {
+      async.eachSeries(sources, function(item, cb) {
         swarmVerifiedPublish(item.content, item.hash, (error, result) => {
           try {
             item.hash = result.url.match('bzz-raw://(.+)')[1]
@@ -86,8 +86,8 @@ module.exports = (contract, fileManager, cb, swarmVerifiedPublishCallBack) => {
   })
 }
 
-function swarmVerifiedPublish (content, expectedHash, cb) {
-  swarmgw.put(content, function (err, ret) {
+function swarmVerifiedPublish(content, expectedHash, cb) {
+  swarmgw.put(content, function(err, ret) {
     if (err) {
       cb(err)
     } else if (ret !== expectedHash) {

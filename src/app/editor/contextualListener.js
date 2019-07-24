@@ -19,7 +19,7 @@ const profile = {
   trigger contextChanged(nodes)
 */
 class ContextualListener extends Plugin {
-  constructor (opts) {
+  constructor(opts) {
     super(profile)
     this.event = new EventManager()
     this._components = {}
@@ -42,7 +42,7 @@ class ContextualListener extends Plugin {
     this.astWalker = new AstWalker()
   }
 
-  onActivation () {
+  onActivation() {
     this.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
       if (languageVersion.indexOf('soljson') !== 0) return
       this._stopHighlighting()
@@ -60,22 +60,22 @@ class ContextualListener extends Plugin {
     }, 1000)
   }
 
-  getActiveHighlights () {
+  getActiveHighlights() {
     return [...this._activeHighlights]
   }
 
-  declarationOf (node) {
+  declarationOf(node) {
     if (node.attributes && node.attributes.referencedDeclaration) {
       return this._index['FlatReferences'][node.attributes.referencedDeclaration]
     }
     return null
   }
 
-  referencesOf (node) {
+  referencesOf(node) {
     return this._index['Declarations'][node.id]
   }
 
-  _highlightItems (cursorPosition, compilationResult, file) {
+  _highlightItems(cursorPosition, compilationResult, file) {
     if (this.currentPosition === cursorPosition) return
     if (this.currentFile !== file) {
       this.currentFile = file
@@ -95,7 +95,7 @@ class ContextualListener extends Plugin {
     }
   }
 
-  _buildIndex (compilationResult, source) {
+  _buildIndex(compilationResult, source) {
     if (compilationResult && compilationResult.sources) {
       const callback = {}
       callback['*'] = (node) => {
@@ -114,7 +114,7 @@ class ContextualListener extends Plugin {
     }
   }
 
-  _highlight (node, compilationResult) {
+  _highlight(node, compilationResult) {
     if (!node) return
     const position = this.sourceMappingDecoder.decode(node.src)
     const eventId = this._highlightInternal(position, node)
@@ -124,7 +124,7 @@ class ContextualListener extends Plugin {
     }
   }
 
-  _highlightInternal (position, node) {
+  _highlightInternal(position, node) {
     let lastCompilationResult = this._deps.compilersArtefacts['__last']
     if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0) {
       let lineColumn = this._deps.offsetToLineColumnConverter.offsetToLineColumn(position, position.file, lastCompilationResult.getSourceCode().sources, lastCompilationResult.getAsts())
@@ -157,7 +157,7 @@ class ContextualListener extends Plugin {
     return null
   }
 
-  _highlightExpressions (node, compilationResult) {
+  _highlightExpressions(node, compilationResult) {
     const highlights = (id) => {
       if (this._index['Declarations'] && this._index['Declarations'][id]) {
         const refs = this._index['Declarations'][id]
@@ -178,7 +178,7 @@ class ContextualListener extends Plugin {
     this.results = compilationResult
   }
 
-  _stopHighlighting () {
+  _stopHighlighting() {
     for (const eventKey in this._activeHighlights) {
       const event = this._activeHighlights[eventKey]
       this.editor.removeMarker(event.eventId, event.fileTarget)
@@ -187,7 +187,7 @@ class ContextualListener extends Plugin {
     this._activeHighlights = []
   }
 
-  gasEstimation (node) {
+  gasEstimation(node) {
     this._loadContractInfos(node)
     let executionCost, codeDepositCost
     if (node.name === 'FunctionDefinition') {
@@ -210,7 +210,7 @@ class ContextualListener extends Plugin {
     return {executionCost, codeDepositCost}
   }
 
-  _loadContractInfos (node) {
+  _loadContractInfos(node) {
     for (const i in this.nodes) {
       if (this.nodes[i].id === node.attributes.scope) {
         const contract = this.nodes[i]
@@ -222,7 +222,7 @@ class ContextualListener extends Plugin {
     }
   }
 
-  _getInputParams (node) {
+  _getInputParams(node) {
     const params = []
     let target
     for (const i in node.children) {

@@ -2,7 +2,7 @@
 var DropdownPanel = require('./DropdownPanel')
 var yo = require('yo-yo')
 
-function MemoryPanel () {
+function MemoryPanel() {
   this.basicPanel = new DropdownPanel('Memory', {
     json: true,
     css: {
@@ -10,11 +10,11 @@ function MemoryPanel () {
     }})
 }
 
-MemoryPanel.prototype.update = function (calldata) {
+MemoryPanel.prototype.update = function(calldata) {
   this.basicPanel.update(calldata)
 }
 
-MemoryPanel.prototype.render = function () {
+MemoryPanel.prototype.render = function() {
   return yo`<div id='memorypanel' >${this.basicPanel.render()}</div>`
 }
 

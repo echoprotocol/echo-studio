@@ -1,7 +1,7 @@
 const EventEmitter = require('events')
 
 class VerifyCallReturnValue extends EventEmitter {
-  command (address, checks) {
+  command(address, checks) {
     this.api.perform((done) => {
       verifyCallReturnValue(this.api, address, checks, () => {
         done()
@@ -12,8 +12,8 @@ class VerifyCallReturnValue extends EventEmitter {
   }
 }
 
-function verifyCallReturnValue (browser, address, checks, done) {
-  browser.execute(function (address) {
+function verifyCallReturnValue(browser, address, checks, done) {
+  browser.execute(function(address) {
     var nodes = document.querySelectorAll('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]')
     var ret = []
     for (var k = 0; k < nodes.length; k++) {
@@ -21,7 +21,7 @@ function verifyCallReturnValue (browser, address, checks, done) {
       ret.push(text.replace('\n', ''))
     }
     return ret
-  }, [address], function (result) {
+  }, [address], function(result) {
     console.log('verifyCallReturnValue', result)
     for (var k in checks) {
       browser.assert.equal(result.value[k], checks[k])

@@ -1,7 +1,7 @@
 const EventEmitter = require('events')
 
 class addAtAddressInstance extends EventEmitter {
-  command (address, isValidFormat, isValidChecksum) {
+  command(address, isValidFormat, isValidChecksum) {
     this.api.perform((done) => {
       addInstance(this.api, address, isValidFormat, isValidChecksum, () => {
         done()
@@ -12,14 +12,14 @@ class addAtAddressInstance extends EventEmitter {
   }
 }
 
-function addInstance (browser, address, isValidFormat, isValidChecksum, callback) {
-  browser.clickLaunchIcon('run').clearValue('.ataddressinput').setValue('.ataddressinput', address, function () {
+function addInstance(browser, address, isValidFormat, isValidChecksum, callback) {
+  browser.clickLaunchIcon('run').clearValue('.ataddressinput').setValue('.ataddressinput', address, function() {
     browser.click('button[id^="runAndDeployAtAdressButton"]')
-        .execute(function () {
+        .execute(function() {
           var ret = document.querySelector('div[class^="modal-body"] div').innerHTML
           document.querySelector('#modal-footer-ok').click()
           return ret
-        }, [], function (result) {
+        }, [], function(result) {
           if (!isValidFormat) {
             browser.assert.equal(result.value, 'Invalid address.')
           } else if (!isValidChecksum) {

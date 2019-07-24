@@ -3,13 +3,13 @@ var sauce = require('./sauce')
 var init = require('../helpers/init')
 
 module.exports = {
-  before: function (browser, done) {
+  before: function(browser, done) {
     init(browser, done)
   },
-  '@sources': function () {
+  '@sources': function() {
     return sources
   },
-  'Test Recorder': function (browser) {
+  'Test Recorder': function(browser) {
     var addressRef
     browser.addFile('scenario.json', {content: records})
         .clickLaunchIcon('run')
@@ -39,7 +39,7 @@ module.exports = {
         .clickFunction('set - transact (not payable)', {types: 'uint256 _p', values: '34'})
         .click('i.savetransaction')
         .modalFooterOKClick()
-        .getEditorValue(function (result) {
+        .getEditorValue(function(result) {
           var parsed = JSON.parse(result)
           browser.assert.equal(JSON.stringify(parsed.transactions[0].record.parameters), JSON.stringify(scenario.transactions[0].record.parameters))
           browser.assert.equal(JSON.stringify(parsed.transactions[0].record.name), JSON.stringify(scenario.transactions[0].record.name))

@@ -1,7 +1,7 @@
 const EventEmitter = require('events')
 
 class ExecuteScript extends EventEmitter {
-  command (script) {
+  command(script) {
     this.api
       .click('#terminalCli')
       .keys(script)

@@ -32,27 +32,27 @@ const css = csjs`
 }
 `
 
-function notAllowWarning (from, to) {
+function notAllowWarning(from, to) {
   return `${from.displayName || from.name} is not allowed to call ${to.displayName || to.name}.`
 }
 
 export class PermissionHandler {
 
-  constructor () {
+  constructor() {
     this.permissions = this._getFromLocal()
   }
 
-  _getFromLocal () {
+  _getFromLocal() {
     const permission = localStorage.getItem('plugins/permissions')
     return permission ? JSON.parse(permission) : {}
   }
 
-  persistPermissions () {
+  persistPermissions() {
     const permissions = JSON.stringify(this.permissions)
     localStorage.setItem('plugins/permissions', permissions)
   }
 
-  clear () {
+  clear() {
     localStorage.removeItem('plugins/permissions')
     addTooltip('All Permissions have been reset')
   }
@@ -63,7 +63,7 @@ export class PermissionHandler {
    * @param {ModuleProfile} to The name of the plugin that receive the call
    * @returns {Promise<{ allow: boolean; remember: boolean }} Answer from the user to the permission
    */
-  async openPermission (from, to) {
+  async openPermission(from, to) {
     return new Promise((resolve, reject) => {
       modalDialog(
         `Permission needed for ${to.displayName || to.name}`,
@@ -104,7 +104,7 @@ export class PermissionHandler {
    * @param {ModuleProfile} to The profile of the module that receive the call
    * @returns {Promise<boolean>}
    */
-  async askPermission (from, to) {
+  async askPermission(from, to) {
     this.permissions = this._getFromLocal()
     if (!this.permissions[to.name]) this.permissions[to.name] = {}
     if (!this.permissions[to.name][from.name]) return this.openPermission(from, to)
@@ -125,7 +125,7 @@ export class PermissionHandler {
    * @param {PluginProfile} from The name and hash of the plugin that make the call
    * @param {ModuleProfile} to The name of the plugin that receive the call
    */
-  form (from, to) {
+  form(from, to) {
     const fromName = from.displayName || from.name
     const toName = to.displayName || to.name
     const remember = this.permissions[to.name][from.name]

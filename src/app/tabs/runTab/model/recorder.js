@@ -14,7 +14,7 @@ var helper = require('../../../../lib/helper.js')
   *
   */
 class Recorder {
-  constructor (udapp, fileManager, config) {
+  constructor(udapp, fileManager, config) {
     var self = this
     self.event = new EventManager()
     self.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {}, _contractABIReferences: {}, _linkReferences: {} }
@@ -94,12 +94,12 @@ class Recorder {
     *
     * @param {Bool} listen
     */
-  setListen (listen) {
+  setListen(listen) {
     this.data._listen = listen
     this.data._replay = !listen
   }
 
-  extractTimestamp (value) {
+  extractTimestamp(value) {
     var stamp = /created{(.*)}/g.exec(value)
     if (stamp) {
       return stamp[1]
@@ -115,7 +115,7 @@ class Recorder {
     * @param {Object} options
     *
     */
-  resolveAddress (record, accounts, options) {
+  resolveAddress(record, accounts, options) {
     if (record.to) {
       var stamp = this.extractTimestamp(record.to)
       if (stamp) {
@@ -134,7 +134,7 @@ class Recorder {
     * @param {Object} record
     *
     */
-  append (timestamp, record) {
+  append(timestamp, record) {
     var self = this
     self.data.journal.push({ timestamp, record })
     self.event.trigger('newTxRecorded', [self.data.journal.length])
@@ -144,7 +144,7 @@ class Recorder {
     * basically return the records + associate values (like abis / accounts)
     *
     */
-  getAll () {
+  getAll() {
     var self = this
     var records = [].concat(self.data.journal)
     return {
@@ -163,7 +163,7 @@ class Recorder {
     * delete the seen transactions
     *
     */
-  clearAll () {
+  clearAll() {
     var self = this
     self.data._listen = true
     self.data._replay = false
@@ -187,11 +187,11 @@ class Recorder {
     * @param {Function} newContractFn
     *
     */
-  run (records, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, newContractFn) {
+  run(records, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, newContractFn) {
     var self = this
     self.setListen(false)
     logCallBack(`Running ${records.length} transaction(s) ...`)
-    async.eachOfSeries(records, function (tx, index, cb) {
+    async.eachOfSeries(records, function(tx, index, cb) {
       var record = self.resolveAddress(tx.record, accounts, options)
       var abi = abis[tx.record.abi]
       if (!abi) {
@@ -254,7 +254,7 @@ class Recorder {
         record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode, contractName: tx.record.contractName, timestamp: tx.timestamp }
       }
       self.udapp.runTx(record, confirmationCb, continueCb, promptCb,
-        function (err, txResult) {
+        function(err, txResult) {
           if (err) {
             console.error(err)
             logCallBack(err + '. Execution failed at ' + index)
@@ -274,7 +274,7 @@ class Recorder {
     }, () => { self.setListen(true); self.clearAll() })
   }
 
-  addressToString (address) {
+  addressToString(address) {
     if (!address) return null
     if (typeof address !== 'string') {
       address = address.toString('hex')
@@ -285,7 +285,7 @@ class Recorder {
     return address
   }
 
-  runScenario (continueCb, promptCb, alertCb, confirmDialog, modalDialog, logCallBack, cb) {
+  runScenario(continueCb, promptCb, alertCb, confirmDialog, modalDialog, logCallBack, cb) {
     var currentFile = this.config.get('currentFile')
     this.fileManager.fileProviderOf(currentFile).get(currentFile, (error, json) => {
       if (error) {
@@ -371,7 +371,7 @@ class Recorder {
     })
   }
 
-  saveScenario (promptCb, cb) {
+  saveScenario(promptCb, cb) {
     var txJSON = JSON.stringify(this.getAll(), null, 2)
     var path = this.fileManager.currentPath()
     promptCb(path, input => {

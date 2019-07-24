@@ -6,7 +6,7 @@ var executionContext = remixLib.execution.executionContext
 
 class Settings {
 
-  constructor (udapp) {
+  constructor(udapp) {
     this.udapp = udapp
     this.event = new EventManager()
 
@@ -38,23 +38,22 @@ class Settings {
       this.event.trigger('updateAccount', [data])
     })
 
-
     this.networkcallid = 0
   }
 
-  changeExecutionContext (context, confirmCb, infoCb, cb) {
+  changeExecutionContext(context, confirmCb, infoCb, cb) {
     return executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
   }
 
-  setProviderFromEndpoint (target, context, infoCb, cb) {
+  setProviderFromEndpoint(target, context, infoCb, cb) {
     return executionContext.setProviderFromEndpoint(target, context, infoCb, cb)
   }
 
-  getProvider () {
+  getProvider() {
     return executionContext.getProvider()
   }
 
-  getAccountBalances (accountId, cb) {
+  getAccountBalances(accountId, cb) {
     return this.udapp.getAccountBalances(accountId, cb)
   }
 
@@ -62,36 +61,36 @@ class Settings {
   //   return this.udapp.newAccount('', passphraseCb, cb)
   // }
 
-  getAccounts (cb) {
+  getAccounts(cb) {
     return this.udapp.getAccounts(cb)
   }
 
-  getInfoByWif (wif) {
+  getInfoByWif(wif) {
     return this.udapp.getInfo(wif)
   }
 
-  validateWif (wif) {
+  validateWif(wif) {
     return this.udapp.validateWif(wif)
   }
 
-  isEchojslibProvider () {
+  isEchojslibProvider() {
     var isInjected = executionContext.getProvider() === 'injected'
     return !isInjected
   }
 
-  isInjectedEchojslib () {
+  isInjectedEchojslib() {
     return executionContext.getProvider() === 'injected'
   }
 
-  isExternalEchoConnected () {
+  isExternalEchoConnected() {
     return executionContext.isExternalEchoConnected()
   }
 
-  subscribeToAccountUpdating (accountId) {
+  subscribeToAccountUpdating(accountId) {
     return executionContext.subscribeToAccountUpdating(accountId)
   }
 
-  signMessage (message, account, passphrase, cb) {
+  signMessage(message, account, passphrase, cb) {
     var isInjected = executionContext.getProvider() === 'injected'
 
     if (isInjected) {

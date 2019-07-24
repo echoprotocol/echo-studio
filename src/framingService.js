@@ -1,6 +1,6 @@
 export class FramingService {
 
-  constructor (sidePanel, verticalIcon, mainView, resizeFeature) {
+  constructor(sidePanel, verticalIcon, mainView, resizeFeature) {
     this.sidePanel = sidePanel
     this.verticalIcon = verticalIcon
     this.mainPanel = mainView.getAppPanel()
@@ -8,7 +8,7 @@ export class FramingService {
     this.resizeFeature = resizeFeature
   }
 
-  start () {
+  start() {
     this.sidePanel.events.on('toggle', () => {
       this.resizeFeature.panel1.clientWidth !== 0 ? this.resizeFeature.minimize() : this.resizeFeature.maximise()
     })

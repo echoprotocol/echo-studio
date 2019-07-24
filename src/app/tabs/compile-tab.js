@@ -40,7 +40,7 @@ const profile = {
 
 class CompileTab extends ViewPlugin {
 
-  constructor (editor, config, renderer, swarmfileProvider, fileManager, fileProviders) {
+  constructor(editor, config, renderer, swarmfileProvider, fileManager, fileProviders) {
     super(profile)
     this.events = new EventEmitter()
     this._view = {
@@ -64,7 +64,7 @@ class CompileTab extends ViewPlugin {
     }
   }
 
-  onActivationInternal () {
+  onActivationInternal() {
     this.compileTabLogic = new CompileTabLogic(this.queryParams, this.fileManager, this.editor, this.config, this.fileProviders)
     this.compiler = this.compileTabLogic.compiler
     this.compileTabLogic.init()
@@ -81,7 +81,7 @@ class CompileTab extends ViewPlugin {
    * EVENTS
    */
 
-  listenToEvents () {
+  listenToEvents() {
     let onContentChanged = () => {
       this.emit('statusChanged', {key: 'edited', title: 'the content has changed, needs recompilation', type: 'info'})
     }
@@ -174,12 +174,12 @@ class CompileTab extends ViewPlugin {
     })
   }
 
-  getCompilationResult () {
+  getCompilationResult() {
     return this.compileTabLogic.compiler.lastCompilationResult
   }
 
   // This function is used by remix-plugin
-  compile (fileName) {
+  compile(fileName) {
     return this.compileTabLogic.compileFile(fileName)
   }
 
@@ -191,7 +191,7 @@ class CompileTab extends ViewPlugin {
    * Section to select the compiled contract
    * @param {string[]} contractList Names of the compiled contracts
    */
-  contractSelection (contractMap) {
+  contractSelection(contractMap) {
     // Return the file name of a path: ex "browser/ballot.sol" -> "ballot.sol"
     const getFileName = (path) => {
       const part = path.split('/')
@@ -255,11 +255,11 @@ class CompileTab extends ViewPlugin {
   }
 
   // TODO : Add success alert when compilation succeed
-  contractCompiledSuccess () {
+  contractCompiledSuccess() {
     return yo`<div></div>`
   }
   // TODO : Add error alert when compilation failed
-  contractCompiledError () {
+  contractCompiledError() {
     return yo`<div></div>`
   }
 
@@ -267,17 +267,17 @@ class CompileTab extends ViewPlugin {
    * METHODS
    */
 
-  selectContract (contractName) {
+  selectContract(contractName) {
     this.selectedContract = contractName
   }
 
-  publish () {
+  publish() {
     if (this.selectedContract) {
       var contract = this.data.contractsDetails[this.selectedContract]
       if (contract.metadata === undefined || contract.metadata.length === 0) {
         modalDialogCustom.alert('This contract may be abstract, may not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
       } else {
-        publishOnSwarm(contract, this.fileManager, function (err, uploaded) {
+        publishOnSwarm(contract, this.fileManager, function(err, uploaded) {
           if (err) {
             try {
               err = JSON.stringify(err)
@@ -297,7 +297,7 @@ class CompileTab extends ViewPlugin {
     }
   }
 
-  details () {
+  details() {
     const help = {
       'Assembly': 'Assembly opcodes describing the contract including corresponding solidity source code',
       'Opcodes': 'Assembly opcodes describing the contract',
@@ -326,13 +326,13 @@ class CompileTab extends ViewPlugin {
     modalDialog(this.selectedContract, log, { label: '' }, { label: 'Close' })
   }
 
-  insertValue (details, propertyName) {
+  insertValue(details, propertyName) {
     var node
     if (propertyName === 'echoJSContractDeploy' || propertyName === 'echoJSDeploy' || propertyName === 'name' || propertyName === 'Assembly') {
       node = yo`<pre>${details[propertyName]}</pre>`
     } else if (propertyName === 'abi' || propertyName === 'metadata') {
       const treeView = new TreeView({
-        extractData: function (item, parent, key) {
+        extractData: function(item, parent, key) {
           var ret = {}
           if (item instanceof Array) {
             ret.children = item.map((item, index) => ({ key: index, value: item }))
@@ -365,13 +365,13 @@ class CompileTab extends ViewPlugin {
     return yo`<pre class="${css.value}">${node || ''}</pre>`
   }
 
-  getContractProperty (property) {
+  getContractProperty(property) {
     if (!this.selectedContract) throw new Error('No contract compiled yet')
     const contractProperties = this.data.contractsDetails[this.selectedContract]
     return contractProperties[property] || null
   }
 
-  copyContractProperty (property) {
+  copyContractProperty(property) {
     let content = this.getContractProperty(property)
     if (!content) {
       addTooltip('No content available for ' + property)
@@ -388,15 +388,15 @@ class CompileTab extends ViewPlugin {
     addTooltip('Copied value to clipboard')
   }
 
-  copyABI () {
+  copyABI() {
     this.copyContractProperty('abi')
   }
 
-  copyBytecode () {
+  copyBytecode() {
     this.copyContractProperty('bytecode')
   }
 
-  render () {
+  render() {
     if (this._view.el) return this._view.el
     this.onActivationInternal()
     this.listenToEvents()

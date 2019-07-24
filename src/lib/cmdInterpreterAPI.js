@@ -15,7 +15,7 @@ var solidityTypeFormatter = require('../app/tabs/debugger/debuggerUI/vmDebugger/
 var GistHandler = require('./gist-handler')
 
 class CmdInterpreterAPI {
-  constructor (terminal, localRegistry) {
+  constructor(terminal, localRegistry) {
     const self = this
     self.event = new EventManager()
     self._components = {}
@@ -44,11 +44,11 @@ class CmdInterpreterAPI {
       'remix.debugHelp()': 'Display help message for debugging'
     }
   }
-  call (message) {
+  call(message) {
     return this._components.terminal.externalApi.request(message)
   }
-  log () { arguments[0] != null ? this._components.terminal.commands.html(arguments[0]) : this._components.terminal.commands.html(arguments[1]) }
-  highlight (rawLocation) {
+  log() { arguments[0] != null ? this._components.terminal.commands.html(arguments[0]) : this._components.terminal.commands.html(arguments[1]) }
+  highlight(rawLocation) {
     var self = this
     if (!rawLocation) {
       self._components.sourceHighlighter.currentSourceLocation(null)
@@ -59,7 +59,7 @@ class CmdInterpreterAPI {
       self._deps.compilersArtefacts['__last'].getAsts())
     self._components.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
   }
-  debug (hash, cb) {
+  debug(hash, cb) {
     var self = this
     delete self.d
     executionContext.web3().eth.getTransaction(hash, (error, tx) => {
@@ -137,12 +137,12 @@ class CmdInterpreterAPI {
       }
     })
   }
-  loadgist (id, cb) {
+  loadgist(id, cb) {
     const self = this
     self._components.gistHandler.loadFromGist({gist: id}, this._deps.fileManager)
     if (cb) cb()
   }
-  loadurl (url, cb) {
+  loadurl(url, cb) {
     const self = this
     self._components.fileImport.import(url,
       (loadingMsg) => { toolTip(loadingMsg) },
@@ -179,16 +179,16 @@ class CmdInterpreterAPI {
         }
       })
   }
-  setproviderurl (url, cb) {
+  setproviderurl(url, cb) {
     executionContext.setProviderFromEndpoint(url, 'web3', (error) => {
       if (error) toolTip(error)
       if (cb) cb()
     })
   }
-  exeCurrent (cb) {
+  exeCurrent(cb) {
     return this.execute(undefined, cb)
   }
-  getFile (path, cb) {
+  getFile(path, cb) {
     var provider = this._deps.fileManager.fileProviderOf(path)
     if (provider) {
       provider.get(path, cb)
@@ -196,8 +196,8 @@ class CmdInterpreterAPI {
       cb('file not found')
     }
   }
-  setFile (path, content, cb) {
-    cb = cb || function () {}
+  setFile(path, content, cb) {
+    cb = cb || function() {}
     var provider = this._deps.fileManager.fileProviderOf(path)
     if (provider) {
       provider.set(path, content, (error) => {
@@ -209,10 +209,10 @@ class CmdInterpreterAPI {
       cb('file not found')
     }
   }
-  execute (file, cb) {
+  execute(file, cb) {
     const self = this
 
-    function _execute (content, cb) {
+    function _execute(content, cb) {
       if (!content) {
         toolTip('no content to execute')
         if (cb) cb()
@@ -246,7 +246,7 @@ class CmdInterpreterAPI {
       _execute(content, cb)
     })
   }
-  help (cb) {
+  help(cb) {
     const self = this
     var help = yo`<div></div>`
     for (var k in self.commandHelp) {
@@ -257,7 +257,7 @@ class CmdInterpreterAPI {
     if (cb) cb()
     return ''
   }
-  debugHelp (cb) {
+  debugHelp(cb) {
     const self = this
     var help = yo`<div>Here are some examples of scripts that can be run (using remix.exeCurrent() or directly from the console)</div>`
     help.appendChild(yo`<br>`)

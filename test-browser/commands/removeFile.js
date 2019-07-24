@@ -1,7 +1,7 @@
 const EventEmitter = require('events')
 
 class RemoveFile extends EventEmitter {
-  command (path) {
+  command(path) {
     this.api.perform((done) => {
       removeFile(this.api, path, () => {
         done()
@@ -12,9 +12,9 @@ class RemoveFile extends EventEmitter {
   }
 }
 
-function removeFile (browser, path, done) {
-  browser.execute(function (path) {
-    function contextMenuClick (element) {
+function removeFile(browser, path, done) {
+  browser.execute(function(path) {
+    function contextMenuClick(element) {
       var evt = element.ownerDocument.createEvent('MouseEvents')
       var RIGHT_CLICK_BUTTON_CODE = 2 // the same for FF and IE
       evt.initMouseEvent('contextmenu', true, true,
@@ -29,7 +29,7 @@ function removeFile (browser, path, done) {
       }
     }
     contextMenuClick(document.querySelector('[data-path="' + path + '"]'))
-  }, [path], function (result) {
+  }, [path], function(result) {
     browser
       .waitForElementVisible('#menuitemdelete', 2000)
       .click('#menuitemdelete')

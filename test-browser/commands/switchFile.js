@@ -1,7 +1,7 @@
 const EventEmitter = require('events')
 
 class SwitchFile extends EventEmitter {
-  command (contractName) {
+  command(contractName) {
     this.api.perform((done) => {
       switchFile(this.api, contractName, () => {
         done()
@@ -12,7 +12,7 @@ class SwitchFile extends EventEmitter {
   }
 }
 
-function switchFile (browser, name, done) {
+function switchFile(browser, name, done) {
   browser.clickLaunchIcon('settings').clickLaunchIcon('fileExplorers')
       .click('li[key="' + name + '"]')
       .pause(2000)

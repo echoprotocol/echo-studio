@@ -34,7 +34,7 @@ const profile = {
 
 class RunTab extends ViewPlugin {
 
-  constructor (udapp, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView) {
+  constructor(udapp, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, mainView) {
     super(profile)
     this.event = new EventManager()
     this.config = config
@@ -47,7 +47,7 @@ class RunTab extends ViewPlugin {
     this.networkModule = networkModule
   }
 
-  onActivationInternal () {
+  onActivationInternal() {
     this.udappUI = new UniversalDAppUI(this.udapp, this.logCallback)
     this.udapp.resetAPI({
       getWifNode: (cb) => {
@@ -81,7 +81,7 @@ class RunTab extends ViewPlugin {
     })
   }
 
-  renderContainer () {
+  renderContainer() {
     this.container = yo`<div class="${css.runTabView} p-3" id="runTabView" ></div>`
 
     var el = yo`
@@ -95,7 +95,7 @@ class RunTab extends ViewPlugin {
     return this.container
   }
 
-  renderInstanceContainer () {
+  renderInstanceContainer() {
     this.instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
 
     const instanceContainerTitle = yo`
@@ -122,7 +122,7 @@ class RunTab extends ViewPlugin {
     this.instanceContainer.appendChild(this.noInstancesText)
   }
 
-  renderSettings (udapp) {
+  renderSettings(udapp) {
     var settings = new Settings(udapp)
     this.settingsUI = new SettingsUI(settings, this.networkModule)
 
@@ -131,7 +131,7 @@ class RunTab extends ViewPlugin {
     })
   }
 
-  renderDropdown (udappUI, fileManager, compilersArtefacts, config, editor, udapp, filePanel, logCallback) {
+  renderDropdown(udappUI, fileManager, compilersArtefacts, config, editor, udapp, filePanel, logCallback) {
     var dropdownLogic = new DropdownLogic(fileManager, compilersArtefacts, config, editor, udapp, filePanel, this)
     this.contractDropdownUI = new ContractDropdownUI(dropdownLogic, logCallback)
 
@@ -147,7 +147,7 @@ class RunTab extends ViewPlugin {
     })
   }
 
-  renderRecorder (udapp, udappUI, fileManager, config, logCallback) {
+  renderRecorder(udapp, udappUI, fileManager, config, logCallback) {
     this.recorderCount = yo`<span>0</span>`
 
     var recorder = new Recorder(udapp, fileManager, config)
@@ -167,7 +167,7 @@ class RunTab extends ViewPlugin {
     this.recorderInterface.render()
   }
 
-  renderRecorderCard () {
+  renderRecorderCard() {
     const collapsedView = yo`
       <div class=${css.recorderCollapsedView}>
         <div class="${css.recorderCount} badge badge-pill badge-primary">${this.recorderCount}</div>
@@ -199,7 +199,7 @@ class RunTab extends ViewPlugin {
     })
   }
 
-  render () {
+  render() {
     this.onActivationInternal()
     executionContext.init(this.config)
     this.udapp.resetEnvironment()

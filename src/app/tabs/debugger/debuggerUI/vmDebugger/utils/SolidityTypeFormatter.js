@@ -6,7 +6,7 @@ module.exports = {
   extractData: extractData
 }
 
-function formatSelf (key, data) {
+function formatSelf(key, data) {
   var style = fontColor(data)
   var keyStyle = data.isProperty ? 'color:#847979' : ''
   if (data.type === 'string') {
@@ -15,13 +15,13 @@ function formatSelf (key, data) {
   return yo`<label style=${keyStyle}>${key}: <label style=${style}>${data.self}</label><label style='font-style:italic'> ${data.isProperty || !data.type ? '' : ' ' + data.type}</label></label>`
 }
 
-function extractData (item, parent, key) {
+function extractData(item, parent, key) {
   var ret = {}
   if (item.isProperty) {
     return item
   }
   if (item.type.lastIndexOf(']') === item.type.length - 1) {
-    ret.children = (item.value || []).map(function (item, index) {
+    ret.children = (item.value || []).map(function(item, index) {
       return {key: index, value: item}
     })
     ret.children.unshift({
@@ -35,13 +35,13 @@ function extractData (item, parent, key) {
     ret.isArray = true
     ret.self = parent.isArray ? '' : item.type
   } else if (item.type.indexOf('struct') === 0) {
-    ret.children = Object.keys((item.value || {})).map(function (key) {
+    ret.children = Object.keys((item.value || {})).map(function(key) {
       return {key: key, value: item.value[key]}
     })
     ret.self = item.type
     ret.isStruct = true
   } else if (item.type.indexOf('mapping') === 0) {
-    ret.children = Object.keys((item.value || {})).map(function (key) {
+    ret.children = Object.keys((item.value || {})).map(function(key) {
       return {key: key, value: item.value[key]}
     })
     ret.isMapping = true
@@ -54,7 +54,7 @@ function extractData (item, parent, key) {
   return ret
 }
 
-function fontColor (data) {
+function fontColor(data) {
   var color = '#124B46'
   if (data.isArray || data.isStruct || data.isMapping) {
     color = '#847979'

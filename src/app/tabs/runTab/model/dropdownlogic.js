@@ -7,7 +7,7 @@ var CompilerAbstract = require('../../../compiler/compiler-abstract')
 var EventManager = remixLib.EventManager
 
 class DropdownLogic {
-  constructor (fileManager, compilersArtefacts, config, editor, udapp, filePanel, runView) {
+  constructor(fileManager, compilersArtefacts, config, editor, udapp, filePanel, runView) {
     this.compilersArtefacts = compilersArtefacts
     this.config = config
     this.editor = editor
@@ -25,7 +25,7 @@ class DropdownLogic {
   }
 
   // TODO: can be moved up; the event in contractDropdown will have to refactored a method instead
-  listenToCompilationEvents () {
+  listenToCompilationEvents() {
     this.runView.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
       // TODO check whether the tab is configured
       let compiler = new CompilerAbstract(languageVersion, data, source)
@@ -35,7 +35,7 @@ class DropdownLogic {
     })
   }
 
-  loadContractFromAddress (address, confirmCb, cb) {
+  loadContractFromAddress(address, confirmCb, cb) {
     if (!executionContext.echojslib().validators.isContractId(address)) {
       return cb('Invalid address.')
     }
@@ -54,7 +54,7 @@ class DropdownLogic {
     cb(null, 'instance')
   }
 
-  getCompiledContracts (compiler, compilerFullName) {
+  getCompiledContracts(compiler, compilerFullName) {
     var contracts = []
     compiler.visitContracts((contract) => {
       contracts.push(contract)
@@ -62,7 +62,7 @@ class DropdownLogic {
     return contracts
   }
 
-  getSelectedContract (contractName, compilerAtributeName) {
+  getSelectedContract(contractName, compilerAtributeName) {
     if (!contractName) return null
 
     var compiler = this.compilersArtefacts[compilerAtributeName]
@@ -93,27 +93,27 @@ class DropdownLogic {
     }
   }
 
-  fromWei (value, doTypeConversion, unit) {
+  fromWei(value, doTypeConversion, unit) {
     if (doTypeConversion) {
       return executionContext.web3().fromWei(typeConversion.toInt(value), unit || 'ether')
     }
     return executionContext.web3().fromWei(value.toString(10), unit || 'ether')
   }
 
-  toWei (value, unit) {
+  toWei(value, unit) {
     return executionContext.web3().toWei(value, unit || 'gwei')
   }
 
-  calculateFee (gas, gasPrice, unit) {
+  calculateFee(gas, gasPrice, unit) {
     return executionContext.web3().toBigNumber(gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), unit || 'gwei')))
   }
 
-  getGasPrice (cb) {
+  getGasPrice(cb) {
     return executionContext.web3().eth.getGasPrice(cb)
   }
 
   // TODO: check if selectedContract and data can be joined
-  createContract (selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, finalCb) {
+  createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, finalCb) {
     if (data) {
       data.contractName = selectedContract.name
       data.linkReferences = selectedContract.bytecodeLinkReferences
@@ -198,7 +198,7 @@ class DropdownLogic {
     )
   }
 
-  runTransaction (data, continueCb, promptCb, modalDialog, confirmDialog, finalCb) {
+  runTransaction(data, continueCb, promptCb, modalDialog, confirmDialog, finalCb) {
     var confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       if (network.name !== 'Main') {
         return continueTxExecution(null)
@@ -257,7 +257,7 @@ class DropdownLogic {
     this.udapp.runTx(data, confirmationCb, continueCb, promptCb, finalCb)
   }
 
-  async forceSend (selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, statusCb, cb) {
+  async forceSend(selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, statusCb, cb) {
     var constructor = selectedContract.getConstructorInterface()
     // TODO: deployMetadataOf can be moved here
     let contractMetadata

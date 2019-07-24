@@ -10,65 +10,65 @@ const requiredModules = [ // services + layout views + system views
 
 export class RemixAppManager extends PluginEngine {
 
-  constructor (plugins) {
+  constructor(plugins) {
     super(plugins)
     this.permissionHandler = new PermissionHandler()
     this.event = new EventEmitter()
     this.registered = {}
   }
 
-  onActivated (plugin) {
+  onActivated(plugin) {
     localStorage.setItem('workspace', JSON.stringify(this.actives))
     this.event.emit('activate', plugin.name)
   }
 
-  getAll () {
+  getAll() {
     return Object.keys(this.registered).map((p) => {
       return this.registered[p]
     })
   }
 
-  getOne (name) {
+  getOne(name) {
     return this.registered[name]
   }
 
-  getIds () {
+  getIds() {
     return Object.keys(this.registered)
   }
 
-  onRegistration (plugin) {
+  onRegistration(plugin) {
     if (!this.registered) this.registered = {}
     this.registered[plugin.name] = plugin
     this.event.emit('added', plugin.name)
   }
 
-  onDeactivated (plugin) {
+  onDeactivated(plugin) {
     localStorage.setItem('workspace', JSON.stringify(this.actives))
     this.event.emit('deactivate', plugin.name)
   }
 
   // TODO check whether this can be removed
-  ensureActivated (apiName) {
+  ensureActivated(apiName) {
     if (!this.isActive(apiName)) this.activateOne(apiName)
     this.event.emit('ensureActivated', apiName)
   }
 
   // TODO check whether this can be removed
-  ensureDeactivated (apiName) {
+  ensureDeactivated(apiName) {
     if (this.isActive(apiName)) this.deactivateOne(apiName)
     this.event.emit('ensureDeactivated', apiName)
   }
 
-  deactivateOne (name) {
+  deactivateOne(name) {
     if (requiredModules.includes(name)) return
     super.deactivateOne(name)
   }
 
-  isRequired (name) {
+  isRequired(name) {
     return requiredModules.includes(name)
   }
 
-  registeredPlugins () {
+  registeredPlugins() {
     let vyper = {
       name: 'vyper',
       displayName: 'Vyper',

@@ -10,7 +10,7 @@ const globalRegistry = require('../../../global/registry')
 
 class SettingsUI {
 
-  constructor (settings, networkModule) {
+  constructor(settings, networkModule) {
     this.settings = settings
     this.event = new EventManager()
     this._components = {}
@@ -31,7 +31,7 @@ class SettingsUI {
     this._initEventListeners()
   }
 
-  _initEventListeners () {
+  _initEventListeners() {
     this.settings.event.register('connectToNetwork', (name, id) => {
       this.netUI.innerHTML = `${name} (${id || '-'}) network`
       this._clearAccountsAndAssets()
@@ -65,7 +65,7 @@ class SettingsUI {
     })
   }
 
-  render () {
+  render() {
     this.netUI = yo`<span class="${css.network} badge badge-secondary"></span>`
 
     var environmentEl = yo`
@@ -157,7 +157,7 @@ class SettingsUI {
     return el
   }
 
-  setDropdown (selectExEnv) {
+  setDropdown(selectExEnv) {
     this.selectExEnv = selectExEnv
 
     this.settings.event.register('addProvider', (network) => {
@@ -199,7 +199,7 @@ class SettingsUI {
     selectExEnv.value = this.settings.getProvider()
   }
 
-  setWifInput () {
+  setWifInput() {
     const settings = document.querySelector(`.${css.settings}`)
     const toInsertAfterNode = settings.childNodes[1]
 
@@ -216,7 +216,7 @@ class SettingsUI {
     settings.insertBefore(wifInput, toInsertAfterNode.nextSibling)
   }
 
-  removeWifInput () {
+  removeWifInput() {
     const settings = document.querySelector(`.${css.settings}`)
     const nodeToDelete = document.querySelector('#wifBlock')
 
@@ -225,7 +225,7 @@ class SettingsUI {
     }
   }
 
-  setFinalContext () {
+  setFinalContext() {
     // set the final context. Cause it is possible that this is not the one we've originaly selected
     const provider = this.settings.getProvider()
 
@@ -239,7 +239,7 @@ class SettingsUI {
     this.event.trigger('clearInstance', [])
   }
 
-  signMessage () {
+  signMessage() {
     this.settings.getAccounts((err, accounts) => {
       if (err) {
         return addTooltip(`Cannot get account list: ${err}`)
@@ -284,7 +284,7 @@ class SettingsUI {
     })
   }
 
-  async getInfoByWif () {
+  async getInfoByWif() {
     try {
       const txOrigin = this.el.querySelector('#txorigin')
 
@@ -305,7 +305,7 @@ class SettingsUI {
   }
 
   // TODO: unclear what's the goal of accountListCallId, feels like it can be simplified
-  fillAccountsList () {
+  fillAccountsList() {
     if (!this.el) return
     this.accountListCallId++
     let callid = this.accountListCallId
@@ -336,8 +336,7 @@ class SettingsUI {
     })
   }
 
-  updateAccountBalances () {
-
+  updateAccountBalances() {
     if (!this.el) return
     let accountEl = this.el.querySelector('#txorigin')
     if (accountEl.selectedIndex === -1) return
@@ -372,7 +371,7 @@ class SettingsUI {
     })
   }
 
-  _clearAccountsAndAssets () {
+  _clearAccountsAndAssets() {
     let accountEl = this.el.querySelector('#txorigin')
     let assetsEl = this.el.querySelector('#assets')
     accountEl.innerHTML = ''

@@ -8,13 +8,13 @@ var sources = [
 ]
 
 module.exports = {
-  before: function (browser, done) {
+  before: function(browser, done) {
     init(browser, done)
   },
-  '@sources': function () {
+  '@sources': function() {
     return sources
   },
-  'Deploy Ballot': function (browser) {
+  'Deploy Ballot': function(browser) {
     browser
     .waitForElementVisible('#icon-panel', 10000)
     .clickLaunchIcon('solidity')
@@ -29,7 +29,7 @@ module.exports = {
       {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'}, null, null)
   },
 
-  'Debug Ballot / delegate': function (browser) {
+  'Debug Ballot / delegate': function(browser) {
     browser.pause(500)
     .click('span#tx0x0571a2439ea58bd349dd130afb8aff62a33af14c06de0dbc3928519bdf13ce2e button[class^="debug"]')
     .pause(2000)
@@ -42,7 +42,7 @@ module.exports = {
     .checkVariableDebug('soliditylocals', localsCheck)
   },
 
-  'Access Ballot via at address': function (browser) {
+  'Access Ballot via at address': function(browser) {
     browser.clickLaunchIcon('run')
     .click('button[class^="udappClose"]')
     .addFile('ballot.abi', { content: ballotABI })

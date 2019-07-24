@@ -3,16 +3,16 @@ var init = require('../helpers/init')
 var sauce = require('./sauce')
 
 module.exports = {
-  before: function (browser, done) {
+  before: function(browser, done) {
     init(browser, done)
   },
-  '@sources': function () {
+  '@sources': function() {
     return sources
   },
-  'Add Lib Test File': function (browser) {
+  'Add Lib Test File': function(browser) {
     browser.addFile('Untitled5.sol', sources[0]['browser/Untitled5.sol'])
   },
-  'Test Auto Deploy Lib': function (browser) {
+  'Test Auto Deploy Lib': function(browser) {
     let addressRef
     browser.verifyContracts(['test'])
           .selectContract('test')
@@ -29,7 +29,7 @@ module.exports = {
             })
           })
   },
-  'Test Manual Deploy Lib': function (browser) {
+  'Test Manual Deploy Lib': function(browser) {
     console.log('testManualDeployLib')
     browser.click('i[class^="clearinstance"]')
           .pause(5000)
@@ -54,7 +54,7 @@ module.exports = {
   tearDown: sauce
 }
 
-function checkDeployShouldFail (browser, callback) {
+function checkDeployShouldFail(browser, callback) {
   let config
   browser.switchFile('browser/test.json')
         .getEditorValue((content) => {
@@ -71,7 +71,7 @@ function checkDeployShouldFail (browser, callback) {
         .perform(() => { callback() })
 }
 
-function checkDeployShouldSucceed (browser, address, callback) {
+function checkDeployShouldSucceed(browser, address, callback) {
   let addressRef
   let config
   browser.switchFile('browser/test.json')

@@ -27,7 +27,7 @@ var css = csjs`
 `
 
 export class MainView {
-  constructor (editor, mainPanel, fileManager, appManager, txListener, eventsDecoder) {
+  constructor(editor, mainPanel, fileManager, appManager, txListener, eventsDecoder) {
     var self = this
     self.event = new EventManager()
     self._view = {}
@@ -41,17 +41,17 @@ export class MainView {
     this.appManager = appManager
     this.init()
   }
-  showApp (name) {
+  showApp(name) {
     this.fileManager.unselectCurrentFile()
     this.mainPanel.showContent(name)
     this._view.editor.style.display = 'none'
     this._components.contextView.hide()
     this._view.mainPanel.style.display = 'block'
   }
-  getAppPanel () {
+  getAppPanel() {
     return this.mainPanel
   }
-  init () {
+  init() {
     var self = this
     self._deps = {
       config: self._components.registry.get('config').api,
@@ -123,7 +123,7 @@ export class MainView {
       })
     }
   }
-  _adjustLayout (direction, delta) {
+  _adjustLayout(direction, delta) {
     var limitUp = 0
     var limitDown = 32
     var containerHeight = window.innerHeight - limitUp // - menu bar containerHeight
@@ -152,31 +152,31 @@ export class MainView {
       self._components.terminal.scroll2bottom()
     }
   }
-  getTerminal () {
+  getTerminal() {
     return this._components.terminal
   }
-  getEditor () {
+  getEditor() {
     var self = this
     return self.editor
   }
-  refresh () {
+  refresh() {
     var self = this
     self._view.tabs.onmouseenter()
   }
-  log (data = {}) {
+  log(data = {}) {
     var self = this
     var command = self._components.terminal.commands[data.type]
     if (typeof command === 'function') command(data.value)
   }
-  logMessage (msg) {
+  logMessage(msg) {
     var self = this
     self.log({type: 'log', value: msg})
   }
-  logHtmlMessage (msg) {
+  logHtmlMessage(msg) {
     var self = this
     self.log({type: 'html', value: msg})
   }
-  render () {
+  render() {
     var self = this
     if (self._view.el) return self._view.el
     self._view.editor = self.editor.render()
@@ -206,11 +206,11 @@ export class MainView {
 
     return self._view.el
   }
-  registerCommand (name, command, opts) {
+  registerCommand(name, command, opts) {
     var self = this
     return self._components.terminal.registerCommand(name, command, opts)
   }
-  updateTerminalFilter (filter) {
+  updateTerminalFilter(filter) {
     this._components.terminal.updateJournal(filter)
   }
 }

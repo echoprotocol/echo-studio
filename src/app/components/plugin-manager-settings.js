@@ -44,7 +44,7 @@ const css = csjs`
 
 export class PluginManagerSettings {
 
-  openDialog () {
+  openDialog() {
     const fromLocal = window.localStorage.getItem('plugins/permissions')
     this.permissions = JSON.parse(fromLocal || '{}')
     this.currentSetting = this.settings()
@@ -53,13 +53,13 @@ export class PluginManagerSettings {
     )
   }
 
-  onValidation () {
+  onValidation() {
     const permissions = JSON.stringify(this.permissions)
     window.localStorage.setItem('plugins/permissions', permissions)
   }
 
   /** Clear one permission from a plugin */
-  clearPersmission (from, to) {
+  clearPersmission(from, to) {
     if (!this.permissions[from]) return
     delete this.permissions[from][to]
     if (Object.keys(this.permissions[from]).length === 0) {
@@ -69,16 +69,16 @@ export class PluginManagerSettings {
   }
 
   /** Clear all persmissions from a plugin */
-  clearAllPersmission (from) {
+  clearAllPersmission(from) {
     if (!this.permissions[from]) return
     delete this.permissions[from]
     yo.update(this.currentSetting, this.settings())
   }
 
-  settings () {
+  settings() {
     const permissionByModule = (key, permission) => {
       const permissionByPlugin = (name, plugin) => {
-        function updatePermission () {
+        function updatePermission() {
           plugin.allow = !plugin.allow
         }
         const checkbox = plugin.allow
@@ -124,7 +124,7 @@ export class PluginManagerSettings {
     </form>`
   }
 
-  render () {
+  render() {
     return yo`
     <footer class="navbar navbar-light bg-light ${css.permissions}">
       <button onclick="${() => this.openDialog()}" class="btn btn-info">Settings</button>

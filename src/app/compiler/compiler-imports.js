@@ -14,13 +14,13 @@ const profile = {
 }
 
 module.exports = class CompilerImports extends Plugin {
-  constructor (githubAccessToken) {
+  constructor(githubAccessToken) {
     super(profile)
     this.githubAccessToken = githubAccessToken || (() => {})
     this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
   }
 
-  handleGithubCall (root, path, cb) {
+  handleGithubCall(root, path, cb) {
     let param = '?'
 
     param += this.githubAccessToken() ? 'access_token=' + this.githubAccessToken() : ''
@@ -51,13 +51,13 @@ module.exports = class CompilerImports extends Plugin {
       })
   }
 
-  handleSwarmImport (url, cleanUrl, cb) {
-    swarmgw.get(url, function (err, content) {
+  handleSwarmImport(url, cleanUrl, cb) {
+    swarmgw.get(url, function(err, content) {
       cb(err, content, cleanUrl)
     })
   }
 
-  handleIPFS (url, cb) {
+  handleIPFS(url, cb) {
     // replace ipfs:// with /ipfs/
     url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
 
@@ -73,7 +73,7 @@ module.exports = class CompilerImports extends Plugin {
       })
   }
 
-  handleHttpCall (url, cleanUrl, cb) {
+  handleHttpCall(url, cleanUrl, cb) {
     return request.get(
       {
         url
@@ -86,7 +86,7 @@ module.exports = class CompilerImports extends Plugin {
     })
   }
 
-  handlers () {
+  handlers() {
     return [
       { type: 'github', match: /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/, handler: (match, cb) => { this.handleGithubCall(match[3], match[4], cb) } },
       { type: 'http', match: /^(http?:\/\/?(.*))$/, handler: (match, cb) => { this.handleHttpCall(match[1], match[2], cb) } },
@@ -96,11 +96,11 @@ module.exports = class CompilerImports extends Plugin {
     ]
   }
 
-  isRelativeImport (url) {
+  isRelativeImport(url) {
     return /^([^/]+)/.exec(url)
   }
 
-  resolve (url) {
+  resolve(url) {
     return new Promise((resolve, reject) => {
       this.import(url, null, (error, content, cleanUrl, type, url) => {
         if (error) return reject(error)
@@ -109,7 +109,7 @@ module.exports = class CompilerImports extends Plugin {
     })
   }
 
-  import (url, loadingCb, cb) {
+  import(url, loadingCb, cb) {
     if (!loadingCb) loadingCb = () => {}
 
     var self = this
@@ -120,7 +120,7 @@ module.exports = class CompilerImports extends Plugin {
     var handlers = this.handlers()
 
     var found = false
-    handlers.forEach(function (handler) {
+    handlers.forEach(function(handler) {
       if (found) {
         return
       }
@@ -130,7 +130,7 @@ module.exports = class CompilerImports extends Plugin {
         found = true
 
         loadingCb('Loading ' + url + ' ...')
-        handler.handler(match, function (err, content, cleanUrl) {
+        handler.handler(match, function(err, content, cleanUrl) {
           if (err) {
             cb('Unable to import "' + cleanUrl + '": ' + err)
             return

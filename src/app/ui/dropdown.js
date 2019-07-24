@@ -22,7 +22,7 @@ var css = require('./styles/dropdown-styles')
 
 */
 class Dropdown {
-  constructor (opts = {}) {
+  constructor(opts = {}) {
     var self = this
     self.event = new EventManager()
     self.data = {
@@ -35,7 +35,7 @@ class Dropdown {
     self._api = opts.api
     self._events = opts.events
   }
-  render () {
+  render() {
     var self = this
     if (self._view.el) return self._view.el
     self._view.selected = yo`
@@ -74,7 +74,7 @@ class Dropdown {
       </div>
     `
     return self._view.el
-    function emit (event) {
+    function emit(event) {
       var input = event.currentTarget
       var label = input.nextSibling.innerText
       if (input.checked) {
@@ -93,7 +93,7 @@ class Dropdown {
       }
       self._view.selected.children[0].innerText = `[${self.data.selected.length}] ${self.data.selected.join(', ')}`
     }
-    function updateDependencies (changed) {
+    function updateDependencies(changed) {
       if (self.data._dependencies[changed]) {
         for (var dep in self.data._dependencies[changed]) {
           var label = self.data._dependencies[changed][dep]
@@ -103,7 +103,7 @@ class Dropdown {
         }
       }
     }
-    function show (event) {
+    function show(event) {
       event.stopPropagation()
       var options = event.currentTarget.children[1]
       var parent = event.target.parentElement
@@ -116,7 +116,7 @@ class Dropdown {
         options.style.display = 'none'
         document.body.removeEventListener('click', handler)
       }
-      function handler (event) {
+      function handler(event) {
         options.style.display = 'none'
         document.body.removeEventListener('click', handler)
       }

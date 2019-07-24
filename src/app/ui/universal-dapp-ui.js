@@ -19,13 +19,13 @@ var modalCustom = require('./modal-dialog-custom')
 var modalDialog = require('./modaldialog')
 var TreeView = require('./TreeView')
 
-function UniversalDAppUI (udapp, logCallback) {
+function UniversalDAppUI(udapp, logCallback) {
   this.udapp = udapp
   this.logCallback = logCallback
   this.compilerData = {contractsDetails: {}}
 }
 
-function decodeResponseToTreeView (response, fnabi) {
+function decodeResponseToTreeView(response, fnabi) {
   var treeView = new TreeView({
     extractData: (item, parent, key) => {
       var ret = {}
@@ -41,7 +41,7 @@ function decodeResponseToTreeView (response, fnabi) {
   return treeView.render(txFormat.decodeResponse(response, fnabi))
 }
 
-UniversalDAppUI.prototype.renderInstance = function (contract, address, contractName, txId) {
+UniversalDAppUI.prototype.renderInstance = function(contract, address, contractName, txId) {
   var noInstances = document.querySelector('[class^="noInstancesText"]')
   if (noInstances) {
     noInstances.parentNode.removeChild(noInstances)
@@ -54,7 +54,7 @@ UniversalDAppUI.prototype.renderInstance = function (contract, address, contract
 // this will render an instance: contract name, contract address, and all the public functions
 // basically this has to be called for the "atAddress" (line 393) and when a contract creation succeed
 // this returns a DOM element
-UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address, contractName, txId) {
+UniversalDAppUI.prototype.renderInstanceFromABI = function(contractABI, address, contractName, txId) {
   var self = this
   // address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   var instance = yo`<div class="instance ${css.instance} ${css.hidesub}" id="instance${address}"></div>`
@@ -94,12 +94,12 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     </div>
   `
 
-  function remove () {
+  function remove() {
     instance.remove()
     // @TODO perhaps add a callack here to warn the caller that the instance has been removed
   }
 
-  function toggleClass (e) {
+  function toggleClass(e) {
     $(instance).toggleClass(`${css.hidesub}`)
     // e.currentTarget.querySelector('i')
     e.currentTarget.querySelector('i').classList.toggle(`fa-angle-right`)
@@ -139,7 +139,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
 
 // TODO this is used by renderInstance when a new instance is displayed.
 // this returns a DOM element.
-UniversalDAppUI.prototype.getCallButton = function (args) {
+UniversalDAppUI.prototype.getCallButton = function(args) {
   var self = this
   // args.funABI, args.address [fun only]
   // args.contractName [constr only]
@@ -147,7 +147,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
 
   var outputOverride = yo`<div class=${css.value}></div>` // show return value
 
-  function clickButton (valArr, inputsValues) {
+  function clickButton(valArr, inputsValues) {
     var logMsg
     if (!args.funABI.constant) {
       logMsg = `transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`

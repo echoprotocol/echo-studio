@@ -32,7 +32,7 @@ const css = csjs`
 *
 */
 export default class PanelsResize {
-  constructor (idpanel1, idpanel2, opt) {
+  constructor(idpanel1, idpanel2, opt) {
     var panel1 = document.querySelector(idpanel1)
     var panel2 = document.querySelector(idpanel2)
     this.panel1 = panel1
@@ -91,7 +91,7 @@ export default class PanelsResize {
       return { panel1Width, panel2left, panel2Width }
     }
 
-    window.addEventListener('resize', function (event) {
+    window.addEventListener('resize', function(event) {
       setPosition({ x: panel1.offsetLeft + panel1.clientWidth })
     })
 
@@ -101,7 +101,7 @@ export default class PanelsResize {
     setPosition(opt)
   }
 
-  minimize () {
+  minimize() {
     let panel1Width = 0
     let panel2left = this.panel1.offsetLeft + panel1Width
     let panel2Width = this.panel2.parentElement.clientWidth - this.panel1.offsetLeft - panel1Width
@@ -110,7 +110,7 @@ export default class PanelsResize {
     this.panel2.style.width = panel2Width + 'px'
   }
 
-  maximise () {
+  maximise() {
     let panel1Width = this.opt.minWidth
     let panel2left = this.panel1.offsetLeft + panel1Width
     let panel2Width = this.panel2.parentElement.clientWidth - this.panel1.offsetLeft - panel1Width

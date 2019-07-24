@@ -26,7 +26,7 @@ var css = csjs`
   }
 `
 
-function VmDebugger (vmDebuggerLogic) {
+function VmDebugger(vmDebuggerLogic) {
   var self = this
   this.view
 
@@ -55,27 +55,27 @@ function VmDebugger (vmDebuggerLogic) {
   this.vmDebuggerLogic.event.register('traceUnloaded', this.stepDetail.reset.bind(this.stepDetail))
   this.vmDebuggerLogic.event.register('newTraceLoaded', this.stepDetail.reset.bind(this.stepDetail))
 
-  this.vmDebuggerLogic.event.register('traceCurrentStepUpdate', function (error, step) {
+  this.vmDebuggerLogic.event.register('traceCurrentStepUpdate', function(error, step) {
     self.stepDetail.updateField('execution step', (error ? '-' : step))
   })
 
-  this.vmDebuggerLogic.event.register('traceMemExpandUpdate', function (error, addmem) {
+  this.vmDebuggerLogic.event.register('traceMemExpandUpdate', function(error, addmem) {
     self.stepDetail.updateField('add memory', (error ? '-' : addmem))
   })
 
-  this.vmDebuggerLogic.event.register('traceStepCostUpdate', function (error, gas) {
+  this.vmDebuggerLogic.event.register('traceStepCostUpdate', function(error, gas) {
     self.stepDetail.updateField('gas', (error ? '-' : gas))
   })
 
-  this.vmDebuggerLogic.event.register('traceCurrentCalledAddressAtUpdate', function (error, address) {
+  this.vmDebuggerLogic.event.register('traceCurrentCalledAddressAtUpdate', function(error, address) {
     self.stepDetail.updateField('loaded address', (error ? '-' : address))
   })
 
-  this.vmDebuggerLogic.event.register('traceRemainingGasUpdate', function (error, remainingGas) {
+  this.vmDebuggerLogic.event.register('traceRemainingGasUpdate', function(error, remainingGas) {
     self.stepDetail.updateField('remaining gas', (error ? '-' : remainingGas))
   })
 
-  this.vmDebuggerLogic.event.register('indexUpdate', function (index) {
+  this.vmDebuggerLogic.event.register('indexUpdate', function(index) {
     self.stepDetail.updateField('vm trace step', index)
   })
 
@@ -96,7 +96,7 @@ function VmDebugger (vmDebuggerLogic) {
   this.fullStoragesChangesPanel = new FullStoragesChangesPanel()
   this.addresses = []
 
-  this.vmDebuggerLogic.event.register('traceAddressesUpdate', function (_addresses) {
+  this.vmDebuggerLogic.event.register('traceAddressesUpdate', function(_addresses) {
     self.fullStoragesChangesPanel.update({})
   })
 
@@ -122,7 +122,7 @@ function VmDebugger (vmDebuggerLogic) {
   this.vmDebuggerLogic.start()
 }
 
-VmDebugger.prototype.renderHead = function () {
+VmDebugger.prototype.renderHead = function() {
   var headView = yo`<div id='vmheadView' class="${css.vmheadView} container">
         <div class="row" >
           <div class="${css.asmCode} column">${this.asmCode.render()}</div>
@@ -135,12 +135,12 @@ VmDebugger.prototype.renderHead = function () {
   return headView
 }
 
-VmDebugger.prototype.remove = function () {
+VmDebugger.prototype.remove = function() {
   // used to stop listenning on event. bad and should be "refactored"
   this.view = null
 }
 
-VmDebugger.prototype.render = function () {
+VmDebugger.prototype.render = function() {
   var view = yo`<div id='vmdebugger'>
         <div>
             ${this.solidityLocals.render()}

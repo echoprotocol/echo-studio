@@ -1,10 +1,10 @@
 'use strict'
 
 // Allowing window to be overriden for testing
-function QueryParams (_window) {
+function QueryParams(_window) {
   if (_window === undefined) _window = window
 
-  this.get = function () {
+  this.get = function() {
     var qs = _window.location.hash.substr(1)
 
     if (_window.location.search.length > 0) {
@@ -24,7 +24,7 @@ function QueryParams (_window) {
     return params
   }
 
-  this.update = function (params) {
+  this.update = function(params) {
     var currentParams = this.get()
     var keys = Object.keys(params)
     for (var x in keys) {

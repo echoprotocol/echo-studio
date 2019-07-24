@@ -1,7 +1,7 @@
 const EventEmitter = require('events')
 
 class AddFile extends EventEmitter {
-  command (name, content) {
+  command(name, content) {
     this.api.perform((done) => {
       addFile(this.api, name, content, () => {
         done()
@@ -12,22 +12,22 @@ class AddFile extends EventEmitter {
   }
 }
 
-function addFile (browser, name, content, done) {
+function addFile(browser, name, content, done) {
   browser.clickLaunchIcon('run').clickLaunchIcon('fileExplorers').click('.newFile')
       .perform((client, done) => {
-        browser.execute(function (fileName) {
+        browser.execute(function(fileName) {
           if (fileName !== 'Untitled.sol') {
             document.querySelector('#modal-dialog #prompt_text').setAttribute('value', fileName)
           }
           document.querySelector('#modal-footer-ok').click()
-        }, [name], function (result) {
+        }, [name], function(result) {
           console.log(result)
           done()
         })
       })
       .setEditorValue(content.content)
       .pause(1000)
-      .perform(function () {
+      .perform(function() {
         done()
       })
 }

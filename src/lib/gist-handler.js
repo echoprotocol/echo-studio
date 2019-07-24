@@ -3,12 +3,12 @@ var modalDialogCustom = require('../app/ui/modal-dialog-custom')
 var request = require('request')
 
 // Allowing window to be overriden for testing
-function GistHandler (_window) {
+function GistHandler(_window) {
   if (_window !== undefined) {
     modalDialogCustom = _window
   }
 
-  this.handleLoad = function (params, cb) {
+  this.handleLoad = function(params, cb) {
     if (!cb) cb = () => {}
     var loadingFromGist = false
     var gistId
@@ -35,7 +35,7 @@ function GistHandler (_window) {
     return loadingFromGist
   }
 
-  function getGistId (str) {
+  function getGistId(str) {
     var idr = /[0-9A-Fa-f]{8,}/
     var match = idr.exec(str)
     return match ? match[0] : null
@@ -44,7 +44,7 @@ function GistHandler (_window) {
   this.loadFromGist = (params, fileManager) => {
     const gistProvider = fileManager.fileProviderOf('gist')
     const self = this
-    return self.handleLoad(params, function (gistId) {
+    return self.handleLoad(params, function(gistId) {
       request.get({
         url: `https://api.github.com/gists/${gistId}`,
         json: true

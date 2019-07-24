@@ -1,7 +1,7 @@
 const EventEmitter = require('events')
 
 class SelectContract extends EventEmitter {
-  command (contractName) {
+  command(contractName) {
     this.api.perform((done) => {
       selectContract(this.api, contractName, () => {
         done()
@@ -12,7 +12,7 @@ class SelectContract extends EventEmitter {
   }
 }
 
-function selectContract (browser, contractName, callback) {
+function selectContract(browser, contractName, callback) {
   browser.clickLaunchIcon('settings').clickLaunchIcon('run')
   .setValue('#runTabView select[class^="contractNames"]', contractName).perform(() => {
     callback()

@@ -19,7 +19,7 @@ const profile = {
 
 module.exports = class UniversalDApp extends Plugin {
 
-  constructor (registry) {
+  constructor(registry) {
     super(profile)
     this.events = new EventEmitter()
     this.event = new EventManager()
@@ -43,13 +43,13 @@ module.exports = class UniversalDApp extends Plugin {
 
   // TODO : event should be triggered by Udapp instead of TxListener
   /** Listen on New Transaction. (Cannot be done inside constructor because txlistener doesn't exist yet) */
-  startListening (txlistener) {
+  startListening(txlistener) {
     txlistener.event.register('newTransaction', (tx) => {
       this.events.emit('newTransaction', tx)
     })
   }
 
-  resetEnvironment () {
+  resetEnvironment() {
     this.accounts = {}
     // TODO: most params here can be refactored away in txRunner
     this.txRunner = new TxRunner(this.accounts, {
@@ -71,7 +71,7 @@ module.exports = class UniversalDApp extends Plugin {
     })
   }
 
-  resetAPI (transactionContextAPI) {
+  resetAPI(transactionContextAPI) {
     this.transactionContextAPI = transactionContextAPI
   }
 
@@ -118,7 +118,7 @@ module.exports = class UniversalDApp extends Plugin {
   //   }
   // }
 
-  getAccounts (cb) {
+  getAccounts(cb) {
     return new Promise((resolve, reject) => {
       const provider = executionContext.getProvider()
       switch (provider) {
@@ -137,7 +137,7 @@ module.exports = class UniversalDApp extends Plugin {
     })
   }
 
-  async getInfo (wif) {
+  async getInfo(wif) {
     const pb = executionContext.echojslib().PrivateKey.fromWif(wif).toPublicKey().toPublicKeyString()
     const [[accountId]] = await executionContext.getEchoApi().getKeyReferences([pb])
     const [info] = await executionContext.getEchoApi().getFullAccounts([accountId])
@@ -145,7 +145,7 @@ module.exports = class UniversalDApp extends Plugin {
     return { accountId, name }
   }
 
-  validateWif (wif) {
+  validateWif(wif) {
     try {
       const valueFromWif = executionContext.echojslib().PrivateKey.fromWif(wif)
 
@@ -160,7 +160,7 @@ module.exports = class UniversalDApp extends Plugin {
     return true
   }
 
-  getAccountBalances (accountId, cb) {
+  getAccountBalances(accountId, cb) {
     executionContext.getEchoApi().getFullAccounts([accountId])
     .then((results) => {
       if (!results || !results[0]) {
@@ -206,7 +206,7 @@ module.exports = class UniversalDApp extends Plugin {
     })
   }
 
-  pendingTransactionsCount () {
+  pendingTransactionsCount() {
     return Object.keys(this.txRunner.pendingTxs).length
   }
 
@@ -216,7 +216,7 @@ module.exports = class UniversalDApp extends Plugin {
     * @param {String} data    - data to send with the transaction ( return of txFormat.buildData(...) ).
     * @param {Function} callback    - callback.
     */
-  createContract (data, confirmationCb, continueCb, promptCb, callback) {
+  createContract(data, confirmationCb, continueCb, promptCb, callback) {
     this.runTx({data: data, useCall: false}, confirmationCb, continueCb, promptCb, (error, txResult) => {
       // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
       callback(error, txResult)
@@ -231,26 +231,26 @@ module.exports = class UniversalDApp extends Plugin {
     * @param {Object} funAbi    - abi definition of the function to call.
     * @param {Function} callback    - callback.
     */
-  callFunction (to, data, funAbi, confirmationCb, continueCb, promptCb, callback) {
+  callFunction(to, data, funAbi, confirmationCb, continueCb, promptCb, callback) {
     this.runTx({to: to, data: data, useCall: funAbi.constant}, confirmationCb, continueCb, promptCb, (error, txResult) => {
       // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
       callback(error, txResult)
     })
   }
 
-  context () {
+  context() {
     return 'blockchain'
   }
 
-  getABI (contract) {
+  getABI(contract) {
     return txHelper.sortAbiFunction(contract.abi)
   }
 
-  getFallbackInterface (contractABI) {
+  getFallbackInterface(contractABI) {
     return txHelper.getFallbackInterface(contractABI)
   }
 
-  getInputs (funABI) {
+  getInputs(funABI) {
     if (!funABI.inputs) {
       return ''
     }
@@ -263,7 +263,7 @@ module.exports = class UniversalDApp extends Plugin {
    *
    * @param {Object} tx    - transaction.
    */
-  sendTransaction (tx) {
+  sendTransaction(tx) {
     return new Promise((resolve, reject) => {
       executionContext.detectNetwork((error, network) => {
         if (error) return reject(error)
@@ -292,7 +292,7 @@ module.exports = class UniversalDApp extends Plugin {
    * @param {Object} tx    - transaction.
    * @param {Function} callback    - callback.
    */
-  silentRunTx (tx, cb) {
+  silentRunTx(tx, cb) {
     this.txRunner.rawRun(
       tx,
       (network, tx, gasEstimation, continueTxExecution, cancelCb) => { continueTxExecution() },
@@ -302,13 +302,13 @@ module.exports = class UniversalDApp extends Plugin {
     )
   }
 
-  runTx (args, confirmationCb, continueCb, promptCb, cb) {
+  runTx(args, confirmationCb, continueCb, promptCb, cb) {
     const self = this
     async.waterfall([
-      function checkForWif (next) {
+      function checkForWif(next) {
         console.log('checkForWif')
         if (self.transactionContextAPI.getWifNode) {
-          self.transactionContextAPI.getWifNode(function (err, wifNode) {
+          self.transactionContextAPI.getWifNode(function(err, wifNode) {
             if (err) {
               return next(err)
             }
@@ -328,7 +328,7 @@ module.exports = class UniversalDApp extends Plugin {
           })
         }
       },
-      function queryValue (wif, next) {
+      function queryValue(wif, next) {
         console.log('queryValue')
         console.log(wif)
         if (args.value) {
@@ -337,11 +337,11 @@ module.exports = class UniversalDApp extends Plugin {
         if (args.useCall || !self.transactionContextAPI.getValue) {
           return next(null, 0, wif)
         }
-        self.transactionContextAPI.getValue(function (err, value) {
+        self.transactionContextAPI.getValue(function(err, value) {
           next(err, value, wif)
         })
       },
-      function getAccount (value, wif, next) {
+      function getAccount(value, wif, next) {
         console.log('getAccount')
         console.log(wif)
         if (args.from) {
@@ -350,12 +350,12 @@ module.exports = class UniversalDApp extends Plugin {
         }
         if (self.transactionContextAPI.getAddress) {
           console.log(2)
-          return self.transactionContextAPI.getAddress(function (err, address) {
+          return self.transactionContextAPI.getAddress(function(err, address) {
             console.log(3)
             next(err, address, value, wif)
           })
         }
-        self.getAccounts(function (err, accounts) {
+        self.getAccounts(function(err, accounts) {
           let address = accounts[0]
 
           if (err) return next(err)
@@ -363,18 +363,18 @@ module.exports = class UniversalDApp extends Plugin {
           next(null, address, value, wif)
         })
       },
-      function getAsset (fromAddress, value, wif, next) {
+      function getAsset(fromAddress, value, wif, next) {
         console.log('getAsset')
         if (args.asset) {
           return next(null, args.from, value, wif)
         }
         if (self.transactionContextAPI.getAsset) {
-          return self.transactionContextAPI.getAsset(function (err, asset) {
+          return self.transactionContextAPI.getAsset(function(err, asset) {
             next(err, asset, fromAddress, value, wif)
           })
         }
       },
-      function runTransaction (asset, fromAddress, value, wif, next) {
+      function runTransaction(asset, fromAddress, value, wif, next) {
         console.log('runTransaction')
         console.log(args)
         var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, timestamp: args.data.timestamp, asset, wif, contractMethod: args.data.contractMethod }
@@ -386,7 +386,7 @@ module.exports = class UniversalDApp extends Plugin {
 
         self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
         self.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
-          function (error, result) {
+          function(error, result) {
             console.log('rawRun callback')
             console.log(`isErr: ${!!error}`)
             let eventName = (tx.useCall || args.data.contractMethod === executionContext.echojslib().constants.OPERATIONS_IDS.CALL_CONTRACT ? 'callExecuted' : 'transactionExecuted')

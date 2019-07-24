@@ -4,7 +4,7 @@ var test = require('tape')
 
 var QueryParams = require('../src/lib/query-params')
 
-test('queryParams.get', function (t) {
+test('queryParams.get', function(t) {
   t.plan(2)
 
   var fakeWindow = {location: {hash: '#wat=sup&foo=bar', search: ''}}
@@ -13,7 +13,7 @@ test('queryParams.get', function (t) {
   t.equal(params.foo, 'bar')
 })
 
-test('queryParams.update', function (t) {
+test('queryParams.update', function(t) {
   t.plan(1)
 
   var fakeWindow = {location: {hash: '#wat=sup', search: ''}}

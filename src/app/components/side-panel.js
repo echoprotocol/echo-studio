@@ -61,7 +61,7 @@ const sidePanel = {
 // TODO merge with vertical-icons.js
 export class SidePanel extends AbstractPanel {
 
-  constructor (appManager, verticalIcons) {
+  constructor(appManager, verticalIcons) {
     super(sidePanel, options)
     this.appManager = appManager
     this.header = this.renderHeader()
@@ -85,12 +85,12 @@ export class SidePanel extends AbstractPanel {
     })
   }
 
-  removeView (profile) {
+  removeView(profile) {
     super.removeView(profile)
     this.verticalIcons.unlinkContent(profile)
   }
 
-  addView (profile, view) {
+  addView(profile, view) {
     super.addView(profile, view)
     this.verticalIcons.linkContent(profile)
   }
@@ -99,13 +99,13 @@ export class SidePanel extends AbstractPanel {
    * Display content and update the header
    * @param {String} name The name of the plugin to display
    */
-  showContent (name) {
+  showContent(name) {
     super.showContent(name)
     yo.update(this.header, this.renderHeader())
   }
 
   /** The header of the side panel */
-  renderHeader () {
+  renderHeader() {
     let name = ' - '
     // let docLink = ''
     let versionWarning
@@ -130,7 +130,7 @@ export class SidePanel extends AbstractPanel {
     `
   }
 
-  render () {
+  render() {
     return yo`
       <section class="${css.panel}">
         ${this.header}

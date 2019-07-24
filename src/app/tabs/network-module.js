@@ -14,7 +14,7 @@ export const profile = {
 // - methods: ['getNetworkProvider', 'getEndpoint', 'detectNetwork', 'addNetwork', 'removeNetwork']
 
 export class NetworkModule extends Plugin {
-  constructor () {
+  constructor() {
     super(profile)
     // TODO: See with remix-lib to make sementic coherent
     // executionContext.event.register('contextChanged', (provider) => {
@@ -35,12 +35,12 @@ export class NetworkModule extends Plugin {
   }
 
   /** Return the current network provider (web3, vm, injected) */
-  getNetworkProvider () {
+  getNetworkProvider() {
     return executionContext.getProvider()
   }
 
   /** Return the current network */
-  detectNetwork () {
+  detectNetwork() {
     return new Promise((resolve, reject) => {
       executionContext.detectNetwork((error, network) => {
         error ? reject(error) : resolve(network)
@@ -49,7 +49,7 @@ export class NetworkModule extends Plugin {
   }
 
   /** Return the url only if network provider is 'web3' */
-  getEndpoint () {
+  getEndpoint() {
     const provider = executionContext.getProvider()
     if (provider !== 'web3') {
       throw new Error('no endpoint: current provider is either injected or vm')
@@ -58,12 +58,12 @@ export class NetworkModule extends Plugin {
   }
 
   /** Add a custom network to the list of available networks */
-  addNetwork (customNetwork) {
+  addNetwork(customNetwork) {
     executionContext.addProvider(customNetwork)
   }
 
   /** Remove a network to the list of availble networks */
-  removeNetwork (name) {
+  removeNetwork(name) {
     executionContext.removeProvider(name)
   }
 }

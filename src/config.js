@@ -3,7 +3,7 @@
 var CONFIG_FILE = '.remix.config'
 const EventEmitter = require('events')
 
-function Config (storage) {
+function Config(storage) {
   this.items = {}
   this.unpersistedItems = {}
   this.events = new EventEmitter()
@@ -17,16 +17,16 @@ function Config (storage) {
   } catch (exception) {
   }
 
-  this.exists = function (key) {
+  this.exists = function(key) {
     return this.items[key] !== undefined
   }
 
-  this.get = function (key) {
+  this.get = function(key) {
     this.ensureStorageUpdated(key)
     return this.items[key]
   }
 
-  this.set = function (key, content) {
+  this.set = function(key, content) {
     this.items[key] = content
     try {
       storage.set(CONFIG_FILE, JSON.stringify(this.items))
@@ -35,7 +35,7 @@ function Config (storage) {
     }
   }
 
-  this.ensureStorageUpdated = function (key) {
+  this.ensureStorageUpdated = function(key) {
     if (key === 'currentFile') {
       if (this.items[key] && this.items[key] !== '' &&
         this.items[key].indexOf('config/') !== 0 &&
@@ -52,13 +52,13 @@ function Config (storage) {
     }
   }
 
-  this.getUnpersistedProperty = function (key) {
+  this.getUnpersistedProperty = function(key) {
     return this.unpersistedItems[key]
   }
 
   // TODO: this only used for *one* property "doNotShowTransactionConfirmationAgain"
   // and can be removed once it's refactored away in txRunner
-  this.setUnpersistedProperty = function (key, value) {
+  this.setUnpersistedProperty = function(key, value) {
     this.unpersistedItems[key] = value
   }
 }

@@ -1,10 +1,10 @@
 // const moduleID = require('./module-id.js')
 
 module.exports = class registry {
-  constructor () {
+  constructor() {
     this.state = {}
   }
-  put ({ api, name }) {
+  put({ api, name }) {
     // const serveruid = moduleID() + '.' + (name || '')
     if (this.state[name]) return this.state[name]
     const server = {
@@ -14,7 +14,7 @@ module.exports = class registry {
     this.state[name] = { server }
     return server
   }
-  get (name) {
+  get(name) {
     // const clientuid = moduleID()
     const state = this.state[name]
     if (!state) return

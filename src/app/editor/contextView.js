@@ -14,7 +14,7 @@ const css = require('./styles/contextView-styles')
    - rename declaration/references
 */
 class ContextView {
-  constructor (opts, localRegistry) {
+  constructor(opts, localRegistry) {
     this._components = {}
     this._components.registry = localRegistry || globalRegistry
     this.contextualListener = opts.contextualListener
@@ -39,7 +39,7 @@ class ContextView {
     })
   }
 
-  render () {
+  render() {
     const view = yo`
       <div class="${css.contextview} ${css.contextviewcontainer} bg-light text-dark border-0">
         <div class=${css.container}>
@@ -52,25 +52,25 @@ class ContextView {
     return view
   }
 
-  hide () {
+  hide() {
     if (this._view) {
       this._view.style.display = 'none'
     }
   }
 
-  show () {
+  show() {
     if (this._view) {
       this._view.style.display = 'block'
     }
   }
 
-  update () {
+  update() {
     if (this._view) {
       yo.update(this._view, this.render())
     }
   }
 
-  _renderTarget () {
+  _renderTarget() {
     let last
     const previous = this._current
     if (this._nodes && this._nodes.length) {
@@ -92,7 +92,7 @@ class ContextView {
     return this.previousElement
   }
 
-  _jumpToInternal (position) {
+  _jumpToInternal(position) {
     const jumpToLine = (lineColumn) => {
       if (lineColumn.start && lineColumn.start.line && lineColumn.start.column) {
         this.editor.gotoLine(lineColumn.start.line, lineColumn.end.column + 1)
@@ -122,7 +122,7 @@ class ContextView {
     }
   }
 
-  _render (node, nodeAtCursorPosition) {
+  _render(node, nodeAtCursorPosition) {
     if (!node) return yo`<div></div>`
     let references = this.contextualListener.referencesOf(node)
     const type = (node.attributes && node.attributes.type) ? node.attributes.type : node.name
@@ -182,7 +182,7 @@ class ContextView {
   }
 }
 
-function isDefinition (node) {
+function isDefinition(node) {
   return node.name === 'ContractDefinition' ||
   node.name === 'FunctionDefinition' ||
   node.name === 'ModifierDefinition' ||

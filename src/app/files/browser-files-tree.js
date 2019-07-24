@@ -3,7 +3,7 @@
 var EventManager = require('../../lib/events')
 
 class FilesTree {
-  constructor (name, storage) {
+  constructor(name, storage) {
     this.event = new EventManager()
     this.storage = storage
     this.type = name
@@ -11,11 +11,11 @@ class FilesTree {
     this.tree = {}
   }
 
-  exists (path, cb) {
+  exists(path, cb) {
     cb(null, this._exists(path))
   }
 
-  updateRefs (path, type) {
+  updateRefs(path, type) {
     var split = path.split('/') // this should be unprefixed path
     var crawlpath = this.tree
     var intermediatePath = ''
@@ -34,18 +34,18 @@ class FilesTree {
     this.storage.set(this.structFile, JSON.stringify(this.tree))
   }
 
-  _exists (path) {
+  _exists(path) {
     var unprefixedpath = this.removePrefix(path)
     return this.storage.exists(unprefixedpath)
   }
 
-  init (cb) {
+  init(cb) {
     var tree = this.storage.get(this.structFile)
     this.tree = tree ? JSON.parse(tree) : {}
     if (cb) cb()
   }
 
-  get (path, cb) {
+  get(path, cb) {
     var unprefixedpath = this.removePrefix(path)
     var content = this.storage.get(unprefixedpath)
     if (cb) {
@@ -54,7 +54,7 @@ class FilesTree {
     return content
   }
 
-  set (path, content, cb) {
+  set(path, content, cb) {
     var unprefixedpath = this.removePrefix(path)
     this.updateRefs(unprefixedpath, 'add')
     var exists = this.storage.exists(unprefixedpath)
@@ -71,15 +71,15 @@ class FilesTree {
     return true
   }
 
-  addReadOnly (path, content) {
+  addReadOnly(path, content) {
     return this.set(path, content)
   }
 
-  isReadOnly (path) {
+  isReadOnly(path) {
     return false
   }
 
-  remove (path) {
+  remove(path) {
     var unprefixedpath = this.removePrefix(path)
     this.updateRefs(unprefixedpath, 'remove')
     if (!this._exists(unprefixedpath)) {
@@ -92,7 +92,7 @@ class FilesTree {
     return true
   }
 
-  rename (oldPath, newPath, isFolder) {
+  rename(oldPath, newPath, isFolder) {
     var unprefixedoldPath = this.removePrefix(oldPath)
     var unprefixednewPath = this.removePrefix(newPath)
     this.updateRefs(unprefixedoldPath, 'remove')
@@ -111,7 +111,7 @@ class FilesTree {
     return false
   }
 
-  resolveDirectory (path, callback) {
+  resolveDirectory(path, callback) {
     if (path[0] === '/') path = path.substring(1)
     if (!path) return callback(null, { [this.type]: {} })
     var tree = {}
@@ -129,7 +129,7 @@ class FilesTree {
     callback(null, tree)
   }
 
-  removePrefix (path) {
+  removePrefix(path) {
     path = path.indexOf(this.type) === 0 ? path.replace(this.type, '') : path
     if (path[0] === '/') return path.substring(1)
     return path

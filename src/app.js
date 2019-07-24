@@ -110,7 +110,7 @@ var css = csjs`
 `
 
 class App {
-  constructor (api = {}, events = {}, opts = {}) {
+  constructor(api = {}, events = {}, opts = {}) {
     var self = this
     self._components = {}
     // setup storage
@@ -149,13 +149,13 @@ class App {
     self._view = {}
   }
 
-  init () {
+  init() {
     var self = this
     self._components.resizeFeature = new PanelsResize('#side-panel', '#editor-container', { 'minWidth': 300, x: 450 })
     run.apply(self)
   }
 
-  render () {
+  render() {
     var self = this
     if (self._view.el) return self._view.el
     // not resizable
@@ -192,7 +192,7 @@ class App {
 
 module.exports = App
 
-async function run () {
+async function run() {
   var self = this
 
   // check the origin and warn message

@@ -11,7 +11,7 @@ var css = csjs`
     max-height: 150px;
   }
 `
-function CodeListView () {
+function CodeListView() {
   this.event = new EventManager()
   this.code
   this.address
@@ -25,12 +25,12 @@ function CodeListView () {
   })
 }
 
-CodeListView.prototype.render = function () {
+CodeListView.prototype.render = function() {
   this.view = yo`<div id='asmcodes' >${this.basicPanel.render({height: style.instructionsList.height})}</div>`
   return this.view
 }
 
-CodeListView.prototype.indexChanged = function (index) {
+CodeListView.prototype.indexChanged = function(index) {
   if (index < 0) return
   if (this.itemSelected) {
     this.itemSelected.removeAttribute('selected')
@@ -50,11 +50,11 @@ CodeListView.prototype.indexChanged = function (index) {
   codeView.scrollTop = this.itemSelected.offsetTop - parseInt(codeView.offsetTop)
 }
 
-CodeListView.prototype.reset = function () {
+CodeListView.prototype.reset = function() {
   this.changed([], '', -1)
 }
 
-CodeListView.prototype.changed = function (code, address, index) {
+CodeListView.prototype.changed = function(code, address, index) {
   if (this.address === address) {
     return this.indexChanged(index)
   }
@@ -64,9 +64,9 @@ CodeListView.prototype.changed = function (code, address, index) {
   this.indexChanged(index)
 }
 
-CodeListView.prototype.renderAssemblyItems = function () {
+CodeListView.prototype.renderAssemblyItems = function() {
   if (this.code) {
-    var codeView = this.code.map(function (item, i) {
+    var codeView = this.code.map(function(item, i) {
       return yo`<div key=${i} value=${i}><span>${item}</span></div>`
     })
     return yo`<div class=${css.instructions} id='asmitems' ref='itemsList'>
