@@ -225,7 +225,7 @@ function renderKnownTransaction (self, data) {
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
         ${checkTxStatus(data.receipt, txType)}
         ${context(self, {contractName, from, to, data})}
-        <div class=${css.buttons}>
+        <div style="display: none;" class=${css.buttons}>
           <button class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
         <i class="${css.arrow} fas fa-angle-down"></i>
@@ -253,7 +253,7 @@ function renderCall (self, data) {
           <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</div>
         </span>
-        <div class=${css.buttons}>
+        <div style="display: none;" class=${css.buttons}>
           <div class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
         <i class="${css.arrow} fas fa-angle-down"></i>
@@ -273,7 +273,7 @@ function renderUnknownTransaction (self, data) {
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
         ${checkTxStatus(data.receipt || data.tx, txType)}
         ${context(self, {from, to, data})}
-        <div class=${css.buttons}>
+        <div style="display: none;" class=${css.buttons}>
           <div class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
         <i class="${css.arrow} fas fa-angle-down"></i>
