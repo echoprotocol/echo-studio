@@ -42,7 +42,7 @@ const profile = {
 
 module.exports = class Filepanel extends ViewPlugin {
 
-  constructor(appManager) {
+  constructor (appManager) {
     super(profile)
     var self = this
     self._components = {}
@@ -64,7 +64,7 @@ module.exports = class Filepanel extends ViewPlugin {
 
     self.remixdHandle = new RemixdHandle(fileSystemExplorer, self._deps.fileProviders['localhost'], appManager)
 
-    function template() {
+    function template () {
       return yo`
         <div class=${css.container}>
           <div class="${css.fileexplorer}">           
@@ -101,35 +101,35 @@ module.exports = class Filepanel extends ViewPlugin {
       fileSystemExplorer.hide()
     })
 
-    fileExplorer.events.register('focus', function(path) {
+    fileExplorer.events.register('focus', function (path) {
       self._deps.fileManager.switchFile(path)
     })
 
-    fileSystemExplorer.events.register('focus', function(path) {
+    fileSystemExplorer.events.register('focus', function (path) {
       self._deps.fileManager.switchFile(path)
     })
 
-    swarmExplorer.events.register('focus', function(path) {
+    swarmExplorer.events.register('focus', function (path) {
       self._deps.fileManager.switchFile(path)
     })
 
-    githubExplorer.events.register('focus', function(path) {
+    githubExplorer.events.register('focus', function (path) {
       self._deps.fileManager.switchFile(path)
     })
 
-    gistExplorer.events.register('focus', function(path) {
+    gistExplorer.events.register('focus', function (path) {
       self._deps.fileManager.switchFile(path)
     })
 
-    httpExplorer.events.register('focus', function(path) {
+    httpExplorer.events.register('focus', function (path) {
       self._deps.fileManager.switchFile(path)
     })
 
-    httpsExplorer.events.register('focus', function(path) {
+    httpsExplorer.events.register('focus', function (path) {
       self._deps.fileManager.switchFile(path)
     })
 
-    self.render = function render() { return element }
+    self.render = function render () { return element }
   }
 }
 

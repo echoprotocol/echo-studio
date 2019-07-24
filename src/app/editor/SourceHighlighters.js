@@ -17,12 +17,12 @@ const profile = {
 
 class SourceHighlighters extends Plugin {
 
-  constructor() {
+  constructor () {
     super(profile)
     this.highlighters = {}
   }
 
-  highlight(position, filePath, hexColor) {
+  highlight (position, filePath, hexColor) {
     const { from } = this.currentRequest
     try {
       if (!this.highlighters[from]) this.highlighters[from] = new SourceHighlighter()
@@ -33,7 +33,7 @@ class SourceHighlighters extends Plugin {
     }
   }
 
-  discardHighlight() {
+  discardHighlight () {
     const { from } = this.currentRequest
     if (this.highlighters[from]) this.highlighters[from].currentSourceLocation(null)
   }

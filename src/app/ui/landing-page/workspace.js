@@ -1,5 +1,5 @@
 export class Workspace {
-  constructor(title, description, isMain, activate, deactivate) {
+  constructor (title, description, isMain, activate, deactivate) {
     this.title = title
     this.description = description
     this.isMain = isMain

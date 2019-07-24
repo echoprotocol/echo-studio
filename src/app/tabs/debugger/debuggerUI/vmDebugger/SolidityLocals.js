@@ -6,7 +6,7 @@ var yo = require('yo-yo')
 
 class SolidityLocals {
 
-  constructor(_parent, _traceManager, _internalTreeCall) {
+  constructor (_parent, _traceManager, _internalTreeCall) {
     this.event = new EventManager()
     this.basicPanel = new DropdownPanel('Solidity Locals', {
       json: true,
@@ -16,19 +16,19 @@ class SolidityLocals {
     this.view
   }
 
-  update(data) {
+  update (data) {
     this.basicPanel.update(data)
   }
 
-  setMessage(message) {
+  setMessage (message) {
     this.basicPanel.setMessage(message)
   }
 
-  setUpdating() {
+  setUpdating () {
     this.basicPanel.setUpdating()
   }
 
-  render() {
+  render () {
     this.view = yo`<div id='soliditylocals'>${this.basicPanel.render()}</div>`
     return this.view
   }

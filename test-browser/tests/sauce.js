@@ -1,7 +1,7 @@
 
 // const https = require('https')
 
-module.exports = function sauce(callback) {
+module.exports = function sauce (callback) {
   return callback()
   /*
   const currentTest = this.client.currentTest

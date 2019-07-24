@@ -8,14 +8,14 @@ var modal = require('./modal-dialog-custom')
  * @param {string} tooltipText The text shown by the tooltip
  * @param {function} [action] Returns An HTMLElement to display for action
  */
-module.exports = function addTooltip(tooltipText, action, opts) {
-  action = action || function() { return yo`<div></div>` }
+module.exports = function addTooltip (tooltipText, action, opts) {
+  action = action || function () { return yo`<div></div>` }
   let t = new Toaster()
   return t.render(tooltipText, action(t), opts)
 }
 
 class Toaster {
-  hide() {
+  hide () {
     if (this.id) clearTimeout(this.id)
     setTimeout(() => {
       // remove from body after the animation is finished
@@ -28,12 +28,12 @@ class Toaster {
   * Force resolve the promise to close
   * the toaster ignoring timeout
   */
-  forceResolve() {
+  forceResolve () {
     if (this.id) clearTimeout(this.id)
     if (this.resolveFn) this.resolveFn()
   }
 
-  render(tooltipText, actionElement, opts) {
+  render (tooltipText, actionElement, opts) {
     opts = defaultOptions(opts)
     let canShorten = true
     if (tooltipText instanceof Element) {
@@ -55,11 +55,11 @@ class Toaster {
       const shortTooltipText = (canShorten && tooltipText.length > 201) ? tooltipText.substring(0, 200) + '...' : tooltipText
       this.resolveFn = resolve
 
-      function showFullMessage() {
+      function showFullMessage () {
         modal.alert(tooltipText)
       }
 
-      function closeTheToaster(self) {
+      function closeTheToaster (self) {
         self.hide()
         over()
         resolve()

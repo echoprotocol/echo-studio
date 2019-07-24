@@ -64,7 +64,7 @@ const profile = {
 
 class PluginManagerComponent extends ViewPlugin {
 
-  constructor(appManager) {
+  constructor (appManager) {
     super(profile)
     this.event = new EventEmitter()
     this.appManager = appManager
@@ -79,7 +79,7 @@ class PluginManagerComponent extends ViewPlugin {
     this.appManager.event.on('added', () => { this.reRender() })
   }
 
-  renderItem(name) {
+  renderItem (name) {
     const api = this.appManager.getOne(name)
     if (!api) return
     const isActive = this.appManager.isActive(name)
@@ -126,7 +126,7 @@ class PluginManagerComponent extends ViewPlugin {
   /**
    * Add a local plugin to the list of plugins
    */
-  async openLocalPlugin() {
+  async openLocalPlugin () {
     try {
       const profile = await this.localPlugin.open(this.appManager.getAll())
       if (!profile) return
@@ -142,7 +142,7 @@ class PluginManagerComponent extends ViewPlugin {
     }
   }
 
-  render() {
+  render () {
     // Filtering helpers
     const isFiltered = (api) => api.name.toLowerCase().includes(this.filter)
     const isNotRequired = ({profile}) => !this.appManager.isRequired(profile.name)
@@ -205,13 +205,13 @@ class PluginManagerComponent extends ViewPlugin {
     return rootView
   }
 
-  reRender() {
+  reRender () {
     if (this.views.root) {
       yo.update(this.views.root, this.render())
     }
   }
 
-  filterPlugins({ target }) {
+  filterPlugins ({ target }) {
     this.filter = target.value.toLowerCase()
     this.reRender()
   }

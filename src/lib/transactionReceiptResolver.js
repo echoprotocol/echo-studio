@@ -2,11 +2,11 @@
 var executionContext = require('../execution-context')
 
 module.exports = class TransactionReceiptResolver {
-  constructor() {
+  constructor () {
     this._transactionReceipts = {}
   }
 
-  resolve(tx, cb) {
+  resolve (tx, cb) {
     if (this._transactionReceipts[tx.hash]) {
       return cb(null, this._transactionReceipts[tx.hash])
     }

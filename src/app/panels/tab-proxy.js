@@ -5,7 +5,7 @@ const EventEmitter = require('events')
 require('remix-tabs')
 
 export class TabProxy {
-  constructor(fileManager, editor, appManager) {
+  constructor (fileManager, editor, appManager) {
     this.event = new EventEmitter()
     this.fileManager = fileManager
     this.appManager = appManager
@@ -79,14 +79,14 @@ export class TabProxy {
     })
   }
 
-  switchTab(tabName) {
+  switchTab (tabName) {
     if (this._handlers[tabName]) {
       this._handlers[tabName].switchTo()
       this._view.filetabs.activateTab(tabName)
     }
   }
 
-  switchNextTab() {
+  switchNextTab () {
     const active = this._view.filetabs.active
     if (active && this._handlers[active]) {
       const handlers = Object.keys(this._handlers)
@@ -98,7 +98,7 @@ export class TabProxy {
     }
   }
 
-  switchPreviousTab() {
+  switchPreviousTab () {
     const active = this._view.filetabs.active
     if (active && this._handlers[active]) {
       const handlers = Object.keys(this._handlers)
@@ -110,11 +110,11 @@ export class TabProxy {
     }
   }
 
-  showTab(name) {
+  showTab (name) {
     this._view.filetabs.activateTab(name)
   }
 
-  addTab(name, title, switchTo, close, icon) {
+  addTab (name, title, switchTo, close, icon) {
     if (this._handlers[name]) return
 
     var slash = name.split('/')
@@ -130,16 +130,16 @@ export class TabProxy {
     this._handlers[name] = { switchTo, close }
   }
 
-  removeTab(name) {
+  removeTab (name) {
     this._view.filetabs.removeTab(name)
     delete this._handlers[name]
   }
 
-  addHandler(type, fn) {
+  addHandler (type, fn) {
     this.handlers[type] = fn
   }
 
-  renderTabsbar() {
+  renderTabsbar () {
     this._view.filetabs = yo`<remix-tabs></remix-tabs>`
     this._view.filetabs.addEventListener('tabClosed', (event) => {
       if (this._handlers[event.detail]) this._handlers[event.detail].close()
@@ -166,7 +166,7 @@ export class TabProxy {
 
     // Switch tab
     var self = this
-    $filesEl.on('click', '.file:not(.active)', function(ev) {
+    $filesEl.on('click', '.file:not(.active)', function (ev) {
       ev.preventDefault()
       var name = $(this).find('.name').text()
       self._handlers[name].switchTo()
@@ -174,7 +174,7 @@ export class TabProxy {
     })
 
     // Remove current tab
-    $filesEl.on('click', '.file .remove', function(ev) {
+    $filesEl.on('click', '.file .remove', function (ev) {
       ev.preventDefault()
       var name = $(this).parent().find('.name').text()
       self._handlers[name].close()

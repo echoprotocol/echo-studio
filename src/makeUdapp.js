@@ -21,11 +21,11 @@ module.exports = (compilersArtefacts, logHtmlCallback) => {
 
   const txlistener = new Txlistener({
     api: {
-      contracts: function() {
+      contracts: function () {
         if (compilersArtefacts['__last']) return compilersArtefacts['__last'].getContracts()
         return null
       },
-      resolveReceipt: function(tx, cb) {
+      resolveReceipt: function (tx, cb) {
         transactionReceiptResolver.resolve(tx, cb)
       }
     },
@@ -37,7 +37,7 @@ module.exports = (compilersArtefacts, logHtmlCallback) => {
 
   const eventsDecoder = new EventsDecoder({
     api: {
-      resolveReceipt: function(tx, cb) {
+      resolveReceipt: function (tx, cb) {
         transactionReceiptResolver.resolve(tx, cb)
       }
     }

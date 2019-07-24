@@ -19,7 +19,7 @@ const profile = {
 }
 
 module.exports = class TestTab extends ViewPlugin {
-  constructor(fileManager, filePanel, compileTab, appManager) {
+  constructor (fileManager, filePanel, compileTab, appManager) {
     super(profile)
     this.compileTab = compileTab
     this._view = { el: null }
@@ -36,12 +36,12 @@ module.exports = class TestTab extends ViewPlugin {
     })
   }
 
-  onActivationInternal() {
+  onActivationInternal () {
     this.testTabLogic = new TestTabLogic(this.fileManager)
     this.listenToEvents()
   }
 
-  listenToEvents() {
+  listenToEvents () {
     this.filePanel.event.register('newTestFileCreated', file => {
       var testList = this.view.querySelector("[class^='testList']")
       var test = yo`<label class="singleTestLabel"><input class="singleTest" onchange=${(e) => this.toggleCheckbox(e.target.checked, file)} type="checkbox" checked="true">${file}</label>`
@@ -69,11 +69,11 @@ module.exports = class TestTab extends ViewPlugin {
     })
   }
 
-  listTests() {
+  listTests () {
     return this.data.allTests.map(test => yo`<label class="singleTestLabel"><input class="singleTest" onchange =${(e) => this.toggleCheckbox(e.target.checked, test)} type="checkbox" checked="true">${test} </label>`)
   }
 
-  toggleCheckbox(eChecked, test) {
+  toggleCheckbox (eChecked, test) {
     if (!this.data.selectedTests) {
       this.data.selectedTests = this._view.el.querySelectorAll('.singleTest:checked')
     }
@@ -88,7 +88,7 @@ module.exports = class TestTab extends ViewPlugin {
     }
   }
 
-  checkAll(event) {
+  checkAll (event) {
     let checkBoxes = this._view.el.querySelectorAll('.singleTest')
     const checkboxesLabels = this._view.el.querySelectorAll('.singleTestLabel')
     // checks/unchecks all
@@ -98,7 +98,7 @@ module.exports = class TestTab extends ViewPlugin {
     }
   }
 
-  testCallback(result) {
+  testCallback (result) {
     this.testsOutput.hidden = false
     if (result.type === 'contract') {
       this.testsOutput.appendChild(yo`<div class=${css.outputTitle}>${result.filename} (${result.value})</div>`)
@@ -109,7 +109,7 @@ module.exports = class TestTab extends ViewPlugin {
     }
   }
 
-  resultsCallback(_err, result, cb) {
+  resultsCallback (_err, result, cb) {
     // total stats for the test
     // result.passingNum
     // result.failureNum
@@ -117,7 +117,7 @@ module.exports = class TestTab extends ViewPlugin {
     cb()
   }
 
-  updateFinalResult(_err, result, filename) {
+  updateFinalResult (_err, result, filename) {
     this.testsSummary.hidden = false
     if (_err) {
       this.testsSummary.appendChild(yo`<div class="${css.testFailureSummary} text-danger" >${_err.message}</div>`)
@@ -139,7 +139,7 @@ module.exports = class TestTab extends ViewPlugin {
     })
   }
 
-  runTest(testFilePath, callback) {
+  runTest (testFilePath, callback) {
     this.loading.hidden = false
     this.fileManager.getFile(testFilePath).then((content) => {
       var runningTest = {}
@@ -156,7 +156,7 @@ module.exports = class TestTab extends ViewPlugin {
     })
   }
 
-  runTests() {
+  runTests () {
     this.testsOutput.innerHTML = ''
     this.testsSummary.innerHTML = ''
     var tests = this.data.selectedTests
@@ -165,7 +165,7 @@ module.exports = class TestTab extends ViewPlugin {
     async.eachOfSeries(tests, (value, key, callback) => { this.runTest(value, callback) })
   }
 
-  updateGenerateFileAction(currentFile) {
+  updateGenerateFileAction (currentFile) {
     let el = yo`<button class="${css.generateTestFile} btn btn-primary" onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}">Generate test file</button>`
     if (!currentFile) {
       el.setAttribute('disabled', 'disabled')
@@ -179,7 +179,7 @@ module.exports = class TestTab extends ViewPlugin {
     return this.generateFileActionElement
   }
 
-  updateRunAction(currentFile) {
+  updateRunAction (currentFile) {
     let el = yo`<button class="${css.runButton} btn btn-primary"  onclick="${this.runTests.bind(this)}">Run Tests</button>`
     const isSolidityActive = this.appManager.isActive('solidity')
     if (!currentFile || !isSolidityActive) {
@@ -196,7 +196,7 @@ module.exports = class TestTab extends ViewPlugin {
     return this.runActionElement
   }
 
-  updateTestFileList(tests) {
+  updateTestFileList (tests) {
     const testsMessage = (tests && tests.length ? this.listTests() : 'No test file available')
     let el = yo`<div class=${css.testList}>${testsMessage}</div>`
     if (!this.testFilesListElement) {
@@ -206,7 +206,7 @@ module.exports = class TestTab extends ViewPlugin {
     }
     return this.testFilesListElement
   }
-  render() {
+  render () {
     this.onActivationInternal()
     this.testsOutput = yo`<div class="${css.container} m-3 border border-primary border-right-0 border-left-0 border-bottom-0"  hidden='true' id="tests"></div>`
     this.testsSummary = yo`<div class="${css.container} border border-primary border-right-0 border-left-0 border-bottom-0" hidden='true' id="tests"></div>`

@@ -2,16 +2,16 @@ module.exports = (fileManager) => {
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.
   let filesToLoad = null
-  let loadFilesCallback = function(files) { filesToLoad = files } // will be replaced later
+  let loadFilesCallback = function (files) { filesToLoad = files } // will be replaced later
 
-  window.addEventListener('message', function(ev) {
+  window.addEventListener('message', function (ev) {
     if (typeof ev.data === typeof [] && ev.data[0] === 'loadFiles') {
       loadFilesCallback(ev.data[1])
     }
   }, false)
 
   // Replace early callback with instant response
-  loadFilesCallback = function(files) {
+  loadFilesCallback = function (files) {
     fileManager.setBatchFiles(files)
   }
 

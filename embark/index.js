@@ -26,7 +26,7 @@ module.exports = (embark) => {
     server = httpServer.createServer({
       root: path.join(__dirname, '../../node_modules/remix-ide')
     })
-    server.listen(port, '127.0.0.1', function() {
+    server.listen(port, '127.0.0.1', function () {
       embark.logger.info('Remix IDE (via embark-remix plugin) available at ' + colors.underline(remixIdeUrl))
     })
   } else {
@@ -55,7 +55,7 @@ module.exports = (embark) => {
     require('readline').createInterface({
       input: process.stdin,
       output: process.stdout
-    }).on('SIGINT', function() {
+    }).on('SIGINT', function () {
       process.emit('SIGINT')
     })
   }

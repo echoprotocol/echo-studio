@@ -10,13 +10,13 @@ var confirmDialog = require('../../ui/confirmDialog')
 
 class RecorderUI {
 
-  constructor(recorder, logCallBack) {
+  constructor (recorder, logCallBack) {
     this.recorder = recorder
     this.logCallBack = logCallBack
     this.event = new EventManager()
   }
 
-  render() {
+  render () {
     var css2 = csjs`
       .container {}
       .runTxs {}
@@ -32,7 +32,7 @@ class RecorderUI {
     this.runButton.onclick = this.runScenario.bind(this)
   }
 
-  runScenario() {
+  runScenario () {
     var continueCb = (error, continueTxExecution, cancelCb) => {
       if (error) {
         var msg = typeof error !== 'string' ? error.message : error
@@ -73,7 +73,7 @@ class RecorderUI {
     })
   }
 
-  triggerRecordButton() {
+  triggerRecordButton () {
     this.recorder.saveScenario(
       (path, cb) => {
         modalDialogCustom.prompt('Save transactions as scenario', 'Transactions will be saved in a file under ' + path, 'scenario.json', cb)

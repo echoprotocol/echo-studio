@@ -10,7 +10,7 @@ var globlalRegistry = require('../../global/registry')
  * TODO: This don't need to be an object anymore. Simplify and just export the renderError function.
  *
  */
-function Renderer(localRegistry) {
+function Renderer (localRegistry) {
   const self = this
   self._components = {}
   self._components.registry = localRegistry || globlalRegistry
@@ -24,7 +24,7 @@ function Renderer(localRegistry) {
   }
 }
 
-Renderer.prototype._error = function(file, error) {
+Renderer.prototype._error = function (file, error) {
   const self = this
   const editor = self._components.registry.get('editor').api
   if (file === self._deps.config.get('currentFile')) {
@@ -32,7 +32,7 @@ Renderer.prototype._error = function(file, error) {
   }
 }
 
-Renderer.prototype._errorClick = function(errFile, errLine, errCol) {
+Renderer.prototype._errorClick = function (errFile, errLine, errCol) {
   const self = this
   const editor = self._components.registry.get('editor').api
   if (errFile !== self._deps.config.get('currentFile')) {
@@ -57,7 +57,7 @@ Renderer.prototype._errorClick = function(errFile, errLine, errCol) {
  * @param {DOMElement} container
  * @param {Object} options {useSpan, noAnnotations, click:(Function), type:(warning, error, staticAnalysisWarning), errFile, errLine, errCol}
  */
-Renderer.prototype.error = function(message, container, opt) {
+Renderer.prototype.error = function (message, container, opt) {
   if (!message) return
   if (container === undefined) return
   opt = opt || {}
@@ -101,14 +101,14 @@ Renderer.prototype.error = function(message, container, opt) {
     }
   })
 
-  $error.find('.close').click(function(ev) {
+  $error.find('.close').click(function (ev) {
     ev.preventDefault()
     $error.remove()
     return false
   })
 }
 
-function parseRegExError(err) {
+function parseRegExError (err) {
   return {
     errFile: err[1],
     errLine: parseInt(err[2], 10) - 1,

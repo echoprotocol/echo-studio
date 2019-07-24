@@ -1,7 +1,7 @@
 const EventEmitter = require('events')
 
 class GetAddressAtPosition extends EventEmitter {
-  command(index, cb) {
+  command (index, cb) {
     this.api.perform((done) => {
       getAddressAtPosition(this.api, index, (pos) => {
         done()
@@ -13,11 +13,11 @@ class GetAddressAtPosition extends EventEmitter {
   }
 }
 
-function getAddressAtPosition(browser, index, callback) {
+function getAddressAtPosition (browser, index, callback) {
   index = index + 2
-  browser.execute(function(index) {
+  browser.execute(function (index) {
     return document.querySelector('.instance:nth-of-type(' + index + ')').getAttribute('id').replace('instance', '')
-  }, [index], function(result) {
+  }, [index], function (result) {
     callback(result.value)
   })
 }

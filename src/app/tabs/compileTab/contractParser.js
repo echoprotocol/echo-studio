@@ -8,7 +8,7 @@ module.exports = (contractName, contract, compiledSource) => {
   return getDetails(contractName, contract, compiledSource)
 }
 
-var getDetails = function(contractName, contract, source) {
+var getDetails = function (contractName, contract, source) {
   var detail = {}
   detail.name = contractName
   detail.metadata = contract.metadata
@@ -48,7 +48,7 @@ var getDetails = function(contractName, contract, source) {
   return detail
 }
 
-var retrieveMetadataHash = function(bytecode) {
+var retrieveMetadataHash = function (bytecode) {
   var match = /a165627a7a72305820([0-9a-f]{64})0029$/.exec(bytecode)
   if (!match) {
     match = /a265627a7a72305820([0-9a-f]{64})6c6578706572696d656e74616cf50037$/.exec(bytecode)
@@ -58,7 +58,7 @@ var retrieveMetadataHash = function(bytecode) {
   }
 }
 
-var echoJSDeploy = function(contractName, jsonInterface, bytecode) {
+var echoJSDeploy = function (contractName, jsonInterface, bytecode) {
   var code = ''
   code += 'import echo, { constants, PrivateKey } from \'echolib-js\';\n'
   code += '\n'
@@ -95,7 +95,7 @@ var echoJSDeploy = function(contractName, jsonInterface, bytecode) {
   return code
 }
 
-var echoJSContractDeploy = function(contractName, jsonInterface, bytecode) {
+var echoJSContractDeploy = function (contractName, jsonInterface, bytecode) {
   var code = ''
 
   code += 'import echo, { PrivateKey } from \'echolib-js\';\n'
@@ -108,7 +108,7 @@ var echoJSContractDeploy = function(contractName, jsonInterface, bytecode) {
   var funABI = txHelper.getConstructorInterface(jsonInterface)
   var args = []
 
-  funABI.inputs.forEach(function(inp) {
+  funABI.inputs.forEach(function (inp) {
     code += '    const ' + inp.name + ' = /* var of type ' + inp.type + ' here */;\n'
     args.push(inp.name)
   })

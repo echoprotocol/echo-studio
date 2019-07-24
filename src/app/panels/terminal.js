@@ -24,7 +24,7 @@ var packageV = require('../../../package.json')
 
 var KONSOLES = []
 
-function register(api) { KONSOLES.push(api) }
+function register (api) { KONSOLES.push(api) }
 
 var ghostbar = yo`<div class=${css.ghostbar} bg-secondary></div>`
 
@@ -38,7 +38,7 @@ const profile = {
 }
 
 class Terminal extends Plugin {
-  constructor(opts, api) {
+  constructor (opts, api) {
     super(profile)
     var self = this
     self.event = new EventManager()
@@ -54,7 +54,7 @@ class Terminal extends Plugin {
     self._components = {}
     self._components.cmdInterpreter = new CommandInterpreterAPI(this)
     self._components.autoCompletePopup = new AutoCompletePopup(self._opts)
-    self._components.autoCompletePopup.event.register('handleSelect', function(input) {
+    self._components.autoCompletePopup.event.register('handleSelect', function (input) {
       let textList = self._view.input.innerText.split(' ')
       textList.pop()
       textList.push(input)
@@ -76,15 +76,15 @@ class Terminal extends Plugin {
     self.registerCommand('info', self._blocksRenderer('info'), { activate: true })
     self.registerCommand('warn', self._blocksRenderer('warn'), { activate: true })
     self.registerCommand('error', self._blocksRenderer('error'), { activate: true })
-    self.registerCommand('script', function execute(args, scopedCommands, append) {
+    self.registerCommand('script', function execute (args, scopedCommands, append) {
       var script = String(args[0])
       scopedCommands.log(`> ${script}`)
-      self._shell(script, scopedCommands, function(error, output) {
+      self._shell(script, scopedCommands, function (error, output) {
         if (error) scopedCommands.error(error)
         else scopedCommands.log(output)
       })
     }, { activate: true })
-    function basicFilter(value, query) { try { return value.indexOf(query) !== -1 } catch (e) { return false } }
+    function basicFilter (value, query) { try { return value.indexOf(query) !== -1 } catch (e) { return false } }
 
     self.registerFilter('log', basicFilter)
     self.registerFilter('info', basicFilter)
@@ -103,14 +103,14 @@ class Terminal extends Plugin {
     if (opts.shell) self._shell = opts.shell
     register(self)
   }
-  logHtml(html) {
+  logHtml (html) {
     var command = this.commands['html']
     if (typeof command === 'function') command(html)
   }
-  focus() {
+  focus () {
     if (this._view.input) this._view.input.focus()
   }
-  render() {
+  render () {
     var self = this
     if (self._view.el) return self._view.el
     self._view.journal = yo`<div id="journal" class=${css.journal}></div>`
@@ -202,10 +202,10 @@ class Terminal extends Plugin {
       self._view.pendingTxCount.innerHTML = await self.call('udapp', 'pendingTransactionsCount')
     }, 1000)
 
-    function listenOnNetwork(ev) {
+    function listenOnNetwork (ev) {
       self.event.trigger('listenOnNetWork', [ev.currentTarget.checked])
     }
-    function paste(event) {
+    function paste (event) {
       const selection = window.getSelection()
       if (!selection.rangeCount) return false
       event.preventDefault()
@@ -221,7 +221,7 @@ class Terminal extends Plugin {
       self.scroll2bottom()
       placeCaretAtEnd(event.currentTarget)
     }
-    function placeCaretAtEnd(el) {
+    function placeCaretAtEnd (el) {
       el.focus()
       var range = document.createRange()
       range.selectNodeContents(el)
@@ -230,9 +230,9 @@ class Terminal extends Plugin {
       sel.removeAllRanges()
       sel.addRange(range)
     }
-    function throttle(fn, wait) {
+    function throttle (fn, wait) {
       var time = Date.now()
-      return function debounce() {
+      return function debounce () {
         if ((time + wait - Date.now()) < 0) {
           fn.apply(this, arguments)
           time = Date.now()
@@ -277,23 +277,23 @@ class Terminal extends Plugin {
     var placeholder = yo`<div class=${css2.anchor}>${background}${text}</div>`
     var inserted = false
 
-    window.addEventListener('resize', function(event) {
+    window.addEventListener('resize', function (event) {
       self.event.trigger('resize', [])
       self.event.trigger('resize', [])
     })
 
-    function focusinput(event) {
+    function focusinput (event) {
       if (self._view.journal.offsetHeight - (self._view.term.scrollTop + self._view.term.offsetHeight) < 50) {
         refocus()
       }
     }
-    function refocus() {
+    function refocus () {
       self._view.input.focus()
       reattach({ currentTarget: self._view.term })
       delete self.scroll2bottom
       self.scroll2bottom()
     }
-    function reattach(event) {
+    function reattach (event) {
       var el = event.currentTarget
       var isBottomed = el.scrollHeight - el.scrollTop - el.clientHeight < 30
       if (isBottomed) {
@@ -313,7 +313,7 @@ class Terminal extends Plugin {
         } else {
           placeholder.style = ''
         }
-        self.scroll2bottom = function() {
+        self.scroll2bottom = function () {
           var next = placeholder.nextElementSibling
           if (next) {
             placeholder.style = ''
@@ -327,7 +327,7 @@ class Terminal extends Plugin {
         }
       }
     }
-    function check() {
+    function check () {
       var pos1 = self._view.term.offsetHeight + self._view.term.scrollTop - (self._view.el.offsetHeight * 0.15)
       var pos2 = placeholder.offsetTop
       if ((pos1 - pos2) > 0) {
@@ -344,14 +344,14 @@ class Terminal extends Plugin {
       } else {
         background.style = ''
         text.style = ''
-        background.onclick = function(event) {
+        background.onclick = function (event) {
           placeholder.scrollIntoView()
           check()
         }
       }
     }
-    function hover(event) { event.currentTarget.classList.toggle(css.hover) }
-    function minimize(event) {
+    function hover (event) { event.currentTarget.classList.toggle(css.hover) }
+    function minimize (event) {
       event.preventDefault()
       event.stopPropagation()
       if (event.button === 0) {
@@ -362,7 +362,7 @@ class Terminal extends Plugin {
       }
     }
     var filtertimeout = null
-    function filter(event) {
+    function filter (event) {
       if (filtertimeout) {
         clearTimeout(filtertimeout)
       }
@@ -371,12 +371,12 @@ class Terminal extends Plugin {
         self.scroll2bottom()
       }, 500)
     }
-    function clear(event) {
+    function clear (event) {
       refocus()
       self._view.journal.innerHTML = ''
     }
     // ----------------- resizeable ui ---------------
-    function mousedown(event) {
+    function mousedown (event) {
       event.preventDefault()
       if (event.which === 1) {
         moveGhostbar(event)
@@ -386,7 +386,7 @@ class Terminal extends Plugin {
         document.addEventListener('keydown', cancelGhostbar)
       }
     }
-    function cancelGhostbar(event) {
+    function cancelGhostbar (event) {
       if (event.keyCode === 27) {
         document.body.removeChild(ghostbar)
         document.removeEventListener('mousemove', moveGhostbar)
@@ -394,10 +394,10 @@ class Terminal extends Plugin {
         document.removeEventListener('keydown', cancelGhostbar)
       }
     }
-    function moveGhostbar(event) { // @NOTE HORIZONTAL ghostbar
+    function moveGhostbar (event) { // @NOTE HORIZONTAL ghostbar
       ghostbar.style.top = self._api.getPosition(event) + 'px'
     }
-    function removeGhostbar(event) {
+    function removeGhostbar (event) {
       if (self._view.icon.classList.contains('fa-angle-double-up')) {
         self._view.icon.classList.toggle('fa-angle-double-down')
         self._view.icon.classList.toggle('fa-angle-double-up')
@@ -442,7 +442,7 @@ class Terminal extends Plugin {
 
     return self._view.el
 
-    function change(event) {
+    function change (event) {
       if (self._components.autoCompletePopup.handleAutoComplete(
         event,
         self._view.input.innerText)) return
@@ -486,7 +486,7 @@ class Terminal extends Plugin {
       }
     }
   }
-  putCursor2End(editable) {
+  putCursor2End (editable) {
     var range = document.createRange()
     range.selectNode(editable)
     var child = editable
@@ -513,7 +513,7 @@ class Terminal extends Plugin {
 
     editable.focus()
   }
-  updateJournal(filterEvent) {
+  updateJournal (filterEvent) {
     var self = this
     var commands = self.data.activeFilters.commands
     var value = filterEvent.value
@@ -549,16 +549,16 @@ class Terminal extends Plugin {
       if (item && item.el && !item.hide) df.appendChild(item.el)
     })
     self._view.journal.innerHTML = ''
-    requestAnimationFrame(function updateDOM() {
+    requestAnimationFrame(function updateDOM () {
       self._view.journal.appendChild(df)
     })
   }
-  _appendItem(item) {
+  _appendItem (item) {
     var self = this
     var { el, gidx } = item
     self._JOURNAL[gidx] = item
     if (!self._jobs.length) {
-      requestAnimationFrame(function updateTerminal() {
+      requestAnimationFrame(function updateTerminal () {
         self._jobs.forEach(el => self._view.journal.appendChild(el))
         self.scroll2bottom()
         self._jobs = []
@@ -566,15 +566,15 @@ class Terminal extends Plugin {
     }
     if (self.data.activeFilters.commands[item.cmd]) self._jobs.push(el)
   }
-  scroll2bottom() {
+  scroll2bottom () {
     var self = this
-    setTimeout(function() {
+    setTimeout(function () {
       self._view.term.scrollTop = self._view.term.scrollHeight
     }, 0)
   }
-  _blocksRenderer(mode) {
+  _blocksRenderer (mode) {
     if (mode === 'html') {
-      return function logger(args, scopedCommands, append) {
+      return function logger (args, scopedCommands, append) {
         if (args.length) append(args[0])
       }
     }
@@ -585,9 +585,9 @@ class Terminal extends Plugin {
       error: 'text-danger' }[mode] // defaults
 
     if (mode) {
-      return function logger(args, scopedCommands, append) {
+      return function logger (args, scopedCommands, append) {
         var types = args.map(type)
-        var values = javascriptserialize.apply(null, args).map(function(val, idx) {
+        var values = javascriptserialize.apply(null, args).map(function (val, idx) {
           if (typeof args[idx] === 'string') val = args[idx]
           if (types[idx] === 'element') val = jsbeautify.html(val)
           return val
@@ -598,22 +598,22 @@ class Terminal extends Plugin {
       throw new Error('mode is not supported')
     }
   }
-  _scopeCommands(append) {
+  _scopeCommands (append) {
     var self = this
     var scopedCommands = {}
-    Object.keys(self.commands).forEach(function makeScopedCommand(cmd) {
+    Object.keys(self.commands).forEach(function makeScopedCommand (cmd) {
       var command = self._commands[cmd]
-      scopedCommands[cmd] = function _command() {
+      scopedCommands[cmd] = function _command () {
         var args = [...arguments]
         command(args, scopedCommands, el => append(cmd, args, blockify(el)))
       }
     })
     return scopedCommands
   }
-  registerFilter(commandName, filterFn) {
+  registerFilter (commandName, filterFn) {
     this.data.filterFns[commandName] = filterFn
   }
-  registerCommand(name, command, opts) {
+  registerCommand (name, command, opts) {
     var self = this
     name = String(name)
     if (self._commands[name]) throw new Error(`command "${name}" exists already`)
@@ -621,14 +621,14 @@ class Terminal extends Plugin {
     self._commands[name] = command
     self._INDEX.commands[name] = []
     self._INDEX.commandsMain[name] = []
-    self.commands[name] = function _command() {
+    self.commands[name] = function _command () {
       var args = [...arguments]
       var steps = []
       var root = { steps, cmd: name }
       var ITEM = { root, cmd: name }
       root.gidx = self._INDEX.allMain.push(ITEM) - 1
       root.idx = self._INDEX.commandsMain[name].push(ITEM) - 1
-      function append(cmd, params, el) {
+      function append (cmd, params, el) {
         var item
         if (cmd) { // subcommand
           item = { el, cmd, root }
@@ -658,7 +658,7 @@ class Terminal extends Plugin {
     }
     return self.commands[name]
   }
-  _shell(script, scopedCommands, done) { // default shell
+  _shell (script, scopedCommands, done) { // default shell
     if (script.indexOf('remix:') === 0) {
       return done(null, 'This type of command has been deprecated and is not functionning anymore. Please run remix.help() to list available commands.')
     }
@@ -675,17 +675,17 @@ class Terminal extends Plugin {
   }
 }
 
-function domTerminalFeatures(self, scopedCommands) {
+function domTerminalFeatures (self, scopedCommands) {
   return {
     // swarmgw,
     // ethers,
     // remix: self._components.cmdInterpreter,
     echojslib: executionContext.echojslib(),
     console: {
-      log: function() { scopedCommands.log.apply(scopedCommands, arguments) },
-      info: function() { scopedCommands.info.apply(scopedCommands, arguments) },
-      warn: function() { scopedCommands.warn.apply(scopedCommands, arguments) },
-      error: function() { scopedCommands.error.apply(scopedCommands, arguments) }
+      log: function () { scopedCommands.log.apply(scopedCommands, arguments) },
+      info: function () { scopedCommands.info.apply(scopedCommands, arguments) },
+      warn: function () { scopedCommands.warn.apply(scopedCommands, arguments) },
+      error: function () { scopedCommands.error.apply(scopedCommands, arguments) }
     },
     setTimeout: (fn, time) => {
       return setTimeout(() => { self._shell('(' + fn.toString() + ')()', scopedCommands, () => {}) }, time)
@@ -703,6 +703,6 @@ function domTerminalFeatures(self, scopedCommands) {
   }
 }
 
-function blockify(el) { return yo`<div class=${css.block}>${el}</div>` }
+function blockify (el) { return yo`<div class=${css.block}>${el}</div>` }
 
 module.exports = Terminal

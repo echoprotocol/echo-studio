@@ -3,10 +3,10 @@ var init = require('../helpers/init')
 var sauce = require('./sauce')
 
 module.exports = {
-  before: function(browser, done) {
+  before: function (browser, done) {
     init(browser, done)
   },
-  'SimpleExecutionConsole': function(browser) {
+  'SimpleExecutionConsole': function (browser) {
     browser
     .waitForElementVisible('#terminalCli', 10000)
     .executeScript('1+1')

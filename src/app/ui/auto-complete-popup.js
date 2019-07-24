@@ -17,7 +17,7 @@ var css = require('./styles/auto-complete-popup-styles')
 */
 
 class AutoCompletePopup {
-  constructor(opts = {}) {
+  constructor (opts = {}) {
     var self = this
     self.event = new EventManager()
     self.isOpen = false
@@ -34,7 +34,7 @@ class AutoCompletePopup {
     // this.extendAutocompletion()
   }
 
-  render() {
+  render () {
     var self = this
     let autoComplete = yo`
       <div class="${css.popup} alert alert-secondary">
@@ -57,16 +57,16 @@ class AutoCompletePopup {
         </div>
       </div>
     `
-    function setUpPopUp(autoComplete) {
+    function setUpPopUp (autoComplete) {
       handleOpenPopup(autoComplete)
       handleListSize(autoComplete)
     }
 
-    function handleOpenPopup(autoComplete) {
+    function handleOpenPopup (autoComplete) {
       autoComplete.style.display = self.data._options.length > 0 ? 'block' : 'none'
     }
 
-    function handleListSize(autoComplete) {
+    function handleListSize (autoComplete) {
       if (self.data._options.length >= self._startingElement) {
         for (let i = self._startingElement; i < (self._elementsToShow + self._startingElement); i++) {
           let el = autoComplete.querySelectorAll('.item')[i]
@@ -82,12 +82,12 @@ class AutoCompletePopup {
     return autoComplete
   }
 
-  handleSelect(text) {
+  handleSelect (text) {
     this.removeAutoComplete()
     this.event.trigger('handleSelect', [text])
   }
 
-  moveUp() {
+  moveUp () {
     if (this._selectedElement === 0) return
     this._selectedElement--
     this._startingElement = this._selectedElement > 0 ? this._selectedElement - 1 : 0
@@ -95,7 +95,7 @@ class AutoCompletePopup {
     yo.update(this._view, this.render())
   }
 
-  moveDown() {
+  moveDown () {
     if (this.data._options.length <= this._selectedElement + 1) return
     this._selectedElement++
     this._startingElement = this._selectedElement - 1
@@ -103,7 +103,7 @@ class AutoCompletePopup {
     yo.update(this._view, this.render())
   }
 
-  handleAutoComplete(event, inputString) {
+  handleAutoComplete (event, inputString) {
     if (this.isOpen && (event.which === 27 || event.which === 8 || event.which === 46)) {
       // backspace or any key that should remove the autocompletion
       this.removeAutoComplete()
@@ -177,7 +177,7 @@ class AutoCompletePopup {
     return false
   }
 
-  removeAutoComplete() {
+  removeAutoComplete () {
     if (!this.isOpen) return
     this._view.style.display = 'none'
     this.isOpen = false
@@ -187,7 +187,7 @@ class AutoCompletePopup {
     yo.update(this._view, this.render())
   }
 
-  extendAutocompletion() {
+  extendAutocompletion () {
     // TODO: this is not using the appManager interface. Terminal should be put as module
     this.opts.appManager.event.on('activate', (id) => {
       const profile = this.opts.appManager.getOne(id).profile
@@ -203,11 +203,11 @@ class AutoCompletePopup {
   }
 }
 
-function getKeyOf(item) {
+function getKeyOf (item) {
   return Object.keys(item)[0]
 }
 
-function getValueOf(item) {
+function getValueOf (item) {
   return Object.values(item)[0]
 }
 

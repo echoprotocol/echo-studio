@@ -1,7 +1,7 @@
 const EventEmitter = require('events')
 
 class SelectContract extends EventEmitter {
-  command(msg, callback) {
+  command (msg, callback) {
     this.api.perform((done) => {
       signMsg(this.api, msg, (hash, signature) => {
         callback(hash, signature)
@@ -13,7 +13,7 @@ class SelectContract extends EventEmitter {
   }
 }
 
-function signMsg(browser, msg, cb) {
+function signMsg (browser, msg, cb) {
   let hash, signature
   browser
       .waitForElementPresent('i[id="remixRunSignMsg"]')

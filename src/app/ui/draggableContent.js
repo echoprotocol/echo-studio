@@ -32,12 +32,12 @@ var css = csjs`
 
 module.exports =
   class DraggableContent {
-    constructor(closeCb) {
+    constructor (closeCb) {
       this.closeCb = closeCb
       this.isMaximised = false
     }
 
-    render(title, url, content) {
+    render (title, url, content) {
       this.content = content
       var el = yo`
     <div class=${css.containerDraggableModal}>
@@ -58,17 +58,17 @@ module.exports =
       this.el = el
       return el
     }
-    setTitle(title) {
+    setTitle (title) {
       this.el.querySelector('.title span').innerHTML = title
     }
-    minimize() {
+    minimize () {
       this.isMaximised = false
       this.content.style.display = 'none'
       this.el.style.height = 'inherit'
       this.el.style.width = '150px'
       this.el.querySelector('.title').style.width = '146px'
     }
-    maximise() {
+    maximise () {
       this.content.style.display = 'block'
       var body = document.querySelector('body')
       this.el.style.height = this.isMaximised ? '500px' : body.offsetHeight + 'px'
@@ -78,7 +78,7 @@ module.exports =
       this.el.style.left = this.isMaximised ? '0%' : '50%'
       this.el.querySelector('.title').style.width = 'inherit'
     }
-    close() {
+    close () {
       if (this.closeCb) this.closeCb()
       if (this.el.parentElement) {
         this.el.parentElement.removeChild(this.el)
@@ -86,7 +86,7 @@ module.exports =
     }
 }
 
-function dragElement(elmnt) {
+function dragElement (elmnt) {
   var pos1 = 0
   var pos2 = 0
   var pos3 = 0
@@ -94,7 +94,7 @@ function dragElement(elmnt) {
 
   elmnt.querySelector('.title').onmousedown = dragMouseDown
 
-  function dragMouseDown(e) {
+  function dragMouseDown (e) {
     e = e || window.event
     if (e.button !== 0) return
     e.preventDefault()
@@ -106,7 +106,7 @@ function dragElement(elmnt) {
     document.onmousemove = elementDrag
   }
 
-  function elementDrag(e) {
+  function elementDrag (e) {
     e = e || window.event
     e.preventDefault()
     // calculate the new cursor position:
@@ -119,7 +119,7 @@ function dragElement(elmnt) {
     elmnt.style.left = (elmnt.offsetLeft - pos1) + 'px'
   }
 
-  function closeDragElement() {
+  function closeDragElement () {
     /* stop moving when mouse button is released: */
     document.onmouseup = null
     document.onmousemove = null

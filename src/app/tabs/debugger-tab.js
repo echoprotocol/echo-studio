@@ -21,12 +21,12 @@ const profile = {
 
 class DebuggerTab extends ViewPlugin {
 
-  constructor() {
+  constructor () {
     super(profile)
     this.el = null
   }
 
-  render() {
+  render () {
     if (this.el) return this.el
 
     this.el = yo`
@@ -37,11 +37,11 @@ class DebuggerTab extends ViewPlugin {
     return this.el
   }
 
-  debug(hash) {
+  debug (hash) {
     if (this.debugger) this.debuggerUI.debug(hash)
   }
 
-  debugger() {
+  debugger () {
     return this.debuggerUI
   }
 }

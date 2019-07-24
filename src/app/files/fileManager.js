@@ -30,7 +30,7 @@ const profile = {
 // - methods: ['getFolder', 'getCurrentFile', 'getFile', 'setFile', 'switchFile']
 
 class FileManager extends Plugin {
-  constructor(editor) {
+  constructor (editor) {
     super(profile)
     this.openedFiles = {} // list all opened files
     this.events = new EventEmitter()
@@ -41,7 +41,7 @@ class FileManager extends Plugin {
     this.init()
   }
 
-  init() {
+  init () {
     this._deps = {
       config: this._components.registry.get('config').api,
       browserExplorer: this._components.registry.get('fileproviders/browser').api,
@@ -60,7 +60,7 @@ class FileManager extends Plugin {
     this._deps.localhostExplorer.event.register('closed', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
   }
 
-  fileRenamedEvent(oldName, newName, isFolder) {
+  fileRenamedEvent (oldName, newName, isFolder) {
     if (!isFolder) {
       this._deps.config.set('currentFile', '')
       this.editor.discard(oldName)
@@ -88,7 +88,7 @@ class FileManager extends Plugin {
     this.events.emit('fileRenamed', oldName, newName)
   }
 
-  currentFileProvider() {
+  currentFileProvider () {
     var path = this.currentPath()
     if (path) {
       return this.fileProviderOf(path)
@@ -96,11 +96,11 @@ class FileManager extends Plugin {
     return null
   }
 
-  currentFile() {
+  currentFile () {
     return this._deps.config.get('currentFile')
   }
 
-  closeFile(name) {
+  closeFile (name) {
     delete this.openedFiles[name]
     if (Object.keys(this.openedFiles).length) {
       this.switchFile(Object.keys(this.openedFiles)[0])
@@ -112,20 +112,20 @@ class FileManager extends Plugin {
     this.events.emit('fileClosed', name)
   }
 
-  currentPath() {
+  currentPath () {
     var currentFile = this._deps.config.get('currentFile')
     var reg = /(.*)(\/).*/
     var path = reg.exec(currentFile)
     return path ? path[1] : null
   }
 
-  getCurrentFile() {
+  getCurrentFile () {
     const path = this.currentFile()
     if (!path) throw new Error('No file selected')
     return path
   }
 
-  getFile(path) {
+  getFile (path) {
     const provider = this.fileProviderOf(path)
     if (!provider) throw new Error(`${path} not available`)
     // TODO: change provider to Promise
@@ -138,17 +138,17 @@ class FileManager extends Plugin {
     })
   }
 
-  async setFile(path, content) {
+  async setFile (path, content) {
     let reject = false
     let saveAsCopy = false
 
-    function acceptFileRewriting(e, toaster) {
+    function acceptFileRewriting (e, toaster) {
       reject = false
       e.target.innerHTML = 'Accepted'
       toaster.hide()
       toaster.forceResolve()
     }
-    function cancelFileRewriting(e, toaster) {
+    function cancelFileRewriting (e, toaster) {
       reject = true
       e.target.innerHTML = 'Canceled'
       toaster.hide()
@@ -194,7 +194,7 @@ class FileManager extends Plugin {
     this._setFileInternal(path, content)
   }
 
-  _setFileInternal(path, content) {
+  _setFileInternal (path, content) {
     const provider = this.fileProviderOf(path)
     if (!provider) throw new Error(`${path} not availble`)
     // TODO : Add permission
@@ -208,7 +208,7 @@ class FileManager extends Plugin {
     })
   }
 
-  _saveAsCopy(path, content) {
+  _saveAsCopy (path, content) {
     const fileProvider = this.fileProviderOf(path)
     if (fileProvider) {
       helper.createNonClashingNameWithPrefix(path, fileProvider, '', (error, copyName) => {
@@ -222,7 +222,7 @@ class FileManager extends Plugin {
     }
   }
 
-  removeTabsOf(provider) {
+  removeTabsOf (provider) {
     for (var tab in this.openedFiles) {
       if (this.fileProviderOf(tab).type === provider.type) {
         this.fileRemovedEvent(tab)
@@ -230,7 +230,7 @@ class FileManager extends Plugin {
     }
   }
 
-  fileRemovedEvent(path) {
+  fileRemovedEvent (path) {
     if (!this.openedFiles[path]) return
     if (path === this._deps.config.get('currentFile')) {
       this._deps.config.set('currentFile', '')
@@ -241,13 +241,13 @@ class FileManager extends Plugin {
     this.switchFile()
   }
 
-  unselectCurrentFile() {
+  unselectCurrentFile () {
     this.saveCurrentFile()
     this._deps.config.set('currentFile', '')
     this.events.emit('noFileSelected')
   }
 
-  switchFile(file) {
+  switchFile (file) {
     const _switchFile = (file) => {
       this.saveCurrentFile()
       this._deps.config.set('currentFile', file)
@@ -281,7 +281,7 @@ class FileManager extends Plugin {
     }
   }
 
-  getFolder(path) {
+  getFolder (path) {
     // TODO : Change provider with promise
     return new Promise((resolve, reject) => {
       const provider = this.fileProviderOf(path)
@@ -293,7 +293,7 @@ class FileManager extends Plugin {
     })
   }
 
-  fileProviderOf(file) {
+  fileProviderOf (file) {
     if (!file) return null
     var provider = file.match(/[^/]*/)
     if (provider !== null && this._deps.filesProviders[provider[0]]) {
@@ -308,7 +308,7 @@ class FileManager extends Plugin {
     return null
   }
 
-  saveCurrentFile() {
+  saveCurrentFile () {
     var currentFile = this._deps.config.get('currentFile')
     if (currentFile && this.editor.current()) {
       var input = this.editor.get(currentFile)
@@ -323,7 +323,7 @@ class FileManager extends Plugin {
     }
   }
 
-  syncEditor(path) {
+  syncEditor (path) {
     var currentFile = this._deps.config.get('currentFile')
     if (path !== currentFile) return
 
@@ -338,7 +338,7 @@ class FileManager extends Plugin {
     }
   }
 
-  setBatchFiles(filesSet, fileProvider, callback) {
+  setBatchFiles (filesSet, fileProvider, callback) {
     const self = this
     if (!fileProvider) fileProvider = 'browser'
 

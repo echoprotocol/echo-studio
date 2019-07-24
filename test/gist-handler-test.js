@@ -7,12 +7,12 @@ if (typeof window !== 'undefined') {
 // should not load UI in that case
 
 // Allowing window to be overriden for testing
-function GistHandler(_window) {
+function GistHandler (_window) {
   if (_window !== undefined) {
     modalDialogCustom = _window
   }
 
-  this.handleLoad = function(params, cb) {
+  this.handleLoad = function (params, cb) {
     if (!cb) cb = () => {}
     var loadingFromGist = false
     var gistId
@@ -42,7 +42,7 @@ function GistHandler(_window) {
     return loadingFromGist
   }
 
-  function getGistId(str) {
+  function getGistId (str) {
     var idr = /[0-9A-Fa-f]{8,}/
     var match = idr.exec(str)
     return match ? match[0] : null

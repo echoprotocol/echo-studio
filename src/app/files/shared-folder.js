@@ -3,7 +3,7 @@ var EventManager = require('../../lib/events')
 var pathtool = require('path')
 
 module.exports = class SharedFolder {
-  constructor(remixd) {
+  constructor (remixd) {
     this.event = new EventManager()
     this._remixd = remixd
     this.remixd = remixapi(remixd, this)
@@ -47,17 +47,17 @@ module.exports = class SharedFolder {
     })
   }
 
-  isConnected() {
+  isConnected () {
     return this._isReady
   }
 
-  close(cb) {
+  close (cb) {
     this.remixd.exit()
     this._isReady = false
     cb()
   }
 
-  init(cb) {
+  init (cb) {
     this._remixd.ensureSocket((error) => {
       if (error) return cb(error)
       this._isReady = !error
@@ -78,14 +78,14 @@ module.exports = class SharedFolder {
   //
   // this.remixd.exists(path, (error, isValid) => {})
 
-  exists(path, cb) {
+  exists (path, cb) {
     var unprefixedpath = this.removePrefix(path)
     this._remixd.call('sharedfolder', 'exists', {path: unprefixedpath}, (error, result) => {
       cb(error, result)
     })
   }
 
-  get(path, cb) {
+  get (path, cb) {
     var unprefixedpath = this.removePrefix(path)
     this._remixd.call('sharedfolder', 'get', {path: unprefixedpath}, (error, file) => {
       if (!error) {
@@ -100,7 +100,7 @@ module.exports = class SharedFolder {
     })
   }
 
-  set(path, content, cb) {
+  set (path, content, cb) {
     var unprefixedpath = this.removePrefix(path)
     this._remixd.call('sharedfolder', 'set', {path: unprefixedpath, content: content}, (error, result) => {
       if (cb) return cb(error, result)
@@ -110,15 +110,15 @@ module.exports = class SharedFolder {
     return true
   }
 
-  addReadOnly(path, content) {
+  addReadOnly (path, content) {
     return false
   }
 
-  isReadOnly(path) {
+  isReadOnly (path) {
     return this._readOnlyMode || this._readOnlyFiles[path] === 1
   }
 
-  remove(path) {
+  remove (path) {
     var unprefixedpath = this.removePrefix(path)
     this._remixd.call('sharedfolder', 'remove', {path: unprefixedpath}, (error, result) => {
       if (error) console.log(error)
@@ -130,7 +130,7 @@ module.exports = class SharedFolder {
     })
   }
 
-  rename(oldPath, newPath, isFolder) {
+  rename (oldPath, newPath, isFolder) {
     var unprefixedoldPath = this.removePrefix(oldPath)
     var unprefixednewPath = this.removePrefix(newPath)
     this._remixd.call('sharedfolder', 'rename', {oldPath: unprefixedoldPath, newPath: unprefixednewPath}, (error, result) => {
@@ -151,13 +151,13 @@ module.exports = class SharedFolder {
     return true
   }
 
-  removePrefix(path) {
+  removePrefix (path) {
     path = path.indexOf(this.type) === 0 ? path.replace(this.type, '') : path
     if (path[0] === '/') return path.substring(1)
     return path
   }
 
-  resolveDirectory(path, callback) {
+  resolveDirectory (path, callback) {
     var self = this
     if (path[0] === '/') path = path.substring(1)
     if (!path) return callback(null, { [self.type]: { } })
@@ -166,7 +166,7 @@ module.exports = class SharedFolder {
   }
 }
 
-function remixapi(remixd, self) {
+function remixapi (remixd, self) {
   const read = (path, callback) => {
     path = '' + (path || '')
     path = pathtool.join('./', path)

@@ -2,20 +2,20 @@ const async = require('async')
 const bignumber = require('bignumber.js')
 
 module.exports = {
-  shortenAddress: function(address, etherBalance) {
+  shortenAddress: function (address, etherBalance) {
     var len = address.length
     return address.slice(0, 5) + '...' + address.slice(len - 5, len) + (etherBalance ? ' (' + etherBalance.toString() + ' ether)' : '')
   },
-  coinBalanceNormalizer: function(value, precision) {
+  coinBalanceNormalizer: function (value, precision) {
     return bignumber(value).dividedBy(10 ** precision).toString()
   },
-  shortenHexData: function(data) {
+  shortenHexData: function (data) {
     if (!data) return ''
     if (data.length < 5) return data
     var len = data.length
     return data.slice(0, 5) + '...' + data.slice(len - 5, len)
   },
-  createNonClashingNameWithPrefix(name, fileProvider, prefix, cb) {
+  createNonClashingNameWithPrefix (name, fileProvider, prefix, cb) {
     var counter = ''
     var ext = 'sol'
     var reg = /(.*)\.([^.]+)/g
@@ -41,16 +41,16 @@ module.exports = {
       (error) => { cb(error, name + counter + prefix + '.' + ext) }
     )
   },
-  createNonClashingName(name, fileProvider, cb) {
+  createNonClashingName (name, fileProvider, cb) {
     this.createNonClashingNameWithPrefix(name, fileProvider, '', cb)
   },
-  checkSpecialChars(name) {
+  checkSpecialChars (name) {
     return name.match(/[/:*?"<>\\'|]/) != null
   },
   find: find
 }
 
-function findDeep(object, fn, found = { break: false, value: undefined }) {
+function findDeep (object, fn, found = { break: false, value: undefined }) {
   if (typeof object !== 'object' || object === null) return
   for (var i in object) {
     if (found.break) break
@@ -67,9 +67,9 @@ function findDeep(object, fn, found = { break: false, value: undefined }) {
   return found.value
 }
 
-function find(args, query) {
+function find (args, query) {
   query = query.trim()
-  var isMatch = !!findDeep(args, function check(value, key) {
+  var isMatch = !!findDeep(args, function check (value, key) {
     if (value === undefined || value === null) return false
     if (typeof value === 'function') return false
     if (typeof value === 'object') return false

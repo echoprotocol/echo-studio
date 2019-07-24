@@ -1,7 +1,7 @@
 const EventEmitter = require('events')
 
 class RenameFile extends EventEmitter {
-  command(path, newFileName, renamedPath) {
+  command (path, newFileName, renamedPath) {
     this.api.perform((done) => {
       renameFile(this.api, path, newFileName, renamedPath, () => {
         done()
@@ -12,9 +12,9 @@ class RenameFile extends EventEmitter {
   }
 }
 
-function renameFile(browser, path, newFileName, renamedPath, done) {
-  browser.execute(function(path) {
-    function contextMenuClick(element) {
+function renameFile (browser, path, newFileName, renamedPath, done) {
+  browser.execute(function (path) {
+    function contextMenuClick (element) {
       var evt = element.ownerDocument.createEvent('MouseEvents')
       var RIGHT_CLICK_BUTTON_CODE = 2 // the same for FF and IE
       evt.initMouseEvent('contextmenu', true, true,
@@ -29,11 +29,11 @@ function renameFile(browser, path, newFileName, renamedPath, done) {
       }
     }
     contextMenuClick(document.querySelector('[data-path="' + path + '"]'))
-  }, [path], function(result) {
+  }, [path], function (result) {
     browser
       .click('#menuitemrename')
       .perform((client, doneSetValue) => {
-        browser.execute(function(path, addvalue) {
+        browser.execute(function (path, addvalue) {
           document.querySelector('[data-path="' + path + '"]').innerHTML = addvalue
         }, [path, newFileName], () => {
           doneSetValue()

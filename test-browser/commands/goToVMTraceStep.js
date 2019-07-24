@@ -1,7 +1,7 @@
 const EventEmitter = require('events')
 
 class GoToVmTraceStep extends EventEmitter {
-  command(step, incr) {
+  command (step, incr) {
     this.api.perform((done) => {
       goToVMtraceStep(this.api, step, incr, () => {
         done()
@@ -12,11 +12,11 @@ class GoToVmTraceStep extends EventEmitter {
   }
 }
 
-function goToVMtraceStep(browser, step, incr, done) {
+function goToVMtraceStep (browser, step, incr, done) {
   if (!incr) incr = 0
-  browser.execute(function(step) {
+  browser.execute(function (step) {
     return document.querySelector('#stepdetail').innerHTML
-  }, [step], function(result) {
+  }, [step], function (result) {
     if (result.value.indexOf('vm trace step: ' + step) !== -1) {
       done()
     } else if (incr > 1000) {

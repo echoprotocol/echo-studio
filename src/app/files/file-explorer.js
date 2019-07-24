@@ -15,7 +15,7 @@ var globalRegistry = require('../../global/registry')
 var queryParams = new QueryParams()
 let MENU_HANDLE
 
-function fileExplorer(localRegistry, files, menuItems) {
+function fileExplorer (localRegistry, files, menuItems) {
   var self = this
   this.events = new EventManager()
   // file provider backend
@@ -65,7 +65,7 @@ function fileExplorer(localRegistry, files, menuItems) {
   self._components.registry.put({ api: self, name: `fileexplorer/${self.files.type}` })
 
   // warn if file changed outside of Remix
-  function remixdDialog() {
+  function remixdDialog () {
     return yo`<div>This file has been changed outside of Remix IDE.</div>`
   }
 
@@ -94,11 +94,11 @@ function fileExplorer(localRegistry, files, menuItems) {
   files.event.register('fileRenamedError', fileRenamedError)
   files.event.register('fileAdded', fileAdded)
 
-  function fileRenamedError(error) {
+  function fileRenamedError (error) {
     modalDialogCustom.alert(error)
   }
 
-  function fileAdded(filepath) {
+  function fileAdded (filepath) {
     self.ensureRoot(() => {
       var folderpath = filepath.split('/').slice(0, -1).join('/')
 
@@ -120,29 +120,29 @@ function fileExplorer(localRegistry, files, menuItems) {
     })
   }
 
-  function fileRemoved(filepath) {
+  function fileRemoved (filepath) {
     var label = self.treeView.labelAt(filepath)
     if (label && label.parentElement) {
       label.parentElement.removeChild(label)
     }
   }
 
-  function fileRenamed(oldName, newName, isFolder) {
+  function fileRenamed (oldName, newName, isFolder) {
     fileRemoved(oldName)
     fileAdded(newName)
   }
 
   // make interface and register to nodeClick, leafClick
   self.treeView = new Treeview({
-    extractData: function extractData(value, tree, key) {
+    extractData: function extractData (value, tree, key) {
       var newValue = {}
       // var isReadOnly = false
       var isFile = false
-      Object.keys(value).filter(function keep(x) {
+      Object.keys(value).filter(function keep (x) {
         if (x === '/content') isFile = true
         // if (x === '/readOnly') isReadOnly = true
         if (x[0] !== '/') return true
-      }).forEach(function(x) { newValue[x] = value[x] })
+      }).forEach(function (x) { newValue[x] = value[x] })
       return {
         path: (tree || {}).path ? tree.path + '/' + key : key,
         children: isFile ? undefined
@@ -153,7 +153,7 @@ function fileExplorer(localRegistry, files, menuItems) {
           })) : undefined
       }
     },
-    formatSelf: function formatSelf(key, data, li) {
+    formatSelf: function formatSelf (key, data, li) {
       var isRoot = data.path === self.files.type
       return yo`
         <div class="${css.items}">
@@ -173,7 +173,7 @@ function fileExplorer(localRegistry, files, menuItems) {
     }
   })
 
-  self.treeView.event.register('nodeRightClick', function(key, data, label, event) {
+  self.treeView.event.register('nodeRightClick', function (key, data, label, event) {
     if (self.files.readonly) return
     if (key === self.files.type) return
     MENU_HANDLE && MENU_HANDLE.hide(null, true)
@@ -190,7 +190,7 @@ function fileExplorer(localRegistry, files, menuItems) {
     })
   })
 
-  self.treeView.event.register('leafRightClick', function(key, data, label, event) {
+  self.treeView.event.register('leafRightClick', function (key, data, label, event) {
     if (key === self.files.type) return
     MENU_HANDLE && MENU_HANDLE.hide(null, true)
     let actions = {}
@@ -216,11 +216,11 @@ function fileExplorer(localRegistry, files, menuItems) {
     MENU_HANDLE = contextMenu(event, actions)
   })
 
-  self.treeView.event.register('leafClick', function(key, data, label) {
+  self.treeView.event.register('leafClick', function (key, data, label) {
     self.events.trigger('focus', [key])
   })
 
-  self.treeView.event.register('nodeClick', function(path, childrenContainer) {
+  self.treeView.event.register('nodeClick', function (path, childrenContainer) {
     if (!childrenContainer) return
     if (childrenContainer.style.display === 'none') return
     self.updatePath(path)
@@ -253,7 +253,7 @@ function fileExplorer(localRegistry, files, menuItems) {
 
   var textUnderEdit = null
 
-  function selectElementContents(el) {
+  function selectElementContents (el) {
     var range = document.createRange()
     range.selectNodeContents(el)
     var sel = window.getSelection()
@@ -261,7 +261,7 @@ function fileExplorer(localRegistry, files, menuItems) {
     sel.addRange(range)
   }
 
-  function editModeOn(label) {
+  function editModeOn (label) {
     textUnderEdit = label.innerText
     label.setAttribute('contenteditable', true)
     label.classList.add('bg-light')
@@ -269,9 +269,9 @@ function fileExplorer(localRegistry, files, menuItems) {
     selectElementContents(label)
   }
 
-  function editModeOff(event) {
+  function editModeOff (event) {
     var label = this
-    function rename() {
+    function rename () {
       var newPath = label.dataset.path
       newPath = newPath.split('/')
       newPath[newPath.length - 1] = label.innerText
@@ -308,7 +308,7 @@ function fileExplorer(localRegistry, files, menuItems) {
   }
 }
 
-fileExplorer.prototype.updatePath = function(path) {
+fileExplorer.prototype.updatePath = function (path) {
   this.files.resolveDirectory(path, (error, fileTree) => {
     if (error) console.error(error)
     if (!fileTree) return
@@ -317,20 +317,20 @@ fileExplorer.prototype.updatePath = function(path) {
   })
 }
 
-fileExplorer.prototype.hide = function() {
+fileExplorer.prototype.hide = function () {
   if (this.container) this.container.style.display = 'none'
 }
 
-fileExplorer.prototype.show = function() {
+fileExplorer.prototype.show = function () {
   if (this.container) this.container.style.display = 'block'
 }
 
-fileExplorer.prototype.init = function() {
+fileExplorer.prototype.init = function () {
   this.container = yo`<div></div>`
   return this.container
 }
 
-fileExplorer.prototype.publishToGist = function() {
+fileExplorer.prototype.publishToGist = function () {
   modalDialogCustom.confirm(
     'Create a public gist',
     'Are you sure you want to publish all your files anonymously as a public gist on github.com?',
@@ -338,7 +338,7 @@ fileExplorer.prototype.publishToGist = function() {
   )
 }
 
-fileExplorer.prototype.uploadFile = function(event) {
+fileExplorer.prototype.uploadFile = function (event) {
   // TODO The file explorer is merely a view on the current state of
   // the files module. Please ask the user here if they want to overwrite
   // a file and then just use `files.add`. The file explorer will
@@ -348,9 +348,9 @@ fileExplorer.prototype.uploadFile = function(event) {
 
   ;[...event.target.files].forEach((file) => {
     let files = this.files
-    function loadFile() {
+    function loadFile () {
       var fileReader = new FileReader()
-      fileReader.onload = function(event) {
+      fileReader.onload = function (event) {
         if (helper.checkSpecialChars(file.name)) {
           modalDialogCustom.alert('Special characters are not allowed')
           return
@@ -376,8 +376,8 @@ fileExplorer.prototype.uploadFile = function(event) {
   })
 }
 
-fileExplorer.prototype.toGist = function(id) {
-  let proccedResult = function(error, data) {
+fileExplorer.prototype.toGist = function (id) {
+  let proccedResult = function (error, data) {
     if (error) {
       modalDialogCustom.alert('Failed to manage gist: ' + error)
     } else {
@@ -436,7 +436,7 @@ fileExplorer.prototype.toGist = function(id) {
 }
 
 // return all the files, except the temporary/readonly ones..
-fileExplorer.prototype.packageFiles = function(filesProvider, callback) {
+fileExplorer.prototype.packageFiles = function (filesProvider, callback) {
   var ret = {}
   filesProvider.resolveDirectory(filesProvider.type, (error, files) => {
     if (error) callback(error)
@@ -460,7 +460,7 @@ fileExplorer.prototype.packageFiles = function(filesProvider, callback) {
 }
 
 // ------------------ copy files --------------
-fileExplorer.prototype.copyFiles = function() {
+fileExplorer.prototype.copyFiles = function () {
   let self = this
   modalDialogCustom.prompt(
     'Copy files from browser explorer',
@@ -470,7 +470,7 @@ fileExplorer.prototype.copyFiles = function() {
       doCopy(target)
     }
   )
-  function doCopy(target) {
+  function doCopy (target) {
     // package only files from the browser storage.
     self.packageFiles(self.files, (error, packaged) => {
       if (error) {
@@ -479,7 +479,7 @@ fileExplorer.prototype.copyFiles = function() {
         let iframe = yo`
           <iframe src=${target} style='display:none;'></iframe>
         `
-        iframe.onload = function() {
+        iframe.onload = function () {
           iframe.contentWindow.postMessage(['loadFiles', packaged], '*')
           tooltip('Files copied successfully.')
         }
@@ -490,7 +490,7 @@ fileExplorer.prototype.copyFiles = function() {
 }
 
 // ------------------ gist publish --------------
-fileExplorer.prototype.updateGist = function() {
+fileExplorer.prototype.updateGist = function () {
   var gistId = this.files.id
   if (!gistId) {
     tooltip('no gist content is currently loaded.')
@@ -499,7 +499,7 @@ fileExplorer.prototype.updateGist = function() {
   }
 }
 
-fileExplorer.prototype.createNewFile = function() {
+fileExplorer.prototype.createNewFile = function () {
   let self = this
   modalDialogCustom.prompt('Create new file', 'File Name', 'Untitled.sol', (input) => {
     helper.createNonClashingName(input, self.files, (error, newName) => {
@@ -517,7 +517,7 @@ fileExplorer.prototype.createNewFile = function() {
   }, null, true)
 }
 
-fileExplorer.prototype.renderMenuItems = function() {
+fileExplorer.prototype.renderMenuItems = function () {
   let items = ''
   if (this.menuItems) {
     items = this.menuItems.map(({action, title, icon}) => {
@@ -540,7 +540,7 @@ fileExplorer.prototype.renderMenuItems = function() {
   return yo`<span class=" ${css.menu}">${items}</span>`
 }
 
-fileExplorer.prototype.ensureRoot = function(cb) {
+fileExplorer.prototype.ensureRoot = function (cb) {
   cb = cb || (() => {})
   var self = this
   if (self.element) return cb()
@@ -558,7 +558,7 @@ fileExplorer.prototype.ensureRoot = function(cb) {
   })
 }
 
-function normalize(path, filesList) {
+function normalize (path, filesList) {
   var prefix = path.split('/')[0]
   var newList = {}
   Object.keys(filesList).forEach(key => {

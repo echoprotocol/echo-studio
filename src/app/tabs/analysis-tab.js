@@ -22,14 +22,14 @@ const profile = {
 
 class AnalysisTab extends ViewPlugin {
 
-  constructor(registry) {
+  constructor (registry) {
     super(profile)
     this.event = new EventManager()
     this.events = new EventEmitter()
     this.registry = registry
   }
 
-  render() {
+  render () {
     if (!this.staticanalysis) this.staticanalysis = new StaticAnalysis(this.registry, this)
     this.staticanalysis.event.register('staticAnaysisWarning', (count) => {
       if (count > 0) {

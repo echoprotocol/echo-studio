@@ -11,16 +11,16 @@ const profile = {
 }
 
 module.exports = class CompilerArtefacts extends Plugin {
-  constructor() {
+  constructor () {
     super(profile)
     this.compilersArtefacts = {}
   }
 
-  clear() {
+  clear () {
     this.compilersArtefacts = {}
   }
 
-  onActivation() {
+  onActivation () {
     this.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
       this.compilersArtefacts['__last'] = new CompilerAbstract(languageVersion, data, source)
     })

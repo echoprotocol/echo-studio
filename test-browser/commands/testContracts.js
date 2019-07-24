@@ -1,7 +1,7 @@
 const EventEmitter = require('events')
 
 class TestContracts extends EventEmitter {
-  command(fileName, contractCode, compiledContractNames) {
+  command (fileName, contractCode, compiledContractNames) {
     this.api.perform((done) => {
       testContracts(this.api, fileName, contractCode, compiledContractNames, () => {
         done()
@@ -12,7 +12,7 @@ class TestContracts extends EventEmitter {
   }
 }
 
-function testContracts(browser, fileName, contractCode, compiledContractNames, callback) {
+function testContracts (browser, fileName, contractCode, compiledContractNames, callback) {
   browser
       .clickLaunchIcon('solidity')
       .clearValue('#input textarea')

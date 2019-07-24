@@ -28,7 +28,7 @@ const css = csjs`
 /** Abstract class used for hosting the view of a plugin */
 export class AbstractPanel extends HostPlugin {
 
-  constructor(profile, opts) {
+  constructor (profile, opts) {
     super(profile)
     this.events = new EventEmitter()
     this.contents = {}
@@ -43,7 +43,7 @@ export class AbstractPanel extends HostPlugin {
    * @param {String} name the name of the plugin
    * @param {HTMLElement} content the HTMLContent of the plugin
    */
-  add(view, name) {
+  add (view, name) {
     console.log('panel', name, view)
     if (this.contents[name]) throw new Error(`Plugin ${name} already rendered`)
     view.style.height = '100%'
@@ -54,11 +54,11 @@ export class AbstractPanel extends HostPlugin {
     this.view.appendChild(this.contents[name])
   }
 
-  addView(profile, view) {
+  addView (profile, view) {
     this.add(view, profile.name)
   }
 
-  removeView(profile) {
+  removeView (profile) {
     this.remove(profile.name)
   }
 
@@ -66,7 +66,7 @@ export class AbstractPanel extends HostPlugin {
    * Remove a plugin from the panel
    * @param {String} name The name of the plugin to remove
    */
-  remove(name) {
+  remove (name) {
     const el = this.contents[name]
     delete this.contents[name]
     if (el) el.parentElement.removeChild(el)
@@ -77,7 +77,7 @@ export class AbstractPanel extends HostPlugin {
    * Display the content of this specific plugin
    * @param {String} name The name of the plugin to display the content
    */
-  showContent(name) {
+  showContent (name) {
     console.log('showContent', name, this.active)
     if (!this.contents[name]) throw new Error(`Plugin ${name} is not yet activated`)
     // hiding the current view and display the `moduleName`
@@ -88,7 +88,7 @@ export class AbstractPanel extends HostPlugin {
     this.active = name
   }
 
-  focus(name) {
+  focus (name) {
     this.showContent(name)
   }
 }

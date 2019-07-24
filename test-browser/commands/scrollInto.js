@@ -1,7 +1,7 @@
 const EventEmitter = require('events')
 
 class ScrollInto extends EventEmitter {
-  command(target) {
+  command (target) {
     this.api.perform((client, done) => {
       _scrollInto(this.api, target, () => {
         done()
@@ -12,10 +12,10 @@ class ScrollInto extends EventEmitter {
   }
 }
 
-function _scrollInto(browser, target, cb) {
-  browser.execute(function(target) {
+function _scrollInto (browser, target, cb) {
+  browser.execute(function (target) {
     document.querySelector(target).scrollIntoView()
-  }, [target], function() {
+  }, [target], function () {
     cb()
   })
 }

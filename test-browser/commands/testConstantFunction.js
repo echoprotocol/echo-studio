@@ -1,7 +1,7 @@
 const EventEmitter = require('events')
 
 class TestConstantFunction extends EventEmitter {
-  command(address, fnFullName, expectedInput, expectedOutput) {
+  command (address, fnFullName, expectedInput, expectedOutput) {
     console.log('TestConstantFunction ' + address + ' fnFullName')
     this.api.perform((done) => {
       testConstantFunction(this.api, address, fnFullName, expectedInput, expectedOutput, () => {
@@ -13,13 +13,13 @@ class TestConstantFunction extends EventEmitter {
   }
 }
 
-function testConstantFunction(browser, address, fnFullName, expectedInput, expectedOutput, cb) {
-  browser.waitForElementPresent('.instance button[title="' + fnFullName + '"]').perform(function(client, done) {
-    client.execute(function() {
+function testConstantFunction (browser, address, fnFullName, expectedInput, expectedOutput, cb) {
+  browser.waitForElementPresent('.instance button[title="' + fnFullName + '"]').perform(function (client, done) {
+    client.execute(function () {
       document.querySelector('#runTabView').scrollTop = document.querySelector('#runTabView').scrollHeight
-    }, [], function() {
+    }, [], function () {
       if (expectedInput) {
-        client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function() {})
+        client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function () {})
       }
       done()
     })

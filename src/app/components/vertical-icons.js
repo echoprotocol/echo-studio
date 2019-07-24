@@ -18,7 +18,7 @@ const profile = {
 // TODO merge with side-panel.js. VerticalIcons should not be a plugin
 export class VerticalIcons extends Plugin {
 
-  constructor(appManager) {
+  constructor (appManager) {
     super(profile)
     this.events = new EventEmitter()
     this.appManager = appManager
@@ -32,17 +32,17 @@ export class VerticalIcons extends Plugin {
     })
   }
 
-  linkContent(profile) {
+  linkContent (profile) {
     if (!profile.icon) return
     this.addIcon(profile)
     this.listenOnStatus(profile)
   }
 
-  unlinkContent(profile) {
+  unlinkContent (profile) {
     this.removeIcon(profile)
   }
 
-  listenOnStatus(profile) {
+  listenOnStatus (profile) {
     // the list of supported keys. 'none' will remove the status
     const keys = ['edited', 'succeed', 'none', 'loading', 'failed']
     const types = ['error', 'warning', 'success', 'info', '']
@@ -63,7 +63,7 @@ export class VerticalIcons extends Plugin {
    * Add an icon to the map
    * @param {ModuleProfile} profile The profile of the module
    */
-  addIcon({kind, name, icon, displayName, tooltip}) {
+  addIcon ({kind, name, icon, displayName, tooltip}) {
     let title = (tooltip || displayName || name)
     this.icons[name] = yo`
       <div
@@ -81,7 +81,7 @@ export class VerticalIcons extends Plugin {
    * @param {Object} key
    * @param {Object} type
    */
-  resolveClasses(key, type) {
+  resolveClasses (key, type) {
     let classes = css.status
     switch (key) {
       case 'succeed':
@@ -108,7 +108,7 @@ export class VerticalIcons extends Plugin {
    * @param {String} name
    * @param {Object} status
    */
-  setIconStatus(name, status) {
+  setIconStatus (name, status) {
     const el = this.icons[name]
     if (!el) return
     let statusEl = el.querySelector('span')
@@ -145,17 +145,17 @@ export class VerticalIcons extends Plugin {
    * Remove an icon from the map
    * @param {ModuleProfile} profile The profile of the module
    */
-  removeIcon({kind, name}) {
+  removeIcon ({kind, name}) {
     if (this.icons[name]) this.iconKind[kind || 'other'].removeChild(this.icons[name])
   }
 
   /**
    *  Remove active for the current activated icons
    */
-  removeActive() {
+  removeActive () {
     // reset filters
     const images = this.view.querySelectorAll(`.image`)
-    images.forEach(function(im) {
+    images.forEach(function (im) {
       im.style.setProperty('filter', 'invert(0.5)')
     })
 
@@ -170,7 +170,7 @@ export class VerticalIcons extends Plugin {
    *  Add active for the new activated icon
    * @param {string} name Name of profile of the module to activate
    */
-  addActive(name) {
+  addActive (name) {
     const themeType = globalRegistry.get('themeModule').api.currentTheme().quality
     const invert = themeType === 'dark' ? 1 : 0
     const nextActive = this.view.querySelector(`[plugin="${name}"]`)
@@ -185,7 +185,7 @@ export class VerticalIcons extends Plugin {
    * Set an icon as active
    * @param {string} name Name of profile of the module to activate
    */
-  select(name) {
+  select (name) {
     this.updateActivations(name)
     this.events.emit('showContent', name)
   }
@@ -194,17 +194,17 @@ export class VerticalIcons extends Plugin {
    * Toggles the side panel for plugin
    * @param {string} name Name of profile of the module to activate
    */
-  toggle(name) {
+  toggle (name) {
     this.updateActivations(name)
     this.events.emit('toggleContent', name)
   }
 
-  updateActivations(name) {
+  updateActivations (name) {
     this.removeActive()
     this.addActive(name)
   }
 
-  onThemeChanged(themeType) {
+  onThemeChanged (themeType) {
     const invert = themeType === 'dark' ? 1 : 0
     const active = this.view.querySelector(`.${css.active}`)
     if (active) {
@@ -213,7 +213,7 @@ export class VerticalIcons extends Plugin {
     }
   }
 
-  render() {
+  render () {
     let home = yo`
     <div
       class="${css.homeIcon}"

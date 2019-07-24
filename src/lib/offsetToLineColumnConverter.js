@@ -11,13 +11,13 @@ const profile = {
 }
 
 export class OffsetToLineColumnConverter extends Plugin {
-  constructor() {
+  constructor () {
     super(profile)
     this.lineBreakPositionsByContent = {}
     this.sourceMappingDecoder = new SourceMappingDecoder()
   }
 
-  offsetToLineColumn(rawLocation, file, sources, asts) {
+  offsetToLineColumn (rawLocation, file, sources, asts) {
     if (!this.lineBreakPositionsByContent[file]) {
       for (var filename in asts) {
         var source = asts[filename]
@@ -30,11 +30,11 @@ export class OffsetToLineColumnConverter extends Plugin {
     return this.sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, this.lineBreakPositionsByContent[file])
   }
 
-  clear() {
+  clear () {
     this.lineBreakPositionsByContent = {}
   }
 
-  activate() {
+  activate () {
     this.on('solidity', 'compilationFinished', () => {
       this.clear()
     })

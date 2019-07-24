@@ -3,14 +3,14 @@ var init = require('../helpers/init')
 var sauce = require('./sauce')
 
 module.exports = {
-  before: function(browser, done) {
+  before: function (browser, done) {
     init(browser, done)
   },
-  '@sources': function() {
+  '@sources': function () {
     return sources
   },
 
-  'Execute Simple Contract and Test Terminal': function(browser) {
+  'Execute Simple Contract and Test Terminal': function (browser) {
     browser.testContracts('Untitled.sol', sources[0]['browser/Untitled.sol'], ['TestContract'])
         .clickLaunchIcon('run')
         .click('#runTabView button[class^="instanceButton"]')
@@ -37,7 +37,7 @@ module.exports = {
         .click('i[class^="clearinstance"]')
   },
 
-  'Test Complex Return Values': function(browser) {
+  'Test Complex Return Values': function (browser) {
     browser.testContracts('returnValues.sol', sources[1]['browser/returnValues.sol'], ['testReturnValues'])
       .clickLaunchIcon('run')
       .click('#runTabView button[class^="instanceButton"]')
@@ -74,7 +74,7 @@ module.exports = {
 }`).click('i[class^="clearinstance"]')
   },
 
-  'Test Complex Input Values': function(browser) {
+  'Test Complex Input Values': function (browser) {
     browser.testContracts('inputValues.sol', sources[2]['browser/inputValues.sol'], ['test'])
         .clickLaunchIcon('run')
         .click('#runTabView button[class^="instanceButton"]')

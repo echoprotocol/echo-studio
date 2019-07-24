@@ -32,19 +32,19 @@ var sources = [
 ]
 
 module.exports = {
-  before: function(browser, done) {
+  before: function (browser, done) {
     init(browser, done)
   },
-  '@sources': function() {
+  '@sources': function () {
     return sources
   },
-  'Remixd': function(browser) {
+  'Remixd': function (browser) {
     runTests(browser)
   },
   tearDown: sauce
 }
 
-function runTests(browser, testData) {
+function runTests (browser, testData) {
   var browserName = browser.options.desiredCapabilities.browserName
   if (browserName === 'safari' || browserName === 'internet explorer') {
     console.log('do not run remixd test for ' + browserName + ': sauce labs doesn\'t seems to handle websocket')
@@ -86,7 +86,7 @@ function runTests(browser, testData) {
     .renameFile('localhost/folder1/contract_' + browserName + '.sol', 'renamed_contract_' + browserName + '.sol', 'localhost/folder1/renamed_contract_' + browserName + '.sol')
     .pause(1000)
     .removeFile('localhost/folder1/contract_' + browserName + '_toremove.sol')
-    .perform(function(done) {
+    .perform(function (done) {
       testImportFromRemixd(browser, () => { done() })
     })
     .clickLaunchIcon('fileExplorers').click('[data-path="localhost"]') // collapse and expand
@@ -104,7 +104,7 @@ function runTests(browser, testData) {
     .end()
 }
 
-function testImportFromRemixd(browser, callback) {
+function testImportFromRemixd (browser, callback) {
   browser
     .waitForElementVisible('[data-path="localhost/src"]', 100000)
     .click('[data-path="localhost/src"]')

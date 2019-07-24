@@ -18,7 +18,7 @@ class MultiParamManager {
     * @param {string} evmBC
     *
     */
-  constructor(lookupOnly, funABI, clickCallBack, inputs, title, evmBC) {
+  constructor (lookupOnly, funABI, clickCallBack, inputs, title, evmBC) {
     this.lookupOnly = lookupOnly
     this.funABI = funABI
     this.clickCallBack = clickCallBack
@@ -29,25 +29,25 @@ class MultiParamManager {
     this.multiFields
   }
 
-  switchMethodViewOn() {
+  switchMethodViewOn () {
     this.contractActionsContainerSingle.style.display = 'none'
     this.contractActionsContainerMulti.style.display = 'flex'
     this.makeMultiVal()
   }
 
-  switchMethodViewOff() {
+  switchMethodViewOff () {
     this.contractActionsContainerSingle.style.display = 'flex'
     this.contractActionsContainerMulti.style.display = 'none'
     var multiValString = this.getMultiValsString()
     if (multiValString) this.basicInputField.value = multiValString
   }
 
-  getValue(item, index) {
+  getValue (item, index) {
     var valStr = item.value.join('')
     return valStr
   }
 
-  getMultiValsString() {
+  getMultiValsString () {
     var valArray = this.multiFields.querySelectorAll('input')
     var ret = ''
     var valArrayTest = []
@@ -73,7 +73,7 @@ class MultiParamManager {
     }
   }
 
-  emptyInputs() {
+  emptyInputs () {
     var valArray = this.multiFields.querySelectorAll('input')
     for (var k = 0; k < valArray.length; k++) {
       valArray[k].value = ''
@@ -81,7 +81,7 @@ class MultiParamManager {
     this.basicInputField.value = ''
   }
 
-  makeMultiVal() {
+  makeMultiVal () {
     var inputString = this.basicInputField.value
     if (inputString) {
       inputString = inputString.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
@@ -96,17 +96,17 @@ class MultiParamManager {
     }
   }
 
-  createMultiFields() {
+  createMultiFields () {
     if (this.funABI.inputs) {
       return yo`<div>
-        ${this.funABI.inputs.map(function(inp) {
+        ${this.funABI.inputs.map(function (inp) {
           return yo`<div class="${css.multiArg}"><label for="${inp.name}"> ${inp.name}: </label><input placeholder="${inp.type}" title="${inp.name}"></div>`
         })}
       </div>`
     }
   }
 
-  render() {
+  render () {
     var title
     if (this.title) {
       title = this.title

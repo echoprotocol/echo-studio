@@ -2,7 +2,7 @@
 
 module.exports = styleGuideClean
 
-function styleGuideClean() {
+function styleGuideClean () {
   /* --------------------------------------------------------------------------
 
                               CSS PROPERTIES

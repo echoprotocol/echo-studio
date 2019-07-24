@@ -21,7 +21,7 @@ const profile = {
 }
 
 module.exports = class SettingsTab extends ViewPlugin {
-  constructor(config, editor, appManager) {
+  constructor (config, editor, appManager) {
     super(profile)
     this.config = config
     this.editor = editor
@@ -43,7 +43,7 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.event = new EventManager()
   }
 
-  createThemeCheckies() {
+  createThemeCheckies () {
     let themes = this._deps.themeModule.getThemes()
     const onswitchTheme = (event, name) => {
       this._deps.themeModule.switchTheme(name)
@@ -62,7 +62,7 @@ module.exports = class SettingsTab extends ViewPlugin {
     }
   }
 
-  render() {
+  render () {
     const self = this
     if (self._view.el) return self._view.el
 
@@ -114,7 +114,7 @@ module.exports = class SettingsTab extends ViewPlugin {
             <label class="form-check-label align-middle" for="alwaysUseVM">Always use Ethereum VM at Load</label>
           </div>
           <div class="form-check ${css.frow}">
-            <div><input id="editorWrap" class="form-check-input align-middle" type="checkbox" onchange=${function() { this.editor.resize(this.checked) }}></div>
+            <div><input id="editorWrap" class="form-check-input align-middle" type="checkbox" onchange=${function () { this.editor.resize(this.checked) }}></div>
             <label class="form-check-label align-middle" for="editorWrap">Text Wrap</label>
           </div>
           <div class="form-check ${css.frow}">
@@ -149,13 +149,13 @@ module.exports = class SettingsTab extends ViewPlugin {
         ${this._view.config.themes}
       </div>`
 
-    function onchangeGenerateContractMetadata(event) {
+    function onchangeGenerateContractMetadata (event) {
       self.config.set('settings/generate-contract-metadata', !self.config.get('settings/generate-contract-metadata'))
     }
-    function onchangeOption(event) {
+    function onchangeOption (event) {
       self.config.set('settings/always-use-vm', !self.config.get('settings/always-use-vm'))
     }
-    function onchangePersonal(event) {
+    function onchangePersonal (event) {
       self.config.set('settings/personal-mode', !self.config.get('settings/personal-mode'))
     }
 

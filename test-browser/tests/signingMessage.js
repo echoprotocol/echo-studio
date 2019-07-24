@@ -3,13 +3,13 @@ var init = require('../helpers/init')
 var sauce = require('./sauce')
 
 module.exports = {
-  before: function(browser, done) {
+  before: function (browser, done) {
     init(browser, done)
   },
-  '@sources': function() {
+  '@sources': function () {
     return sources
   },
-  'Test Signature': function(browser) {
+  'Test Signature': function (browser) {
     let hash, signature
     browser.clickLaunchIcon('run').signMessage('test message', (h, s) => {
       hash = h

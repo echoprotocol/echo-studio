@@ -35,7 +35,7 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
 
   show()
 
-  function setFocusOn(btn) {
+  function setFocusOn (btn) {
     var okDiv = document.getElementById('modal-footer-ok')
     var cancelDiv = document.getElementById('modal-footer-cancel')
     if (btn === 'ok') {
@@ -47,13 +47,13 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
     }
   }
 
-  function okListener() {
+  function okListener () {
     removeEventListener()
     hide()
     if (ok && ok.fn && agreed) ok.fn()
   }
 
-  function cancelListener() {
+  function cancelListener () {
     removeEventListener()
     hide()
     if (cancel && cancel.fn) cancel.fn()
@@ -63,7 +63,7 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
     }
   }
 
-  function modalKeyEvent(e) {
+  function modalKeyEvent (e) {
     if (e.keyCode === 27) { // Esc
       cancelListener()
     } else if (e.keyCode === 13) { // Enter
@@ -80,11 +80,11 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
     }
   }
 
-  function hide() {
+  function hide () {
     if (container) container.style.display = 'none'
   }
 
-  function show() {
+  function show () {
     if (!container) return
     container.style.display = 'block'
     if (focusSelector) {
@@ -98,7 +98,7 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
     }
   }
 
-  function removeEventListener() {
+  function removeEventListener () {
     okDiv.removeEventListener('click', okListener)
     cancelDiv.removeEventListener('click', cancelListener)
     closeDiv.removeEventListener('click', cancelListener)
@@ -124,7 +124,7 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
   return { container, okListener, cancelListener }
 }
 
-function html(opts) {
+function html (opts) {
   return yo`
   <div id="modal-dialog" class="modal" tabindex="-1" role="dialog">
     <div id="modal-background" class="modal-dialog" role="document">

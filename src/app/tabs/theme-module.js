@@ -26,7 +26,7 @@ const profile = {
 
 export class ThemeModule extends Plugin {
 
-  constructor(registry) {
+  constructor (registry) {
     super(profile)
     this.events = new EventEmitter()
     this._deps = {
@@ -37,12 +37,12 @@ export class ThemeModule extends Plugin {
   }
 
   /** Return the active theme */
-  currentTheme() {
+  currentTheme () {
     return this.themes[this.active]
   }
 
   /** Returns all themes as an array */
-  getThemes() {
+  getThemes () {
     return Object.keys(this.themes).map(key => this.themes[key])
   }
 
@@ -50,7 +50,7 @@ export class ThemeModule extends Plugin {
    * Change the current theme
    * @param {string} [themeName] - The name of the theme
    */
-  switchTheme(themeName) {
+  switchTheme (themeName) {
     if (themeName && !Object.keys(this.themes).includes(themeName)) {
       throw new Error(`Theme ${themeName} doesn't exist`)
     }

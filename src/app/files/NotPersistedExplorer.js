@@ -3,12 +3,12 @@ var ReadOnlyExplorer = require('./basicReadOnlyExplorer')
 var toolTip = require('../ui/tooltip')
 
 class NotPersistedExplorer extends ReadOnlyExplorer {
-  constructor(type) {
+  constructor (type) {
     super(type)
     this.readonly = false
   }
 
-  remove(path) {
+  remove (path) {
     var unprefixedPath = this.removePrefix(path)
     var folderPath = path.substring(0, path.lastIndexOf('/'))
     if (this.paths[folderPath]) {
@@ -19,7 +19,7 @@ class NotPersistedExplorer extends ReadOnlyExplorer {
     return true
   }
 
-  rename(oldPath, newPath, isFolder) {
+  rename (oldPath, newPath, isFolder) {
     if (isFolder) { return toolTip('folder renaming is not handled by this explorer') }
     var unprefixedoldPath = this.removePrefix(oldPath)
     var unprefixednewPath = this.removePrefix(newPath)
@@ -31,7 +31,7 @@ class NotPersistedExplorer extends ReadOnlyExplorer {
     })
   }
 
-  isReadOnly(path) {
+  isReadOnly (path) {
     return false
   }
 }

@@ -3,7 +3,7 @@ var EventManager = require('../../../../lib/events')
 var yo = require('yo-yo')
 
 class Slider {
-  constructor() {
+  constructor () {
     this.event = new EventManager()
     this.max
     this.disabled = true
@@ -11,7 +11,7 @@ class Slider {
     this.previousValue = null
   }
 
-  setSliderLength(length) {
+  setSliderLength (length) {
     if (!this.view) return
     this.view.querySelector('#slider').setAttribute('max', length - 1)
     this.max = length - 1
@@ -26,7 +26,7 @@ class Slider {
     this.setValue(0)
   }
 
-  onChange(event) {
+  onChange (event) {
     if (!this.view) return
     var value = parseInt(this.view.querySelector('#slider').value)
     if (value === this.previousValue) return
@@ -35,16 +35,16 @@ class Slider {
     this.event.trigger('sliderMoved', [value])
   }
 
-  setValue(value) {
+  setValue (value) {
     if (!this.view) return
     this.view.querySelector('#slider').value = value
   }
 
-  render() {
+  render () {
     var self = this
     var view = yo`<div>
         <input id='slider' style='width: 100%' type='range' min=0 max=${this.max} value=0
-          onchange=${function() { self.onChange() }} oninput=${function() { self.onChange() }} disabled=${this.disabled} />
+          onchange=${function () { self.onChange() }} oninput=${function () { self.onChange() }} disabled=${this.disabled} />
       </div>`
     if (!this.view) {
       this.view = view

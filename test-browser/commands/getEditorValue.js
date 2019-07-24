@@ -1,9 +1,9 @@
 const EventEmitter = require('events')
 
 class GetEditorValue extends EventEmitter {
-  command(callback) {
+  command (callback) {
     this.api.perform((client, done) => {
-      this.api.execute(function(value) {
+      this.api.execute(function (value) {
         return document.getElementById('input').editor.getValue()
       }, [], (result) => {
         done(result.value)

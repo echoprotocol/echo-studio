@@ -3,7 +3,7 @@ const csjs = require('csjs-inject')
 const globlalRegistry = require('../../global/registry')
 
 class SourceHighlighter {
-  constructor(localRegistry) {
+  constructor (localRegistry) {
     this._components = {}
     this._components.registry = localRegistry || globlalRegistry
     // dependencies
@@ -18,7 +18,7 @@ class SourceHighlighter {
     this.source = null
   }
 
-  currentSourceLocation(lineColumnPos, location) {
+  currentSourceLocation (lineColumnPos, location) {
     if (this.statementMarker) this._deps.editor.removeMarker(this.statementMarker, this.source)
     if (this.fullLineMarker) this._deps.editor.removeMarker(this.fullLineMarker, this.source)
     let lastCompilationResult = this._deps.compilerArtefacts['__last']
@@ -30,7 +30,7 @@ class SourceHighlighter {
     }
   }
 
-  currentSourceLocationFromfileName(lineColumnPos, filePath, style) {
+  currentSourceLocationFromfileName (lineColumnPos, filePath, style) {
     if (this.statementMarker) this._deps.editor.removeMarker(this.statementMarker, this.source)
     if (this.fullLineMarker) this._deps.editor.removeMarker(this.fullLineMarker, this.source)
     this.statementMarker = null
@@ -60,7 +60,7 @@ class SourceHighlighter {
         `
 
       this.statementMarker = this._deps.editor.addMarker(lineColumnPos, this.source, css.highlightcode.className + ' ' + css.customBackgroundColor.className)
-      this._deps.editor.scrollToLine(lineColumnPos.start.line, true, true, function() {})
+      this._deps.editor.scrollToLine(lineColumnPos.start.line, true, true, function () {})
 
       if (lineColumnPos.start.line === lineColumnPos.end.line) {
         this.fullLineMarker = this._deps.editor.addMarker({

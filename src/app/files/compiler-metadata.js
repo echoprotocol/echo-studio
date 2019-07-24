@@ -12,7 +12,7 @@ const profile = {
 }
 
 class CompilerMetadata extends Plugin {
-  constructor(fileManager, config) {
+  constructor (fileManager, config) {
     super(profile)
     var self = this
     self.fileManager = fileManager
@@ -20,7 +20,7 @@ class CompilerMetadata extends Plugin {
     self.networks = ['VM:-', 'main:1', 'ropsten:3', 'rinkeby:4', 'kovan:42', 'görli:5', 'Custom']
   }
 
-  onActivation() {
+  onActivation () {
     var self = this
     this.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
       if (!self.config.get('settings/generate-contract-metadata')) return
@@ -66,7 +66,7 @@ class CompilerMetadata extends Plugin {
     })
   }
 
-  _syncContext(contract, metadata) {
+  _syncContext (contract, metadata) {
     var linkReferences = metadata['linkReferences']
     var autoDeployLib = metadata['autoDeployLib']
     if (!linkReferences) linkReferences = {}
@@ -86,7 +86,7 @@ class CompilerMetadata extends Plugin {
   }
 
   // TODO: is only called by dropdownLogic and can be moved there
-  deployMetadataOf(contractName) {
+  deployMetadataOf (contractName) {
     return new Promise((resolve, reject) => {
       var self = this
       var provider = self.fileManager.currentFileProvider()

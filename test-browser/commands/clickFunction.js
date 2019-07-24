@@ -1,14 +1,14 @@
 const EventEmitter = require('events')
 
 class ClickFunction extends EventEmitter {
-  command(fnFullName, expectedInput) {
+  command (fnFullName, expectedInput) {
     this.api.waitForElementPresent('.instance button[title="' + fnFullName + '"]')
-    .perform(function(client, done) {
-      client.execute(function() {
+    .perform(function (client, done) {
+      client.execute(function () {
         document.querySelector('#runTabView').scrollTop = document.querySelector('#runTabView').scrollHeight
-      }, [], function() {
+      }, [], function () {
         if (expectedInput) {
-          client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function() {})
+          client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function () {})
         }
         done()
       })

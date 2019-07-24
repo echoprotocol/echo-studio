@@ -41,7 +41,7 @@ var css = csjs`
   }
 `
 
-function TxBrowser() {
+function TxBrowser () {
   this.event = new EventManager()
 
   this.state = {
@@ -51,7 +51,7 @@ function TxBrowser() {
   this.view
 }
 
-TxBrowser.prototype.submit = function() {
+TxBrowser.prototype.submit = function () {
   if (this.state.debugging) {
     this.unload()
   } else {
@@ -60,36 +60,36 @@ TxBrowser.prototype.submit = function() {
   yo.update(this.view, this.render())
 }
 
-TxBrowser.prototype.updateTxN = function(ev) {
+TxBrowser.prototype.updateTxN = function (ev) {
   this.state.txNumber = ev.target.value
   if (this.view) {
     yo.update(this.view, this.render())
   }
 }
 
-TxBrowser.prototype.load = function(txHash, tx) {
+TxBrowser.prototype.load = function (txHash, tx) {
   this.state.txNumber = txHash
 }
 
-TxBrowser.prototype.unload = function() {
+TxBrowser.prototype.unload = function () {
   this.event.trigger('unloadRequested')
 }
 
-TxBrowser.prototype.setState = function(state) {
+TxBrowser.prototype.setState = function (state) {
   this.state = {...this.state, ...state}
   if (this.view) {
     yo.update(this.view, this.render())
   }
 }
 
-TxBrowser.prototype.render = function() {
+TxBrowser.prototype.render = function () {
   var self = this
   this.state.txNumberInput = yo`
     <input
       value="${this.state.txNumber || ''}"
       class="form-control m-0 ${css.txinput}"
       id='txinput'
-      onkeyup=${function() { self.updateTxN(arguments[0]) }}
+      onkeyup=${function () { self.updateTxN(arguments[0]) }}
       type='text'
       oninput=${this.txInputChanged.bind(this)}
       placeholder=${'Transaction hash, should start with 0x'}
@@ -100,7 +100,7 @@ TxBrowser.prototype.render = function() {
       class='btn btn-primary btn-sm ${css.txbutton}'
       id='load'
       title='${this.state.debugging ? 'Stop' : 'Start'} debugging'
-      onclick=${function() { self.submit() }}
+      onclick=${function () { self.submit() }}
     >
       ${this.state.debugging ? 'Stop' : 'Start'} debugging
     </button>
@@ -133,7 +133,7 @@ TxBrowser.prototype.render = function() {
   return view
 }
 
-TxBrowser.prototype.txInputChanged = function(event) {
+TxBrowser.prototype.txInputChanged = function (event) {
   // todo check validation of txnumber in the input element, use
   // required
   // oninvalid="setCustomValidity('Please provide a valid transaction number, must start with 0x and have length of 22')"

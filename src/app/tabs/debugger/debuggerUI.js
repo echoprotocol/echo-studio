@@ -31,7 +31,7 @@ var css = csjs`
 
 class DebuggerUI {
 
-  constructor(container) {
+  constructor (container) {
     this.registry = globalRegistry
     this.event = new EventManager()
 
@@ -51,7 +51,7 @@ class DebuggerUI {
     this.setEditor()
   }
 
-  setEditor() {
+  setEditor () {
     const self = this
     this.editor = this.registry.get('editor').api
 
@@ -63,47 +63,47 @@ class DebuggerUI {
       if (self.debugger) self.debugger.breakPointManager.add({fileName: fileName, row: row})
     })
 
-    self.editor.event.register('contentChanged', function() {
+    self.editor.event.register('contentChanged', function () {
       if (self.debugger) self.debugger.unload()
     })
   }
 
-  listenToEvents() {
+  listenToEvents () {
     const self = this
     if (!self.debugger) return
 
-    this.debugger.event.register('debuggerStatus', function(isActive) {
+    this.debugger.event.register('debuggerStatus', function (isActive) {
       self.sourceHighlighter.currentSourceLocation(null)
       self.isActive = isActive
     })
 
-    this.debugger.event.register('newSourceLocation', function(lineColumnPos, rawLocation) {
+    this.debugger.event.register('newSourceLocation', function (lineColumnPos, rawLocation) {
       self.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
     })
 
     this.debugger.event.register('debuggerUnloaded', self.unLoad.bind(this))
   }
 
-  startTxBrowser() {
+  startTxBrowser () {
     const self = this
     let txBrowser = new TxBrowser()
     this.txBrowser = txBrowser
 
-    txBrowser.event.register('requestDebug', function(blockNumber, txNumber, tx) {
+    txBrowser.event.register('requestDebug', function (blockNumber, txNumber, tx) {
       if (self.debugger) self.debugger.unload()
       self.startDebugging(blockNumber, txNumber, tx)
     })
 
-    txBrowser.event.register('unloadRequested', this, function(blockNumber, txIndex, tx) {
+    txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
       if (self.debugger) self.debugger.unload()
     })
   }
 
-  isDebuggerActive() {
+  isDebuggerActive () {
     return this.isActive
   }
 
-  startDebugging(blockNumber, txNumber, tx) {
+  startDebugging (blockNumber, txNumber, tx) {
     const self = this
     if (this.debugger) this.unLoad()
 
@@ -139,11 +139,11 @@ class DebuggerUI {
     })
   }
 
-  debug(txHash) {
+  debug (txHash) {
     this.startDebugging(null, txHash, null)
   }
 
-  render() {
+  render () {
     this.debuggerPanelsView = yo`<div class="${css.innerShift}"></div>`
     this.debuggerHeadPanelsView = yo`<div class="${css.innerShift}"></div>`
     this.stepManagerView = yo`<div class="${css.innerShift}"></div>`
@@ -163,7 +163,7 @@ class DebuggerUI {
     return view
   }
 
-  unLoad() {
+  unLoad () {
     yo.update(this.debuggerHeadPanelsView, yo`<div></div>`)
     yo.update(this.debuggerPanelsView, yo`<div></div>`)
     yo.update(this.stepManagerView, yo`<div></div>`)
@@ -176,7 +176,7 @@ class DebuggerUI {
     this.event.trigger('traceUnloaded')
   }
 
-  renderDebugger() {
+  renderDebugger () {
     yo.update(this.debuggerHeadPanelsView, this.vmDebugger.renderHead())
     yo.update(this.debuggerPanelsView, this.vmDebugger.render())
     yo.update(this.stepManagerView, this.stepManager.render())

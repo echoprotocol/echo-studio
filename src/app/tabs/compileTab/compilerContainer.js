@@ -10,7 +10,7 @@ const DEFAULT_VERSION = 'v0.4.24+commit.5206c759.js'
 
 class CompilerContainer {
 
-  constructor(compileTabLogic, editor, config, queryParams) {
+  constructor (compileTabLogic, editor, config, queryParams) {
     this._view = {}
     this.compileTabLogic = compileTabLogic
     this.editor = editor
@@ -32,21 +32,21 @@ class CompilerContainer {
   /**
    * Update the compilation button with the name of the current file
    */
-  set currentFile(name = '') {
+  set currentFile (name = '') {
     if (!this._view.compilationButton) return
     const button = this.compilationButton(name.split('/').pop())
     yo.update(this._view.compilationButton, button)
   }
 
-  deactivate() {
+  deactivate () {
   }
 
-  activate() {
+  activate () {
     this.currentFile = this.config.get('currentFile')
     this.listenToEvents()
   }
 
-  listenToEvents() {
+  listenToEvents () {
     this.editor.event.register('contentChanged', this.scheduleCompilation.bind(this))
     this.editor.event.register('sessionSwitched', this.scheduleCompilation.bind(this))
 
@@ -98,7 +98,7 @@ class CompilerContainer {
   /**************
    * SUBCOMPONENT
    */
-  compilationButton(name) {
+  compilationButton (name) {
     if (!name) name = ''
     var displayed = name === '' ? '<no file selected>' : name
     var el = yo`
@@ -113,12 +113,12 @@ class CompilerContainer {
     return el
   }
 
-  _retrieveVersion() {
+  _retrieveVersion () {
     let version = this._view.versionSelector.value
     return version.substring(9, version.length)
   }
 
-  render() {
+  render () {
     this.compileTabLogic.compiler.event.register('compilerLoaded', (version) => this.setVersionText(version))
     this.fetchAllVersion((allversions, selectedVersion) => {
       this.data.allversions = allversions
@@ -229,38 +229,38 @@ class CompilerContainer {
     return this._view.compileContainer
   }
 
-  updateAutoCompile(event) {
+  updateAutoCompile (event) {
     this.config.set('autoCompile', this._view.autoCompile.checked)
   }
 
-  compile(event) {
+  compile (event) {
     if (this.config.get('currentFile')) {
       this.compileTabLogic.runCompiler()
     }
   }
 
-  compileIfAutoCompileOn() {
+  compileIfAutoCompileOn () {
     if (this.config.get('autoCompile')) {
       this.compile()
     }
   }
 
-  hideWarnings(event) {
+  hideWarnings (event) {
     this.config.set('hideWarnings', this._view.hideWarningsBox.checked)
     this.compileIfAutoCompileOn()
   }
 
-  onchangeOptimize() {
+  onchangeOptimize () {
     this.compileTabLogic.setOptimize(!!this._view.optimize.checked)
     this.compileIfAutoCompileOn()
   }
 
-  onchangeLanguage(event) {
+  onchangeLanguage (event) {
     this.compileTabLogic.setLanguage(event.target.value)
     this.compileIfAutoCompileOn()
   }
 
-  onchangeEvmVersion(_) {
+  onchangeEvmVersion (_) {
     let s = this._view.evmVersionSelector
     let v = s.value
     if (v === 'default') {
@@ -270,13 +270,13 @@ class CompilerContainer {
     this.compileIfAutoCompileOn()
   }
 
-  onchangeLoadVersion(event) {
+  onchangeLoadVersion (event) {
     this.data.selectedVersion = this._view.versionSelector.value
     this._updateVersionSelector()
     this._updateLanguageSelector()
   }
 
-  _updateVersionSelector() {
+  _updateVersionSelector () {
     this._view.versionSelector.innerHTML = ''
     this.data.allversions.forEach(build => {
       const option = build.path === this.data.selectedVersion
@@ -313,7 +313,7 @@ class CompilerContainer {
     }
   }
 
-  _updateLanguageSelector() {
+  _updateLanguageSelector () {
     if (semver.lt(this._retrieveVersion(), DEFAULT_VERSION)) {
       this._view.languageSelector.setAttribute('disabled', '')
       this._view.languageSelector.value = 'Solidity'
@@ -323,12 +323,12 @@ class CompilerContainer {
     }
   }
 
-  setVersionText(text) {
+  setVersionText (text) {
     this.data.version = text
     if (this._view.version) this._view.version.innerText = text
   }
 
-  fetchAllVersion(callback) {
+  fetchAllVersion (callback) {
     minixhr(`${this.data.baseurl}/list.json`, (json, event) => {
       // @TODO: optimise and cache results to improve app loading times
       var allversions, selectedVersion
@@ -349,7 +349,7 @@ class CompilerContainer {
     })
   }
 
-  scheduleCompilation() {
+  scheduleCompilation () {
     if (!this.config.get('autoCompile')) return
     if (this.data.compileTimeout) window.clearTimeout(this.data.compileTimeout)
     this.data.compileTimeout = window.setTimeout(() => this.compileIfAutoCompileOn(), this.data.timeout)

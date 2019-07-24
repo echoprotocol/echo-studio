@@ -117,10 +117,10 @@ var css = csjs`
   *
   */
 class TxLogger {
-  constructor(eventsDecoder, txListener, terminal) {
+  constructor (eventsDecoder, txListener, terminal) {
     this.event = new EventManager()
     this.seen = {}
-    function filterTx(value, query) {
+    function filterTx (value, query) {
       if (value.length) {
         return helper.find(value, query)
       }
@@ -149,7 +149,12 @@ class TxLogger {
     this.logUnknownTX = this.terminal.registerCommand('unknownTransaction', (args, cmds, append) => {
       // triggered for transaction AND call
       var data = args[0]
-      var el = renderUnknownTransaction(this, data)
+      var el
+      if (data.tx.isCall) {
+        el = renderUnknownCall(this, data)
+      } else {
+        el = renderUnknownTransaction(this, data)
+      }
       append(el)
     }, { activate: false, filterFn: filterTx })
 
@@ -170,7 +175,7 @@ class TxLogger {
     })
 
     this.txListener.event.register('newCall', (tx) => {
-       log(this, tx, null)
+      log(this, tx, null)
     })
 
     this.terminal.updateJournal({ type: 'select', value: 'unknownTransaction' })
@@ -178,7 +183,7 @@ class TxLogger {
   }
 }
 
-function debug(e, data, self) {
+function debug (e, data, self) {
   e.stopPropagation()
   if (data.tx.isCall && data.tx.envMode !== 'vm') {
     modalDialog.alert('Cannot debug this call. Debugging calls is only possible in JavaScript VM mode.')
@@ -187,7 +192,7 @@ function debug(e, data, self) {
   }
 }
 
-function log(self, tx, receipt) {
+function log (self, tx, receipt) {
   var resolvedTransaction = self.txListener.resolvedTransaction(tx.id)
   if (resolvedTransaction) {
     // var compiledContracts = null
@@ -205,7 +210,7 @@ function log(self, tx, receipt) {
   }
 }
 
-function renderKnownTransaction(self, data) {
+function renderKnownTransaction (self, data) {
   var from = data.tx.trx.operations[0][1].registrar
   var to = `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`
   var contractName = data.resolvedData.contractName + '.' + data.resolvedData.fn
@@ -226,7 +231,7 @@ function renderKnownTransaction(self, data) {
   return tx
 }
 
-function renderCall(self, data) {
+function renderCall (self, data) {
   var to = data.tx.to
   var from = data.tx.from ? data.tx.from : ' - '
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
@@ -252,7 +257,33 @@ function renderCall(self, data) {
   return tx
 }
 
-function renderUnknownTransaction(self, data) {
+function renderUnknownCall (self, data) {
+  var to = data.tx.to
+  var from = data.tx.from ? data.tx.from : ' - '
+  var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
+  var obj = {from, to}
+  var txType = 'call'
+  var tx = yo`
+    <span id="tx${data.tx.id}">
+      <div class="${css.log}" onclick=${e => callTxDetails(e, tx, data, obj)}>
+        ${checkTxStatus(data.tx, txType)}
+        <span class=${css.txLog}>
+          <span class=${css.tx}>[call]</span>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</div>
+        </span>
+        <div style="display: none;" class=${css.buttons}>
+          <div class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
+        </div>
+        <i class="${css.arrow} fas fa-angle-down"></i>
+      </div>
+    </span>
+  `
+  return tx
+}
+
+function renderUnknownTransaction (self, data) {
   var from = data.tx.from
   var to = data.tx.to
   var obj = {from, to}
@@ -272,22 +303,22 @@ function renderUnknownTransaction(self, data) {
   return tx
 }
 
-function renderEmptyBlock(self, data) {
+function renderEmptyBlock (self, data) {
   return yo`
     <span class=${css.txLog}>
       <span class='${css.tx}'><div class=${css.txItem}>[<span class=${css.txItemTitle}>block:${data.block.number} - </span> 0 transactions]</span></span>
     </span>`
 }
 
-function checkTxStatus(tx, type) {
+function checkTxStatus (tx, type) {
   if (type === 'call' || type === 'unknownCall') {
     return yo`<i class="${css.txStatus} ${css.call}">call</i>`
   }
-  
+
   return yo`<i class="${css.txStatus} ${css.succeeded} fas fa-check-circle"></i>`
 }
 
-function context(self, opts) {
+function context (self, opts) {
   var data = opts.data || ''
   var from = opts.from ? opts.from : ''
   var to = opts.to
@@ -345,7 +376,7 @@ module.exports = TxLogger
 
 // helpers
 
-function txDetails(e, tx, data, obj) {
+function txDetails (e, tx, data, obj) {
   var table = tx.childNodes[1]
   var from = obj.from
   var contractName = obj.contractName
@@ -383,7 +414,7 @@ function txDetails(e, tx, data, obj) {
   }
 }
 
-function callTxDetails(e, tx, data, obj) {
+function callTxDetails (e, tx, data, obj) {
   var table = tx.childNodes[1]
   var from = obj.from
   var contractName = obj.contractName
@@ -397,26 +428,25 @@ function callTxDetails(e, tx, data, obj) {
   } else {
     log.removeChild(log.lastChild)
     log.appendChild(arrowUp)
-
     table = createTable({
       contract: contractName,
-      txId: data.tx.id,
       status: data.resolvedData ? data.resolvedData.status : null,
       isCall: data.tx.isCall,
-      contractAddress: data.resolvedData.address,
-      contractId: `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`,
+      contractAddress: data.resolvedData && data.resolvedData.address ? data.resolvedData.address : ' - ',
+      contractId: data.resolvedData && data.resolvedData.contractAddress ? `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}` : ' - ',
       data: data.tx,
       from,
-      to: `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`,
+      to: data.resolvedData && data.resolvedData.contractAddress ? `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}` : ' - ',
       input: data.tx.input,
-      'decoded output': data.tx ? JSON.stringify(typeConversion.stringify(data.tx), null, '\t') : ' - '
+      'decoded input': data.tx.params ? JSON.stringify(typeConversion.stringify(data.tx.params), null, '\t') : ' - ',
+      'decoded output': data.tx.decodedOutput ? JSON.stringify(typeConversion.stringify(data.tx.decodedOutput), null, '\t') : ' - '
     })
 
     tx.appendChild(table)
   }
 }
 
-function createTable(opts) {
+function createTable (opts) {
   var table = yo`<table class="${css.txTable}" id="txTable"></table>`
   if (!opts.isCall) {
     var msg = ''
@@ -449,13 +479,21 @@ function createTable(opts) {
       </td>
     </tr>
   `
-  table.appendChild(transactionId)
+  if (opts.txId) table.appendChild(transactionId)
+
+  var toHash
+  var data = opts.data  // opts.data = data.tx
+  if (data.to) {
+    toHash = data.to
+  } else {
+    toHash = opts.to
+  }
 
   var contractId = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> contract id </td>
-      <td class="${css.td}">${opts.contractId}
-        ${copyToClipboard(() => opts.contractId)}
+      <td class="${css.td}">${toHash}
+        ${copyToClipboard(() => toHash)}
       </td>
     </tr>
   `
@@ -471,18 +509,11 @@ function createTable(opts) {
   `
   if (opts.from) table.appendChild(from)
 
-  var toHash
-  var data = opts.data  // opts.data = data.tx
-  if (data.to) {
-    toHash = data.to
-  } else {
-    toHash = opts.to
-  }
   var to = yo`
     <tr class="${css.tr}">
     <td class="${css.td}"> to </td>
     <td class="${css.td}">${toHash}
-      ${copyToClipboard(() => data.to ? data.to : toHash)}
+      ${copyToClipboard(() => toHash)}
     </td>
     </tr>
   `
@@ -566,7 +597,7 @@ function createTable(opts) {
   if (opts['decoded output']) {
     var outputDecoded = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> output </td>
+      <td class="${css.td}"> decoded output </td>
       <td class="${css.td}" id="decodedoutput" >${opts['decoded output']}
         ${copyToClipboard(() => opts['decoded output'])}
       </td>
