@@ -51,7 +51,6 @@ class SettingsUI {
       if (!this.loadedAccounts[id]) {
         txOrigin.appendChild(yo`<option value="${id}" >${id} (${name})</option>`)
         this.loadedAccounts[id] = 1
-        this.updateAccountBalances(id)
       }
     })
 
