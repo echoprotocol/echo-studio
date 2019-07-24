@@ -115,14 +115,23 @@ class SettingsUI {
 
       </div>
     `
-    // <i id="remixRunSignMsg" class="fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
-    const assetEl = yo`
+    const amountAssetEl = yo`
       <div class="${css.crow}">
         <div class="${css.col1_1}">
-          Asset
+          Amount asset
         </div>
         <div class=${css.asset}>
-          <select name="assets" class="form-control ${css.select}" id="assets" ></select>
+          <select name="assets" class="form-control ${css.select}" id="amountassets" ></select>
+        </div>
+      </div>
+    `
+    const feeAssetEl = yo`
+      <div class="${css.crow}">
+        <div class="${css.col1_1}">
+          Fee asset
+        </div>
+        <div class=${css.asset}>
+          <select name="assets" class="form-control ${css.select}" id="feeassets" ></select>
         </div>
       </div>
     `
@@ -141,7 +150,8 @@ class SettingsUI {
         ${environmentEl}
         ${networkEl}
         ${accountEl}
-        ${assetEl}
+        ${amountAssetEl}
+        ${feeAssetEl}
         ${valueEl}
       </div>
     `
@@ -340,8 +350,6 @@ class SettingsUI {
     if (!this.el) return
     let accountEl = this.el.querySelector('#txorigin')
     if (accountEl.selectedIndex === -1) return
-    let assetsEl = this.el.querySelector('#assets')
-    assetsEl.innerHTML = ''
 
     let accountId = accountEl.options[accountEl.selectedIndex].value
 
@@ -351,31 +359,44 @@ class SettingsUI {
         return
       }
 
-      for (let loadAssetType in this.loadAssetTypes) {
-        if (!results.find(({assetType}) => assetType === loadAssetType)) {
-          assetsEl.removeChild(assetsEl.querySelector('option[value="' + loadAssetType + '"]'))
-          delete this.loadedAccounts[loadAssetType]
-        }
-      }
+      this._updateAssets(results)
+    })
+  }
 
-      results.forEach((element) => {
-        const { amount, assetType, precision, symbol } = element
-        const value = `${assetType} (${helper.coinBalanceNormalizer(amount, precision)} ${symbol})`
-        if (!this.loadedAccounts[assetType]) {
-          assetsEl.appendChild(yo`<option value="${element.assetType}">${value}</option>`)
-          this.loadAssetTypes[assetType] = 1
-        } else {
-          assetsEl.querySelector('option[value="' + assetType + '"]').innerHTML = value
-        }
-      })
+  _updateAssets (assets) {
+    let amountAssetsEl = this.el.querySelector('#amountassets')
+    let feeAssetsEl = this.el.querySelector('#feeassets')
+
+    for (let loadAssetType in this.loadAssetTypes) {
+      if (!assets.find(({assetType}) => assetType === loadAssetType)) {
+        amountAssetsEl.removeChild(amountAssetsEl.querySelector('option[value="' + loadAssetType + '"]'))
+        feeAssetsEl.removeChild(feeAssetsEl.querySelector('option[value="' + loadAssetType + '"]'))
+        delete this.loadedAccounts[loadAssetType]
+      }
+    }
+
+    assets.forEach((element) => {
+      const { amount, assetType, precision, symbol } = element
+      const value = `${assetType} (${helper.coinBalanceNormalizer(amount, precision)} ${symbol})`
+
+      if (!this.loadAssetTypes[assetType]) {
+        amountAssetsEl.appendChild(yo`<option value="${element.assetType}">${value}</option>`)
+        feeAssetsEl.appendChild(yo`<option value="${element.assetType}">${value}</option>`)
+        this.loadAssetTypes[assetType] = 1
+      } else {
+        amountAssetsEl.querySelector('option[value="' + assetType + '"]').innerHTML = value
+        feeAssetsEl.querySelector('option[value="' + assetType + '"]').innerHTML = value
+      }
     })
   }
 
   _clearAccountsAndAssets() {
     let accountEl = this.el.querySelector('#txorigin')
-    let assetsEl = this.el.querySelector('#assets')
+    let amountAssetsEl = this.el.querySelector('#amountassets')
+    let feeAssetsEl = this.el.querySelector('#feeassets')
+    amountAssetsEl.innerHTML = ''
+    feeAssetsEl.innerHTML = ''
     accountEl.innerHTML = ''
-    assetsEl.innerHTML = ''
     this.loadedAccounts = {}
     this.loadAssetTypes = {}
   }
