@@ -5,11 +5,8 @@ variables:
 build:
   stage: build
   script:
-    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.pixelplex.by/690-echo-studio/echo-studio-tools.git tools
-    - cd tools
     - git submodule init
     - git submodule update
-    - cd ../
     - docker-compose --project-name=690_echo_studio up -d
   only:
     - develop
