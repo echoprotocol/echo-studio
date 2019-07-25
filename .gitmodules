@@ -1,0 +1,3 @@
+[submodule "tools"]
+	path = tools
+	url = gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.pixelplex.by/690-echo-studio/echo-studio-tools.git tools
