@@ -5,6 +5,7 @@ variables:
 build:
   stage: build
   script:
+    - ls
     - docker-compose --project-name=690_echo_studio up
   only:
     - develop
