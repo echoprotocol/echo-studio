@@ -15,18 +15,6 @@ class SettingsUI {
     this.event = new EventManager()
     this._components = {}
 
-    this.settings.event.register('connectToNetwork', (name, id) => {
-      this.netUI.innerHTML = `${name} (${id || '-'}) network`
-      this._clearAccountsAndAssets()
-      this.updateNetwork()
-      this.restartUpdatingInterval()
-    })
-
-    this.settings.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
-      if (error) return
-      if (!lookupOnly) this.el.querySelector('#value').value = '0'
-      this.updateAccountBalances()
-    })
     this._components = {
       registry: globalRegistry,
       networkModule: networkModule
@@ -40,7 +28,41 @@ class SettingsUI {
     this.loadedAccounts = {}
     this.loadAssetTypes = {}
 
-    this.updatingInterval = null
+    this._initEventListeners()
+  }
+
+  _initEventListeners () {
+    this.settings.event.register('connectToNetwork', (name, id) => {
+      this.netUI.innerHTML = `${name} (${id || '-'}) network`
+      this._clearAccountsAndAssets()
+      if (this.settings.isInjectedEchojslib()) {
+        this.fillAccountsList()
+      }
+    })
+
+    this.settings.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
+      if (error) return
+      if (!lookupOnly) this.el.querySelector('#value').value = '0'
+    })
+
+    this.settings.event.register('switchAccount', (account) => {
+      let txOrigin = this.el.querySelector('#txorigin')
+      let {id, name} = account
+      if (!this.loadedAccounts[id]) {
+        txOrigin.appendChild(yo`<option value="${id}" >${id} (${name})</option>`)
+        this.loadedAccounts[id] = 1
+      }
+    })
+
+    this.settings.event.register('updateAccount', (data) => {
+      const { id } = data
+      let accountEl = this.el.querySelector('#txorigin')
+      let accountId = accountEl.options[accountEl.selectedIndex].value
+
+      if (accountId === id) {
+        this.updateAccountBalances(accountId)
+      }
+    })
   }
 
   render () {
@@ -81,22 +103,35 @@ class SettingsUI {
         <div class="${css.col1_1}">
           Account
         </div>
-        <div class=${css.account}>
-          <select name="txorigin" class="form-control ${css.select}" id="txorigin" onchange=${() => {
-            this.fillAccountsList()
-          }}></select>
-          ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
+            <div class=${css.account}>
+                  <select name="txorigin" class="form-control ${css.select}" id="txorigin" onchange=${
+                  (event) => {
+                    const { value } = event.target
+                    this.updateAccountBalances(value)
+                    this.settings.subscribeToAccountUpdating(value)
+                  }}></select>
+                  ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
+        </div>
+
+      </div>
+    `
+    const amountAssetEl = yo`
+      <div class="${css.crow}">
+        <div class="${css.col1_1}">
+          Value asset
+        </div>
+        <div class=${css.asset}>
+          <select name="assets" class="form-control ${css.select}" id="amountassets" ></select>
         </div>
       </div>
     `
-    // <i id="remixRunSignMsg" class="fas fa-edit ${css.icon}" aria-hidden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
-    const assetEl = yo`
+    const feeAssetEl = yo`
       <div class="${css.crow}">
         <div class="${css.col1_1}">
-          Asset
+          Fee asset
         </div>
         <div class=${css.asset}>
-          <select name="assets" class="form-control ${css.select}" id="assets" ></select>
+          <select name="assets" class="form-control ${css.select}" id="feeassets" ></select>
         </div>
       </div>
     `
@@ -115,7 +150,8 @@ class SettingsUI {
         ${environmentEl}
         ${networkEl}
         ${accountEl}
-        ${assetEl}
+        ${feeAssetEl}
+        ${amountAssetEl}
         ${valueEl}
       </div>
     `
@@ -126,21 +162,9 @@ class SettingsUI {
       this.setFinalContext()
     })
 
-    this.restartUpdatingInterval()
-
     this.el = el
 
     return el
-  }
-
-  restartUpdatingInterval () {
-    if (this.updatingInterval) {
-      clearInterval(this.updatingInterval)
-    }
-
-    this.updatingInterval = setInterval(() => {
-      this.updateNetwork()
-    }, 10000)
   }
 
   setDropdown (selectExEnv) {
@@ -169,7 +193,7 @@ class SettingsUI {
       let context = selectExEnv.options[selectExEnv.selectedIndex].value
       this.settings.changeExecutionContext(context, () => {
         modalDialogCustom.confirm('External node request', 'Are you sure you want to connect to an echo node?', () => {
-          modalDialogCustom.prompt('External node request', 'Echo Provider Endpoint', 'wss://testnet.echo-dev.io/ws', (target) => {
+          modalDialogCustom.prompt('External node request', 'Echo Provider Endpoint', 'wss://devnet.echo-dev.io/ws', (target) => {
             this.settings.setProviderFromEndpoint(target, context, (alertMsg) => {
               if (alertMsg) {
                 modalDialogCustom.alert(alertMsg)
@@ -270,14 +294,6 @@ class SettingsUI {
     })
   }
 
-  updateNetwork () {
-    if (this.settings.isInjectedEchojslib()) {
-      this.fillAccountsList()
-    } else {
-      this.updateAccountBalances()
-    }
-  }
-
   async getInfoByWif () {
     try {
       const txOrigin = this.el.querySelector('#txorigin')
@@ -287,15 +303,14 @@ class SettingsUI {
       const wifInput = document.querySelector('#wifInput')
       const wif = wifInput.value
       const isValidWif = this.settings.validateWif(wif)
-
       if (isValidWif) {
-        const info = await this.settings.getInfoByWif(wif)
-
-        txOrigin.appendChild(yo`<option value="${info[0][0]}" >${info[0][0]}</option>`)
-        this.updateAccountBalances()
+        const { accountId, name } = await this.settings.getInfoByWif(wif)
+        txOrigin.appendChild(yo`<option value="${accountId}" >${accountId} (${name})</option>`)
+        this.updateAccountBalances(accountId)
+        this.settings.subscribeToAccountUpdating(accountId)
       }
     } catch (error) {
-      console.warn(error)
+      console.error(error)
     }
   }
 
@@ -321,12 +336,13 @@ class SettingsUI {
       for (let i in accounts) {
         let {id, name} = accounts[i]
         if (!this.loadedAccounts[id]) {
-          txOrigin.appendChild(yo`<option value="${id}" >${id} ${name ? `(${name})` : null}</option>`)
+          txOrigin.appendChild(yo`<option value="${id}" >${id} (${name})</option>`)
           this.loadedAccounts[id] = 1
         }
       }
       txOrigin.setAttribute('value', accounts[0].id)
       this.updateAccountBalances()
+      this.settings.subscribeToAccountUpdating(accounts[0].id)
     })
   }
 
@@ -334,41 +350,53 @@ class SettingsUI {
     if (!this.el) return
     let accountEl = this.el.querySelector('#txorigin')
     if (accountEl.selectedIndex === -1) return
-    let assetsEl = this.el.querySelector('#assets')
-    assetsEl.innerHTML = ''
 
     let accountId = accountEl.options[accountEl.selectedIndex].value
+
     this.settings.getAccountBalances(accountId, (err, results) => {
       if (err) {
         console.warn(err)
         return
       }
 
-      for (let loadAssetType in this.loadAssetTypes) {
-        if (!results.find(({assetType}) => assetType === loadAssetType)) {
-          assetsEl.removeChild(assetsEl.querySelector('option[value="' + loadAssetType + '"]'))
-          delete this.loadedAccounts[loadAssetType]
-        }
-      }
+      this._updateAssets(results)
+    })
+  }
 
-      results.forEach((element) => {
-        const { amount, assetType, precision, symbol } = element
-        const value = `${assetType} (${helper.coinBalanceNormalizer(amount, precision)} ${symbol} )`
-        if (!this.loadedAccounts[assetType]) {
-          assetsEl.appendChild(yo`<option value="${element.assetType}">${value}</option>`)
-          this.loadAssetTypes[assetType] = 1
-        } else {
-          assetsEl.querySelector('option[value="' + assetType + '"]').innerHTML = value
-        }
-      })
+  _updateAssets (assets) {
+    let amountAssetsEl = this.el.querySelector('#amountassets')
+    let feeAssetsEl = this.el.querySelector('#feeassets')
+
+    for (let loadAssetType in this.loadAssetTypes) {
+      if (!assets.find(({assetType}) => assetType === loadAssetType)) {
+        amountAssetsEl.removeChild(amountAssetsEl.querySelector('option[value="' + loadAssetType + '"]'))
+        feeAssetsEl.removeChild(feeAssetsEl.querySelector('option[value="' + loadAssetType + '"]'))
+        delete this.loadedAccounts[loadAssetType]
+      }
+    }
+
+    assets.forEach((element) => {
+      const { amount, assetType, precision, symbol } = element
+      const value = `${assetType} (${helper.coinBalanceNormalizer(amount, precision)} ${symbol})`
+
+      if (!this.loadAssetTypes[assetType]) {
+        amountAssetsEl.appendChild(yo`<option value="${element.assetType}">${value}</option>`)
+        feeAssetsEl.appendChild(yo`<option value="${element.assetType}">${value}</option>`)
+        this.loadAssetTypes[assetType] = 1
+      } else {
+        amountAssetsEl.querySelector('option[value="' + assetType + '"]').innerHTML = value
+        feeAssetsEl.querySelector('option[value="' + assetType + '"]').innerHTML = value
+      }
     })
   }
 
   _clearAccountsAndAssets () {
     let accountEl = this.el.querySelector('#txorigin')
-    let assetsEl = this.el.querySelector('#assets')
+    let amountAssetsEl = this.el.querySelector('#amountassets')
+    let feeAssetsEl = this.el.querySelector('#feeassets')
+    amountAssetsEl.innerHTML = ''
+    feeAssetsEl.innerHTML = ''
     accountEl.innerHTML = ''
-    assetsEl.innerHTML = ''
     this.loadedAccounts = {}
     this.loadAssetTypes = {}
   }

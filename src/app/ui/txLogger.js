@@ -149,7 +149,12 @@ class TxLogger {
     this.logUnknownTX = this.terminal.registerCommand('unknownTransaction', (args, cmds, append) => {
       // triggered for transaction AND call
       var data = args[0]
-      var el = renderUnknownTransaction(this, data)
+      var el
+      if (data.tx.isCall) {
+        el = renderUnknownCall(this, data)
+      } else {
+        el = renderUnknownTransaction(this, data)
+      }
       append(el)
     }, { activate: false, filterFn: filterTx })
 
@@ -227,14 +232,40 @@ function renderKnownTransaction (self, data) {
 }
 
 function renderCall (self, data) {
-  var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
+  var to = data.tx.to
   var from = data.tx.from ? data.tx.from : ' - '
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
   var obj = {from, to}
   var txType = 'call'
   var tx = yo`
-    <span id="tx${data.tx.hash}">
-      <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
+    <span id="tx${data.tx.id}">
+      <div class="${css.log}" onclick=${e => callTxDetails(e, tx, data, obj)}>
+        ${checkTxStatus(data.tx, txType)}
+        <span class=${css.txLog}>
+          <span class=${css.tx}>[call]</span>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</div>
+        </span>
+        <div style="display: none;" class=${css.buttons}>
+          <div class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
+        </div>
+        <i class="${css.arrow} fas fa-angle-down"></i>
+      </div>
+    </span>
+  `
+  return tx
+}
+
+function renderUnknownCall (self, data) {
+  var to = data.tx.to
+  var from = data.tx.from ? data.tx.from : ' - '
+  var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
+  var obj = {from, to}
+  var txType = 'call'
+  var tx = yo`
+    <span id="tx${data.tx.id}">
+      <div class="${css.log}" onclick=${e => callTxDetails(e, tx, data, obj)}>
         ${checkTxStatus(data.tx, txType)}
         <span class=${css.txLog}>
           <span class=${css.tx}>[call]</span>
@@ -280,16 +311,9 @@ function renderEmptyBlock (self, data) {
 }
 
 function checkTxStatus (tx, type) {
-  // if (tx.status === '0x1') {
-  //   return yo`<i class="${css.txStatus} ${css.succeeded} fas fa-check-circle"></i>`
-  // }
-  // if (type === 'call' || type === 'unknownCall') {
-  //   return yo`<i class="${css.txStatus} ${css.call}">call</i>`
-  // } else if (tx.status === '0x0') {
-  //   return yo`<i class="${css.txStatus} ${css.failed} fas fa-times-circle"></i>`
-  // } else {
-  //   return yo`<i class="${css.txStatus} ${css.notavailable} fas fa-circle-thin" title='Status not available' ></i>`
-  // }
+  if (type === 'call' || type === 'unknownCall') {
+    return yo`<i class="${css.txStatus} ${css.call}">call</i>`
+  }
 
   return yo`<i class="${css.txStatus} ${css.succeeded} fas fa-check-circle"></i>`
 }
@@ -353,19 +377,18 @@ module.exports = TxLogger
 // helpers
 
 function txDetails (e, tx, data, obj) {
-  var table = document.querySelector(`#${tx.id} [class^="txTable"]`)
+  var table = tx.childNodes[1]
   var from = obj.from
   var contractName = obj.contractName
-  var log = document.querySelector(`#${tx.id} [class^='log']`)
-  var arrow = document.querySelector(`#${tx.id} [class^='arrow']`)
+  var log = tx.childNodes[0]
   var arrowUp = yo`<i class="${css.arrow} fas fa-angle-up"></i>`
   var arrowDown = yo`<i class="${css.arrow} fas fa-angle-down"></i>`
   if (table && table.parentNode) {
     tx.removeChild(table)
-    log.removeChild(arrow)
+    log.removeChild(log.lastChild)
     log.appendChild(arrowDown)
   } else {
-    log.removeChild(arrow)
+    log.removeChild(log.lastChild)
     log.appendChild(arrowUp)
 
     table = createTable({
@@ -385,6 +408,38 @@ function txDetails (e, tx, data, obj) {
       'contract result': data.resolvedData && data.resolvedData.contractResult && data.resolvedData.contractResult ? JSON.stringify(typeConversion.stringify(data.resolvedData.contractResult), null, '\t') : ' - ',
       logs: data.logs,
       val: data.tx.trx.operations[0][1].value.amount
+    })
+
+    tx.appendChild(table)
+  }
+}
+
+function callTxDetails (e, tx, data, obj) {
+  var table = tx.childNodes[1]
+  var from = obj.from
+  var contractName = obj.contractName
+  var log = tx.childNodes[0]
+  var arrowUp = yo`<i class="${css.arrow} fas fa-angle-up"></i>`
+  var arrowDown = yo`<i class="${css.arrow} fas fa-angle-down"></i>`
+  if (table && table.parentNode) {
+    tx.removeChild(table)
+    log.removeChild(log.lastChild)
+    log.appendChild(arrowDown)
+  } else {
+    log.removeChild(log.lastChild)
+    log.appendChild(arrowUp)
+    table = createTable({
+      contract: contractName,
+      status: data.resolvedData ? data.resolvedData.status : null,
+      isCall: data.tx.isCall,
+      contractAddress: data.resolvedData && data.resolvedData.address ? data.resolvedData.address : ' - ',
+      contractId: data.resolvedData && data.resolvedData.contractAddress ? `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}` : ' - ',
+      data: data.tx,
+      from,
+      to: data.resolvedData && data.resolvedData.contractAddress ? `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}` : ' - ',
+      input: data.tx.input,
+      'decoded input': data.tx.params ? JSON.stringify(typeConversion.stringify(data.tx.params), null, '\t') : ' - ',
+      'decoded output': data.tx.decodedOutput ? JSON.stringify(typeConversion.stringify(data.tx.decodedOutput), null, '\t') : ' - '
     })
 
     tx.appendChild(table)
@@ -424,13 +479,21 @@ function createTable (opts) {
       </td>
     </tr>
   `
-  table.appendChild(transactionId)
+  if (opts.txId) table.appendChild(transactionId)
+
+  var toHash
+  var data = opts.data  // opts.data = data.tx
+  if (data.to) {
+    toHash = data.to
+  } else {
+    toHash = opts.to
+  }
 
   var contractId = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> contract id </td>
-      <td class="${css.td}">${opts.contractId}
-        ${copyToClipboard(() => opts.contractId)}
+      <td class="${css.td}">${toHash}
+        ${copyToClipboard(() => toHash)}
       </td>
     </tr>
   `
@@ -446,18 +509,11 @@ function createTable (opts) {
   `
   if (opts.from) table.appendChild(from)
 
-  var toHash
-  var data = opts.data  // opts.data = data.tx
-  if (data.to) {
-    toHash = opts.to + ' ' + data.to
-  } else {
-    toHash = opts.to
-  }
   var to = yo`
     <tr class="${css.tr}">
     <td class="${css.td}"> to </td>
     <td class="${css.td}">${toHash}
-      ${copyToClipboard(() => data.to ? data.to : toHash)}
+      ${copyToClipboard(() => toHash)}
     </td>
     </tr>
   `
@@ -541,7 +597,7 @@ function createTable (opts) {
   if (opts['decoded output']) {
     var outputDecoded = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> output </td>
+      <td class="${css.td}"> decoded output </td>
       <td class="${css.td}" id="decodedoutput" >${opts['decoded output']}
         ${copyToClipboard(() => opts['decoded output'])}
       </td>

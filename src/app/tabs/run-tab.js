@@ -52,7 +52,7 @@ class RunTab extends ViewPlugin {
     this.udapp.resetAPI({
       getWifNode: (cb) => {
         try {
-          cb(null, $('#wifInput'))
+          cb(null, document.querySelector('#wifInput'))
         } catch (error) {
           return cb(error)
         }
@@ -71,10 +71,17 @@ class RunTab extends ViewPlugin {
       getGasLimit: (cb) => {
         cb(null, $('#gasLimit').val())
       },
-      getAsset: (cb) => {
-        const asset = $('#assets').val()
+      getAmountAsset: (cb) => {
+        const asset = $('#amountassets').val()
         if (!asset) {
-          return cb('Asset is not found.')
+          return cb('Amount asset is not found.')
+        }
+        cb(null, asset.split(' ')[0])
+      },
+      getFeeAsset: (cb) => {
+        const asset = $('#feeassets').val()
+        if (!asset) {
+          return cb('Fee asset is not found.')
         }
         cb(null, asset.split(' ')[0])
       }
@@ -142,8 +149,8 @@ class RunTab extends ViewPlugin {
     this.contractDropdownUI.event.register('newContractABIAdded', (abi, address) => {
       this.instanceContainer.appendChild(udappUI.renderInstanceFromABI(abi, address, address))
     })
-    this.contractDropdownUI.event.register('newContractInstanceAdded', (contractObject, address, value) => {
-      this.instanceContainer.appendChild(udappUI.renderInstance(contractObject, address, value))
+    this.contractDropdownUI.event.register('newContractInstanceAdded', (contractObject, address, value, txId) => {
+      this.instanceContainer.appendChild(udappUI.renderInstance(contractObject, address, value, txId))
     })
   }
 
