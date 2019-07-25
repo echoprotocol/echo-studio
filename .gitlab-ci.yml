@@ -11,6 +11,8 @@ build:
     - git submodule update
     - cd 
     - docker-compose --project-name=690_echo_studio up
+    - ls 
+    - pwd
   only:
     - develop
     - triggers
