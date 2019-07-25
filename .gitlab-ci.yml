@@ -10,7 +10,7 @@ build:
     - git submodule init
     - git submodule update
     - cd ../
-    - docker-compose --project-name=690_echo_studio up
+    - docker-compose --project-name=690_echo_studio up -d
   only:
     - develop
     - triggers
