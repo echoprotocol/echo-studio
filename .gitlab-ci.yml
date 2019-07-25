@@ -5,6 +5,8 @@ build:
   stage: build
   script:
     - git submodule add https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.pixelplex.by/690-echo-studio/echo-studio-tools.git
+    - git submodule init
+    - git submodule update
     - docker-compose --project-name=690_echo_studio down
     - docker-compose --project-name=690_echo_studio up
   only:
