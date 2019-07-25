@@ -212,7 +212,7 @@ function log (self, tx, receipt) {
 
 function renderKnownTransaction (self, data) {
   var from = data.tx.trx.operations[0][1].registrar
-  var to = `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`
+  var to = data.tx.methodName ? data.resolvedData.contractAddress : `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`
   var contractName = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var obj = {from, to, contractName}
   var txType = 'knownTx'
@@ -390,17 +390,16 @@ function txDetails (e, tx, data, obj) {
   } else {
     log.removeChild(log.lastChild)
     log.appendChild(arrowUp)
-
     table = createTable({
       contract: contractName,
       txId: data.tx.id,
       status: data.resolvedData ? data.resolvedData.status : null,
       isCall: data.tx.isCall,
       contractAddress: data.resolvedData.address,
-      contractId: `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`,
+      contractId: data.tx.methodName ? data.resolvedData.contractAddress : `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`,
       data: data.tx,
       from,
-      to: `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`,
+      to: data.tx.methodName ? data.resolvedData.contractAddress : `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`,
       gasUsed: data.resolvedData.gasUsed,
       input: data.tx.input,
       'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
