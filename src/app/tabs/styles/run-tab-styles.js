@@ -105,6 +105,9 @@ var css = csjs`
   .recorderDescription {
     margin: 0 15px 15px 0;
    }
+  .ethCheckbox{
+      padding: 0.75rem 1.25rem;
+   }
   .contractNames {
     width: 100%;
     border: 1px solid

@@ -84,6 +84,10 @@ class RunTab extends ViewPlugin {
           return cb('Fee asset is not found.')
         }
         cb(null, asset.split(' ')[0])
+      },
+      getEthAccuracy: (cb) => {
+        const asset = $('#ethAccuracy').is(':checked')
+        cb(null, asset)
       }
     })
   }
