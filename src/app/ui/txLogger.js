@@ -212,7 +212,7 @@ function log (self, tx, receipt) {
 
 function renderKnownTransaction (self, data) {
   var from = data.tx.trx.operations[0][1].registrar
-  var to = `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`
+  var to = data.tx.methodName ? data.resolvedData.contractAddress : `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`
   var contractName = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var obj = {from, to, contractName}
   var txType = 'knownTx'
