@@ -2,26 +2,7 @@ version: '3'
 
 services:
   echo-studio:
-    image: registry-gitlab.pixelplex.by/690-echo-studio/echo-studio:latest
+    build: .
     container_name: "690.echo-studio.echo-studio"
     ports:
       - 0.0.0.0:26900:8080
-    command: [sh, -c, "npm run setupremix && npm run build && npm start"]
-#    command: [sh, -c, "npm start"]
-    environment:
-      - NODE_ENV=production
-      - NODE_APP_INSTANCE=$NODE_APP_INSTANCE
-    restart: always
-    volumes:
-      - studio_volume:/app/remix
-    depends_on:
-      - echo-studio-tools
-
-  echo-studio-tools:
-    image: registry-gitlab.pixelplex.by/690-echo-studio/echo-studio-tools:latest
-    container_name: "690.echo-studio.echo-studio-tools"
-    volumes:
-      - studio_volume:/app/remix
-
-volumes:
-  studio_volume:

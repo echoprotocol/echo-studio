@@ -1,28 +1,12 @@
 stages:
   - build
-  - run
 
 build:
   stage: build
   script:
-    - docker login  -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build --build-arg NODE_APP_INSTANCE=master -t registry-gitlab.pixelplex.by/690-echo-studio/echo-studio .
-    - docker push registry-gitlab.pixelplex.by/690-echo-studio/echo-studio
-
-  only:
-    - develop
-    - triggers
-    - ES-1
-  tags:
-    - echo-studio
-run:
-  stage: run
-  script:
-    - docker login  -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker pull registry-gitlab.pixelplex.by/690-echo-studio/echo-studio-tools:latest
-    - docker-compose --project-name=690_echo_studio down -v
+    - git submodule add git@gitlab.pixelplex.by:690-echo-studio/echo-studio-tools.git tools
+    - docker-compose --project-name=690_echo_studio down
     - docker-compose --project-name=690_echo_studio up
-
   only:
     - develop
     - triggers
