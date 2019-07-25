@@ -5,8 +5,6 @@ variables:
 build:
   stage: build
   script:
-    - git submodule init 
-    - git submodule update
     - docker-compose --project-name=690_echo_studio up -d
   only:
     - develop
