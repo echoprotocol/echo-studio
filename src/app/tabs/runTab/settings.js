@@ -149,6 +149,14 @@ class SettingsUI {
         </div>
       </d
     `
+    const ethAccuracyEl = yo`
+      <div class="${css.crow}">
+        <li class="list-group-item ${css.ethCheckbox} form-group ${css.compilerConfig}">
+          <input class="${css.autocompile}"  id="ethAccuracy" type="checkbox" title="Eth accuracy">
+          <label for="ethAccuracy">Eth accuracy</label>
+        </li>
+      </d
+    `
 
     const el = yo`
       <div class="${css.settings}">
@@ -158,6 +166,7 @@ class SettingsUI {
         ${feeAssetEl}
         ${amountAssetEl}
         ${valueEl}
+        ${ethAccuracyEl}
       </div>
     `
     var selectExEnv = environmentEl.querySelector('#selectExEnvOptions')

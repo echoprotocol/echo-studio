@@ -377,8 +377,18 @@ module.exports = class UniversalDApp extends Plugin {
           })
         }
       },
-      function runTransaction (feeAsset, amountAsset, fromAddress, value, wif, next) {
-        var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, timestamp: args.data.timestamp, feeAsset, amountAsset, wif, contractMethod: args.data.contractMethod }
+      function getEthAccuracy (feeAsset, amountAsset, fromAddress, value, wif, next) {
+        if (args.ethAccuracy) {
+          return next(null, args.ethAccuracy, args.feeAsset, args.amountAsset, args.from, value, wif)
+        }
+        if (self.transactionContextAPI.getEthAccuracy) {
+          return self.transactionContextAPI.getEthAccuracy(function (err, ethAccuracy) {
+            next(err, ethAccuracy, feeAsset, amountAsset, fromAddress, value, wif)
+          })
+        }
+      },
+      function runTransaction (ethAccuracy, feeAsset, amountAsset, fromAddress, value, wif, next) {
+        var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, timestamp: args.data.timestamp, feeAsset, amountAsset, ethAccuracy, wif, contractMethod: args.data.contractMethod }
         var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
         var timestamp = Date.now()
         if (tx.timestamp) {
@@ -390,7 +400,6 @@ module.exports = class UniversalDApp extends Plugin {
           function (error, result) {
             let eventName = (tx.useCall || args.data.contractMethod === executionContext.echojslib().constants.OPERATIONS_IDS.CALL_CONTRACT) ? 'callExecuted' : 'transactionExecuted'
             self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, args.data.txId ? args.data.txId : null, args.data.contractName, args.data.methodName, tx.useCall ? args.funAbi : null, timestamp, payLoad])
-
             if (error && (typeof (error) !== 'string')) {
               if (error.message) error = error.message
               else {
