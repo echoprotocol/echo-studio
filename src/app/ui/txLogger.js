@@ -211,7 +211,6 @@ function log (self, tx, receipt) {
 }
 
 function renderKnownTransaction (self, data) {
-  console.log(data)
   var from = data.tx.trx.operations[0][1].registrar
   var to = `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`
   var contractName = data.resolvedData.contractName + '.' + data.resolvedData.fn
@@ -391,7 +390,6 @@ function txDetails (e, tx, data, obj) {
   } else {
     log.removeChild(log.lastChild)
     log.appendChild(arrowUp)
-    console.log(data.resolvedData.contractAddress)
     table = createTable({
       contract: contractName,
       txId: data.tx.id,
