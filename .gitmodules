@@ -1,3 +1,0 @@
-[submodule "tools"]
-  path = ./tools
-  url = git@gitlab.pixelplex.by:690-echo-studio/echo-studio-tools.git
