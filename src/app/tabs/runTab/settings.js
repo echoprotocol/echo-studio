@@ -224,7 +224,7 @@ class SettingsUI {
       </div>
   `
     const warning = yo`
-      <div class="${css.crow}">
+      <div id="wifBlockWarning" class="${css.crow}">
         <div class="${css.col1_1}"></div>        
         <div>
           Not recommended for mainnet use
@@ -239,9 +239,11 @@ class SettingsUI {
   removeWifInput () {
     const settings = document.querySelector(`.${css.settings}`)
     const nodeToDelete = document.querySelector('#wifBlock')
+    const nodeToDeleteWarning = document.querySelector('#wifBlockWarning')
 
     if (nodeToDelete) {
       settings.removeChild(nodeToDelete)
+      settings.removeChild(nodeToDeleteWarning)
     }
   }
 
