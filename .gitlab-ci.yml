@@ -9,10 +9,8 @@ build:
     - cd tools
     - git submodule init
     - git submodule update
-    - cd 
+    - cd ../
     - docker-compose --project-name=690_echo_studio up
-    - ls 
-    - pwd
   only:
     - develop
     - triggers
