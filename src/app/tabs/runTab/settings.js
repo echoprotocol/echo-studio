@@ -222,7 +222,17 @@ class SettingsUI {
           <input type="text" oninput=${() => { this.getInfoByWif() }} class="form-control ${css.wifInput} ${css.col2}" id="wifInput" title="Enter the value and choose the unit">
         </div>
       </div>
-    `
+  `
+    const warning = yo`
+      <div class="${css.crow}">
+        <div class="${css.col1_1}"></div>        
+        <div>
+          Not recommended for mainnet use
+        </div>
+      </div>
+  `
+
+    settings.insertBefore(warning, toInsertAfterNode.nextSibling)
     settings.insertBefore(wifInput, toInsertAfterNode.nextSibling)
   }
 
