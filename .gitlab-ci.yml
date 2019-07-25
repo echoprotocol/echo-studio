@@ -4,12 +4,12 @@ stages:
 build:
   stage: build
   script:
-    - git submodule add https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.pixelplex.by/690-echo-studio/echo-studio-tools.git
-    - docker-compose --project-name=690_echo_studio down
+    - git submodule add https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.pixelplex.by/690-echo-studio/echo-studio-tools.git tools
+    - git submodule update --init --recursive
     - docker-compose --project-name=690_echo_studio up
   only:
     - develop
     - triggers
     - ES-1
   tags:
-    - echo-studio 
+    - echo-studio

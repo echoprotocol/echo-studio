@@ -15,7 +15,7 @@ RUN cd /app/remix/tools && npm config set unsafe-perm true
 COPY . .
 RUN cd /app/remix/tools &&  NODE_ENV=development npm install && npm run bootstrap
 
-FROM node:10.16-alpine as builder
+FROM node:10.16-alpine
 ARG NODE_APP_INSTANCE="production"
 ENV NODE_ENV="production"
 ENV NODE_APP_INSTANCE=$NODE_APP_INSTANCE
