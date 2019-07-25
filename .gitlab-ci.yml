@@ -12,4 +12,4 @@ build:
     - triggers
     - ES-1
   tags:
-    - echo-studio
+    - echo-studio 
