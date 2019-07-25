@@ -46,6 +46,11 @@ class SettingsUI {
     })
 
     this.settings.event.register('switchAccount', (account) => {
+      if (!account) {
+        console.warn('There are not accounts in Bridge')
+        return
+      }
+
       let txOrigin = this.el.querySelector('#txorigin')
       let {id, name} = account
       if (!this.loadedAccounts[id]) {
