@@ -31,7 +31,7 @@ class AutoCompletePopup {
     self._elementsToShow = 4
     self._selectedElement = 0
     this.extraCommands = []
-    this.extendAutocompletion()
+    // this.extendAutocompletion()
   }
 
   render () {

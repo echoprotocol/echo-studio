@@ -118,7 +118,12 @@ class DropdownLogic {
       data.contractName = selectedContract.name
       data.linkReferences = selectedContract.bytecodeLinkReferences
       data.contractABI = selectedContract.abi
-      data.wif = document.querySelector('#wifInput').value
+      data.contractMethod = executionContext.echojslib().constants.OPERATIONS_IDS.CREATE_CONTRACT
+
+      const wifInput = document.querySelector('#wifInput')
+      if (wifInput) {
+        data.wif = wifInput.value
+      }
     }
 
     var confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
@@ -186,8 +191,9 @@ class DropdownLogic {
         //   return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
         // }
         var contractResult = txResult[0].contractResult
+        var txId = txResult[0].id
 
-        finalCb(null, selectedContract, contractResult)
+        finalCb(null, selectedContract, contractResult, txId)
       }
     )
   }

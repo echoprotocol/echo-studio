@@ -35,7 +35,7 @@ function fileExplorer (localRegistry, files, menuItems) {
         icon: 'fab fa-github'
       },
       { action: 'copyFiles',
-        title: 'Copy all files to another instance of Remix IDE',
+        title: 'Copy all files to another instance of Echo Studio',
         icon: 'far fa-copy'
       },
       { action: 'uploadFile',

@@ -30,6 +30,14 @@ class Settings {
       this.event.trigger('connectToNetwork', [name, id])
     })
 
+    executionContext.event.register('switchAccount', (account) => {
+      this.event.trigger('switchAccount', [account])
+    })
+
+    executionContext.event.register('updateAccount', (data) => {
+      this.event.trigger('updateAccount', [data])
+    })
+
     this.networkcallid = 0
   }
 
@@ -78,8 +86,8 @@ class Settings {
     return executionContext.isExternalEchoConnected()
   }
 
-  isGotExtensionAccess () {
-    return executionContext.isGotExtensionAccess()
+  subscribeToAccountUpdating (accountId) {
+    return executionContext.subscribeToAccountUpdating(accountId)
   }
 
   signMessage (message, account, passphrase, cb) {

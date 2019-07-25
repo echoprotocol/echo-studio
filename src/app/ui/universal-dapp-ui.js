@@ -41,20 +41,20 @@ function decodeResponseToTreeView (response, fnabi) {
   return treeView.render(txFormat.decodeResponse(response, fnabi))
 }
 
-UniversalDAppUI.prototype.renderInstance = function (contract, address, contractName) {
+UniversalDAppUI.prototype.renderInstance = function (contract, address, contractName, txId) {
   var noInstances = document.querySelector('[class^="noInstancesText"]')
   if (noInstances) {
     noInstances.parentNode.removeChild(noInstances)
   }
   var abi = this.udapp.getABI(contract)
-  return this.renderInstanceFromABI(abi, address, contractName)
+  return this.renderInstanceFromABI(abi, address, contractName, txId)
 }
 
 // TODO this function was named before "appendChild".
 // this will render an instance: contract name, contract address, and all the public functions
 // basically this has to be called for the "atAddress" (line 393) and when a contract creation succeed
 // this returns a DOM element
-UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address, contractName) {
+UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address, contractName, txId) {
   var self = this
   // address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   var instance = yo`<div class="instance ${css.instance} ${css.hidesub}" id="instance${address}"></div>`
@@ -129,7 +129,8 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
       funABI: funABI,
       address: address,
       contractAbi: contractABI,
-      contractName: contractName
+      contractName: contractName,
+      txId
     }))
   })
 
@@ -250,10 +251,14 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
           self.logCallback(`${logMsg}`)
         }
         if (args.funABI.type === 'fallback') data.dataHex = value
+        if (args.txId) data.txId = args.txId
+        data.contractMethod = executionContext.echojslib().constants.OPERATIONS_IDS.CALL_CONTRACT
+        data.contractName = args.contractName
+        data.methodName = args.funABI.name
         self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {
           if (!error) {
-            if (lookupOnly) {
-              var decoded = decodeResponseToTreeView(ethJSUtil.toBuffer(txResult.result), args.funABI)
+            if (typeof txResult === 'string') {
+              var decoded = decodeResponseToTreeView(txResult, args.funABI)
               outputCb(decoded)
             }
           } else {

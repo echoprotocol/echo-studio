@@ -105,6 +105,9 @@ var css = csjs`
   .recorderDescription {
     margin: 0 15px 15px 0;
    }
+  .ethCheckbox{
+      padding: 0.75rem 1.25rem;
+   }
   .contractNames {
     width: 100%;
     border: 1px solid
@@ -251,10 +254,6 @@ var css = csjs`
   .wifInput {
     margin-right: 10px;
     width: 90%;
-<<<<<<< HEAD
-    font-size: 0.8rem;
-=======
->>>>>>> 52b9d74b463853a5535a179980bf2263e433fce6
   }
   .gasNvalUnit {
     /* transform: scale(0.7); */
