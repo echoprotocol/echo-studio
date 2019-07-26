@@ -10,12 +10,10 @@ test:
   variables:
     NODE_ENV: test
     GIT_SUBMODULE_STRATEGY: none
-    
-#  cache:
-#    paths:
-#      - ./node_modules
+  cache:
+    paths:
+      - ./node_modules
   script:
-    - ls -la tools
     - npm i
     - npm run csslint
     - npm run lint
