@@ -401,9 +401,11 @@ function txDetails (e, tx, data, obj) {
       from,
       to: data.tx.methodName ? data.resolvedData.contractAddress : `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`,
       gasUsed: data.resolvedData.gasUsed,
-      input: data.tx.input,
+      input: data.tx.input ? data.tx.input : data.tx.trx.operations[0][1].code,
+      output: data.resolvedData.output ? data.resolvedData.output : ' - ',
+      transaction: data.tx ? JSON.stringify(typeConversion.stringify(data.tx), null, '\t') : ' - ',
       'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
-      'decoded output': data.tx ? JSON.stringify(typeConversion.stringify(data.tx), null, '\t') : ' - ',
+      'decoded output': data.resolvedData.decodedOutput ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedOutput), null, '\t') : ' - ',
       'contract result': data.resolvedData && data.resolvedData.contractResult && data.resolvedData.contractResult ? JSON.stringify(typeConversion.stringify(data.resolvedData.contractResult), null, '\t') : ' - ',
       logs: data.logs,
       val: data.tx.trx.operations[0][1].value.amount
@@ -436,7 +438,8 @@ function callTxDetails (e, tx, data, obj) {
       data: data.tx,
       from,
       to: data.resolvedData && data.resolvedData.contractAddress ? `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}` : ' - ',
-      input: data.tx.input,
+      input: data.tx.input ? data.tx.input : ' - ',
+      output: data.tx.output ? data.tx.output : ' - ',
       'decoded input': data.tx.params ? JSON.stringify(typeConversion.stringify(data.tx.params), null, '\t') : ' - ',
       'decoded output': data.tx.decodedOutput ? JSON.stringify(typeConversion.stringify(data.tx.decodedOutput), null, '\t') : ' - '
     })
@@ -593,15 +596,40 @@ function createTable (opts) {
     table.appendChild(inputDecoded)
   }
 
-  if (opts['decoded output']) {
+  if (opts.output && (opts.data.methodName || opts.isCall)) {
+    var output = yo`
+    <tr class="${css.tr}">
+<<<<<<< HEAD
+=======
+      <td class="${css.td}"> output </td>
+      <td class="${css.td}">${helper.shortenHexData(opts.output)}
+        ${copyToClipboard(() => opts.output)}
+      </td>
+    </tr>`
+    table.appendChild(output)
+  }
+
+  if (opts['decoded output'] && (opts.data.methodName || opts.isCall)) {
     var outputDecoded = yo`
     <tr class="${css.tr}">
+>>>>>>> develop
       <td class="${css.td}"> decoded output </td>
       <td class="${css.td}" id="decodedoutput" >${opts['decoded output']}
         ${copyToClipboard(() => opts['decoded output'])}
       </td>
     </tr>`
     table.appendChild(outputDecoded)
+  }
+
+  if (opts.transaction) {
+    var transaction = yo`
+    <tr class="${css.tr}">
+      <td class="${css.td}"> transaction </td>
+      <td class="${css.td}" id="transaction" >${opts.transaction}
+        ${copyToClipboard(() => opts.transaction)}
+      </td>
+    </tr>`
+    table.appendChild(transaction)
   }
 
   if (opts['contract result']) {
@@ -635,8 +663,8 @@ function createTable (opts) {
   val = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> value </td>
-      <td class="${css.td}">${val} wei
-        ${copyToClipboard(() => `${val} wei`)}
+      <td class="${css.td}">${val}
+        ${copyToClipboard(() => `${val}`)}
       </td>
     </tr>
   `

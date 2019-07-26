@@ -399,7 +399,7 @@ module.exports = class UniversalDApp extends Plugin {
         self.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
           function (error, result) {
             let eventName = (tx.useCall || args.data.contractMethod === executionContext.echojslib().constants.OPERATIONS_IDS.CALL_CONTRACT) ? 'callExecuted' : 'transactionExecuted'
-            self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, args.data.txId ? args.data.txId : null, args.data.contractName, args.data.methodName, tx.useCall ? args.funAbi : null, timestamp, payLoad])
+            self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, args.data.txId ? args.data.txId : null, args.data.contractName, args.data.methodName, args.funAbi ? args.funAbi : null, null, timestamp, payLoad])
             if (error && (typeof (error) !== 'string')) {
               if (error.message) error = error.message
               else {
