@@ -34,6 +34,6 @@ RUN cd tools && npm install && npm run bootstrap
 # install dependecies and build sources
 RUN NODE_ENV=development npm install
 RUN npm run setupremix
-RUN npm run build
+RUN npm run build_production
 
-CMD ["npm", "run", "remixd"]
+CMD ["npm", "run", "start_production"]
