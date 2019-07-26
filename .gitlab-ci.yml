@@ -9,6 +9,7 @@ test:
   stage: test
   variables:
     NODE_ENV: test
+    GIT_SUBMODULE_STRATEGY: recursive
   cache:
     paths:
       - node_modules
