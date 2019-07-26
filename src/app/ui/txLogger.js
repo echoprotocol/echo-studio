@@ -599,8 +599,6 @@ function createTable (opts) {
   if (opts.output && (opts.data.methodName || opts.isCall)) {
     var output = yo`
     <tr class="${css.tr}">
-<<<<<<< HEAD
-=======
       <td class="${css.td}"> output </td>
       <td class="${css.td}">${helper.shortenHexData(opts.output)}
         ${copyToClipboard(() => opts.output)}
@@ -612,7 +610,6 @@ function createTable (opts) {
   if (opts['decoded output'] && (opts.data.methodName || opts.isCall)) {
     var outputDecoded = yo`
     <tr class="${css.tr}">
->>>>>>> develop
       <td class="${css.td}"> decoded output </td>
       <td class="${css.td}" id="decodedoutput" >${opts['decoded output']}
         ${copyToClipboard(() => opts['decoded output'])}
