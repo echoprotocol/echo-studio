@@ -20,7 +20,7 @@ test:
   tags:
     - docker
   only:
-    - merge_requests
+#    - merge_requests
     - develop
     - master
     - web
@@ -36,6 +36,7 @@ build.develop:
     - docker-compose -p 690 up -d
   only:
     - develop
+    - ES-1
   tags:
     - pp-develop
   environment:
