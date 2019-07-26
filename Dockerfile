@@ -13,6 +13,7 @@ RUN apk add build-base git python bash
 # allow install packages with prepare scrypt by root user
 RUN git config --global http.sslverify "false"
 RUN npm config set unsafe-perm true
+RUN git config --global --unset http.proxy
 
 COPY . .
 
