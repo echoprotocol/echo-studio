@@ -1,6 +1,7 @@
 .idea
 .vscode
 build
+dist
 node_modules
 docs/_build
 reports
@@ -9,7 +10,8 @@ soljson.js.*
 npm-debug.log*
 remix
 .DS_Store
-contracts
+contracts/*
+!contracts/.gitkeep
 TODO
 .tern-port
 package-lock.json

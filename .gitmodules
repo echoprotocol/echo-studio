@@ -1,0 +1,3 @@
+[submodule "tools"]
+	path = tools
+	url = ../echo-studio-tools.git
