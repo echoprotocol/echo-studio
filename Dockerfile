@@ -24,4 +24,6 @@ RUN NODE_ENV=development npm install
 RUN npm run setupremix
 RUN npm run build
 
-CMD ["npm", "start"]
+RUN ls -la build
+
+CMD ["npm", "remixd"]
