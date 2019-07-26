@@ -1,14 +1,103 @@
 stages:
+  - test
   - build
-variables:
-  GIT_SUBMODULE_STRATEGY: recursive
-build:
-  stage: build
+  - deploy
+
+
+test:
+  image: node:10.16
+  stage: test
+  variables:
+    NODE_ENV: test
+  cache:
+    paths:
+      - node_modules
   script:
-    - docker-compose --project-name=690_echo_studio up -d
+    - npm i
+    - npm run csslint
+    - npm run lint
+  tags:
+    - docker
+  only:
+    - merge_requests
+    - develop
+    - master
+    - web
+
+
+build.develop:
+  stage: build
+  variables:
+    NODE_APP_INSTANCE: develop
+    GIT_SUBMODULE_STRATEGY: recursive
+  script:
+    - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker-compose -p 690 up -d
   only:
     - develop
-    - triggers
-    - ES-1
   tags:
-    - echo-studio
+    - pp-develop
+  environment:
+    name: develop
+    url: https://690-echo-studio.pixelplex-test.by
+
+
+build.master:
+  stage: build
+  variables:
+    NODE_APP_INSTANCE: master
+    GIT_SUBMODULE_STRATEGY: recursive
+  script:
+    - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker-compose -p 690 up -d
+  only:
+    - master
+  tags:
+    - pp-stage
+  environment:
+    name: master
+    url: https://690-echo-studio.pixelplexlabs.com
+
+
+build.production:
+  stage: build
+  variables:
+    NODE_APP_INSTANCE: production
+    GIT_SUBMODULE_STRATEGY: recursive
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
+  after_script:
+    - docker logout $CI_REGISTRY
+  only:
+    - tags
+  tags:
+    - echo-linux
+  environment:
+    name: production
+    url: https://echostudio.echo.org
+
+
+deploy.production:
+  stage: deploy
+  variables:
+    NODE_ENV: production
+    NODE_APP_INSTANCE: production
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:latest
+    - docker-compose -p 690 up -d
+  after_script:
+    - docker logout $CI_REGISTRY
+  only:
+    - tags
+  tags:
+    - echo-studio-1
+  when: manual
+  environment:
+    name: production
+    url: https://echostudio.echo.org
