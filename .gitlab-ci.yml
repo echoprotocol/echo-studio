@@ -10,6 +10,7 @@ test:
   variables:
     NODE_ENV: test
     GIT_SUBMODULE_STRATEGY: none
+    
 #  cache:
 #    paths:
 #      - ./node_modules
