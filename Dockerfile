@@ -14,7 +14,19 @@ RUN apk add build-base git python bash
 #RUN git config --global http.sslverify "false"
 RUN npm config set unsafe-perm true
 
-COPY . .
+COPY ./assets ./assets
+COPY ./bin ./bin
+COPY ./embark ./embark
+COPY ./src ./src
+COPY ./tools ./tools
+COPY ./background.js ./background.js
+COPY ./icon.png ./icon.png
+COPY ./index.html ./index.html
+COPY ./manifest.json ./manifest.json
+COPY ./nightwatch* ./
+COPY ./package.json .
+COPY ./.git ./.git
+COPY ./contracts ./contracts
 
 # instal dependencies and build tools
 RUN cd tools && npm install && npm run bootstrap
@@ -24,6 +36,4 @@ RUN NODE_ENV=development npm install
 RUN npm run setupremix
 RUN npm run build
 
-RUN ls -la build
-
-CMD ["npm", "remixd"]
+CMD ["npm", "run", "remixd"]

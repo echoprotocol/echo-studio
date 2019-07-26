@@ -169,7 +169,7 @@
     "nightwatch_local_console": "nightwatch ./test-browser/tests/console.js --config nightwatch.js --env chrome ",
     "onchange": "onchange build/app.js -- npm-run-all lint",
     "prepublish": "mkdirp build; npm-run-all -ls downloadsolc_root build",
-    "remixd": "remixd -s ./contracts --remix-ide http://127.0.0.1:8080",
+    "remixd": "remixd -s ./contracts --remix-ide http://0.0.0.0:8080",
     "selenium": "selenium-standalone start",
     "selenium-install": "selenium-standalone install",
     "serve": "npx http-server .",
