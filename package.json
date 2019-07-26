@@ -149,7 +149,7 @@
     "linkremixanalyzer": "cd node_modules && rm -rf remix-analyzer && ln -s ../tools/remix-analyzer remix-analyzer && cd ..",
     "linkethers": "cd node_modules && rm -rf ethers && ln -s ../tools/ethers ethers && cd ..",
     "build": "browserify src/index.js -o build/app.js --exclude solc",
-    "build_production": "npm run build && rm -rf dist && mkdir dist && cp -r assets dist/assets && cp -r build dist/build && cp index.html dist/",
+    "build_production": "npm run build && rm -rf dist && mkdir dist && cp -r assets dist/assets && cp -r build dist/build && cp index.html dist/ && cp icon.png dist/",
     "start_production": "npx http-server dist",
     "build_debugger": "browserify src/app/debugger/remix-debugger/index.js -o src/app/debugger/remix-debugger/build/app.js",
     "browsertest": "sleep 5 && npm run nightwatch_local",
