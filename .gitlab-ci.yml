@@ -9,18 +9,16 @@ test:
   stage: test
   variables:
     NODE_ENV: test
-    GIT_SUBMODULE_STRATEGY: none
-  cache:
-    paths:
-      - ./node_modules
+    GIT_SUBMODULE_STRATEGY: none  
   script:
+    - rm -rf node_modules
     - npm i
     - npm run csslint
     - npm run lint
   tags:
     - docker
   only:
-#    - merge_requests
+    - merge_requests
     - develop
     - master
     - web
@@ -35,8 +33,7 @@ build.develop:
     - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
     - docker-compose -p 690 up -d
   only:
-    - develop
-    - ES-1
+    - develop    
   tags:
     - pp-develop
   environment:
