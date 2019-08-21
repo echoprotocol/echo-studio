@@ -13,6 +13,8 @@ var modalDialog = require('./modal-dialog-custom')
 var typeConversion = remixLib.execution.typeConversion
 var globlalRegistry = require('../../global/registry')
 
+var CONTRACT_OBJECT_TYPE = remixLib.echojslib.constants.OBJECT_TYPES.CONTRACT
+
 var css = csjs`
   .log {
     display: flex;
@@ -212,7 +214,7 @@ function log (self, tx, receipt) {
 
 function renderKnownTransaction (self, data) {
   var from = data.tx.trx.operations[0][1].registrar
-  var to = data.tx.methodName ? data.resolvedData.contractAddress : `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`
+  var to = data.tx.methodName ? data.resolvedData.contractAddress : `1.${CONTRACT_OBJECT_TYPE}.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`
   var contractName = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var obj = {from, to, contractName}
   var txType = 'knownTx'
@@ -383,6 +385,7 @@ function txDetails (e, tx, data, obj) {
   var log = tx.childNodes[0]
   var arrowUp = yo`<i class="${css.arrow} fas fa-angle-up"></i>`
   var arrowDown = yo`<i class="${css.arrow} fas fa-angle-down"></i>`
+
   if (table && table.parentNode) {
     tx.removeChild(table)
     log.removeChild(log.lastChild)
@@ -396,10 +399,10 @@ function txDetails (e, tx, data, obj) {
       status: data.resolvedData ? data.resolvedData.status : null,
       isCall: data.tx.isCall,
       contractAddress: data.resolvedData.address,
-      contractId: data.tx.methodName ? data.resolvedData.contractAddress : `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`,
+      contractId: data.tx.methodName ? data.resolvedData.contractAddress : `1.${CONTRACT_OBJECT_TYPE}.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`,
       data: data.tx,
       from,
-      to: data.tx.methodName ? data.resolvedData.contractAddress : `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`,
+      to: data.tx.methodName ? data.resolvedData.contractAddress : `1.${CONTRACT_OBJECT_TYPE}.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}`,
       gasUsed: data.resolvedData.gasUsed,
       input: data.tx.input ? data.tx.input : data.tx.trx.operations[0][1].code,
       output: data.resolvedData.output ? data.resolvedData.output : ' - ',
@@ -434,10 +437,10 @@ function callTxDetails (e, tx, data, obj) {
       status: data.resolvedData ? data.resolvedData.status : null,
       isCall: data.tx.isCall,
       contractAddress: data.resolvedData && data.resolvedData.address ? data.resolvedData.address : ' - ',
-      contractId: data.resolvedData && data.resolvedData.contractAddress ? `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}` : ' - ',
+      contractId: data.resolvedData && data.resolvedData.contractAddress ? `1.${CONTRACT_OBJECT_TYPE}.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}` : ' - ',
       data: data.tx,
       from,
-      to: data.resolvedData && data.resolvedData.contractAddress ? `1.14.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}` : ' - ',
+      to: data.resolvedData && data.resolvedData.contractAddress ? `1.${CONTRACT_OBJECT_TYPE}.${parseInt(data.resolvedData.contractAddress.slice(2), 16)}` : ' - ',
       input: data.tx.input ? data.tx.input : ' - ',
       output: data.tx.output ? data.tx.output : ' - ',
       'decoded input': data.tx.params ? JSON.stringify(typeConversion.stringify(data.tx.params), null, '\t') : ' - ',

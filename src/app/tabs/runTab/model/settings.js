@@ -34,6 +34,10 @@ class Settings {
       this.event.trigger('switchAccount', [account])
     })
 
+    executionContext.event.register('bridgePermissionError', () => {
+      this.event.trigger('bridgePermissionError', [])
+    })
+
     executionContext.event.register('updateAccount', (data) => {
       this.event.trigger('updateAccount', [data])
     })

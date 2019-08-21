@@ -45,6 +45,10 @@ class SettingsUI {
       if (!lookupOnly) this.el.querySelector('#value').value = '0'
     })
 
+    this.settings.event.register('bridgePermissionError', () => {
+      addTooltip('You don’t have permission to access the Echo Bridge')
+    })
+
     this.settings.event.register('switchAccount', (account) => {
       if (!account) {
         console.warn('There are not accounts in Bridge')
