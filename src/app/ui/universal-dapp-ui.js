@@ -252,7 +252,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
         }
         if (args.funABI.type === 'fallback') data.dataHex = value
         if (args.txId) data.txId = args.txId
-        data.contractMethod = executionContext.echojslib().constants.OPERATIONS_IDS.CALL_CONTRACT
+        data.contractMethod = executionContext.echojslib().constants.OPERATIONS_IDS.CONTRACT_CALL
         data.contractName = args.contractName
         data.methodName = args.funABI.name
         self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {

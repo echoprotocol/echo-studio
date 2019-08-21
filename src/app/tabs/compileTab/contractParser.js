@@ -86,7 +86,7 @@ var echoJSDeploy = function (contractName, jsonInterface, bytecode) {
   code += '\n'
   code += '    const result = await echo' +
   '\n             .createTransaction()' +
-  '\n             .addOperation(constants.OPERATIONS_IDS.CREATE_CONTRACT, operation)' +
+  '\n             .addOperation(constants.OPERATIONS_IDS.CONTRACT_CREATE, operation)' +
   '\n             .addSigner(privateKey)' +
   '\n             .broadcast();' +
   '\n' +
