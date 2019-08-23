@@ -6,7 +6,7 @@
 
 Echo Studio is a browser-based compiler and IDE that enables users to build **Echo contracts with Solidity language** and to debug transactions.
 
-To try it out, visit [https://echo-studio.echo-dev.io](https://echo-studio.echo-dev.io).
+To try it out, visit [https://echo-studio.echo.org](https://echo-studio.echo.org).
 
 ![Echo Studio example](./echo_studio_example.png)
 
