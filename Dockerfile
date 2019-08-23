@@ -33,7 +33,7 @@ RUN cd tools && npm install && npm run bootstrap
 
 # install dependecies and build sources
 RUN NODE_ENV=development npm install
-RUN npm run setupremix
+RUN npm run setupstudio
 RUN npm run build_production
 
 CMD ["npm", "run", "start_production"]

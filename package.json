@@ -1,7 +1,7 @@
 {
-  "name": "remix-ide",
-  "version": "v0.1.0",
-  "description": "Minimalistic browser-based Solidity IDE",
+  "name": "echo-studio",
+  "version": "v0.2.0",
+  "description": "Echo Studio is a browser-based compiler and IDE that enables users to build Echo contracts with Solidity language and to debug transactions.",
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@babel/plugin-transform-object-assign": "^7.2.0",
@@ -80,22 +80,29 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ethereum/remix-ide.git"
+    "url": "https://github.com/echoprotocol/echo-studio.git"
   },
   "keywords": [
-    "ethereum",
+    "echo",
+    "studio",
+    "echo-studio",
     "solidity",
     "compiler"
   ],
-  "author": "chriseth",
+  "author": {
+    "name": "PixelPlex, Inc.",
+    "email": "info@pixelplex.io",
+    "url": "https://pixelplex.io"
+  },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ethereum/remix-ide/issues"
+    "url": "https://github.com/echoprotocol/echo-studio/issues"
   },
-  "homepage": "https://github.com/ethereum/remix-ide#readme",
+  "homepage": "https://github.com/echoprotocol/echo-studio",
   "standard": {
     "ignore": [
       "build/",
+      "tools/",
       "src/app/editor/mode-solidity.js",
       "soljson.js",
       "assets/js/0.7.7/app.js"
@@ -140,7 +147,7 @@
     "remix-ide": "./bin/remix-ide"
   },
   "scripts": {
-    "setupremix": "npm run linkremixdebug && npm run linkremixlib && npm run linkremixsolidity && npm run linkremixanalyzer && npm run linkremixtests && npm run linkethers",
+    "setupstudio": "npm run linkremixdebug && npm run linkremixlib && npm run linkremixsolidity && npm run linkremixanalyzer && npm run linkremixtests && npm run linkethers",
     "pullremix": "git clone https://github.com/ethereum/remix",
     "linkremixlib": "cd node_modules && rm -rf remix-lib && ln -s ../tools/remix-lib remix-lib && cd ..",
     "linkremixsolidity": "cd node_modules && rm -rf remix-solidity && ln -s ../tools/remix-solidity remix-solidity && cd ..",
