@@ -196,7 +196,7 @@ async function run () {
   var self = this
 
   if (window.location.protocol.indexOf('https') === 0) {
-    toolTip('You are using an `https` connection. Please switch to `http` if you are using Remix against an `http Web3 provider` or allow Mixed Content in your browser.')
+    // toolTip('You are using an `https` connection. Please switch to `http` if you are using Echo Studio against an `http` or allow Mixed Content in your browser.')
   }
 
   // workaround for Electron support

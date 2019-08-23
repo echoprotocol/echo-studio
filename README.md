@@ -1,127 +1,143 @@
-[![CircleCI](https://circleci.com/gh/ethereum/remix-ide.svg?style=svg)](https://circleci.com/gh/ethereum/remix-ide)
 
-# Remix
+# Echo Studio
 
-Remix is a browser-based compiler and IDE that enables users to build **Ethereum contracts with Solidity language** and to debug transactions.
+![Travis (.com) branch](https://img.shields.io/travis/com/echoprotocol/echo-studio/master?label=build%20master)
+![Travis (.com) branch](https://img.shields.io/travis/com/echoprotocol/echo-studio/develop?label=build%20develop)
 
-To try it out, visit [https://remix.ethereum.org](https://remix.ethereum.org).
+Echo Studio is a browser-based compiler and IDE that enables users to build **Echo contracts with Solidity language** and to debug transactions.
 
-https://github.com/ethereum/remix-ide/releases also gives others ways to use Remix locally. Please check it out.
+To try it out, visit [https://echo-studio.echo-dev.io](https://echo-studio.echo-dev.io).
 
-Remix consists of many modules and in this repository you will find the Remix IDE (aka. Browser-Solidity).
+Studio consists of many modules and in this repository you will find the Echo Studio (aka. Browser-Solidity).
 
-![Remix screenshot](https://github.com/ethereum/remix-ide/raw/master/remix_screenshot.png)
-
-## Offline Usage
-
-The `gh-pages` branch has always the latest stable build of Remix. It also contains a ZIP file with the entire build. Download it to use offline.
-
-Note: it contains the latest release of Solidity available at the time of the packaging. No other compiler versions are supported.
+![Echo Studio example](./echo_studio_example.png)
 
 
-## INSTALLATION:
+## Installation Prerequisites
 
-Install **npm** and **node.js** (see https://docs.npmjs.com/getting-started/installing-node), then do:
+Before installing, [download and install Node.js](https://nodejs.org/en/download/).
+Node.js 8.x.x or higher is required.
 
-Remix-ide has been published as an npm module:
+## Install Echo Studio from github source:
+
+Use the following steps to install the wallet from github source:
+
+Clone the git repository:
 
 ```bash
-npm install remix-ide -g
-remix-ide
+git clone https://github.com/echoprotocol/echo-studio.git
 ```
-Or if you want to clone the github repository (`wget` need to be installed first) :
+
+Go into the repository:
 
 ```bash
-git clone https://github.com/ethereum/remix-ide.git
-git clone https://github.com/ethereum/remix.git # only if you plan to link remix and remix-ide repositories and develop on it.
+cd echo-studio
+```
 
-cd remix  # only if you plan to link remix and remix-ide repositories and develop on it.
-npm install  # only if you plan to link remix and remix-ide repositories and develop on it.
-npm run bootstrap  # only if you plan to link remix and remix-ide repositories and develop on it.
+Use the package manager [npm](https://www.npmjs.com/) to install dependencies:
 
-cd remix-ide
+```bash
 npm install
-npm run setupremix  # only if you plan to link remix and remix-ide repositories and develop on it.
-npm start
 ```
 
-## DEVELOPING:
+Update the registered submodules:
+```
+git submodule update --init --recursive
+```
+Go into the tools sumbmodule:
+```bash
+cd tools
+```
 
-Run `npm start` and open `http://127.0.0.1:8080` in your browser.
+Install `tools` dependencies:
 
-Then open your `text editor` and start developing.
-The browser will automatically refresh when files are saved.
+```bash
+npm install
+```
 
-Most of the the time working with other modules (like debugger etc.) hosted in the [Remix repository](https://github.com/ethereum/remix) is not needed.
+Bootstrap the packages in the current repo:
 
-### Troubleshooting building
+```bash
+npm run bootstrap
+```
+
+Go back into the echo-studio repository:
+
+```bash
+cd ..
+```
+
+Setup `tools`:
+
+```bash
+npm run setupstudio
+```
+
+This starts the process in development mode and starts a webpack dev server:
+
+```bash
+npm run start
+```
+
+This will launch the Echo Studio at http://localhost:8080
+
+## Building the Echo Studio for Production
+
+If you want builds the wallet for production to the `dist` folder run this command:
+
+```bash
+npm run build_production
+```
+
+## Lint
+
+To [lint](https://eslint.org/) your `*.js` and `*.jsx` files run this command:
+
+```bash
+npm run lint
+```
+
+## Troubleshooting building
 
 Some things to consider if you have trouble building the package:
 
-- Make sure that you have the correct version of `node`, `npm` and `nvm`. You can find the version that is tested on Travis CI by looking at the log in the [build results](https://travis-ci.org/ethereum/remix-ide).
+- Make sure that you have the correct version of `node`.
 
-Run:
+	Run:
 
-```bash
-node --version
-npm --version
-nvm --version
-```
+	```bash
+	node --version
+	```
 
 - In Debian based OS such as Ubuntu 14.04LTS you may need to run `apt-get install build-essential`. After installing `build-essential` run `npm rebuild`.
 
-## Unit Testing
 
-Register new unit test files in `test/index.js`.
-The tests are written using [tape](https://www.npmjs.com/package/tape).
+## Contributing
 
-Run the unit tests via: `npm test`
+Read our [Contributing Guide](https://github.com/echoprotocol/echo-studio/CONTRIBUTING.md) to learn about our development process, how to propose bugfixes and improvements.
 
-For local headless browser tests run `npm run test-browser`
-(requires Selenium to be installed - can be done with `npm run selenium-install`)
+## License
 
-Running unit tests via `npm test` requires at least node v7.0.0
+The MIT License (MIT)
 
-## Browser Testing
+Copyright (c) 2019 ECHO DEVELOPMENT LTD
 
-To run the Selenium tests via Nightwatch:
-
- - Build Remix IDE and serve it: `npm run build && npm run serve` # starts web server at localhost:8080
- - Make sure Selenium is installed `npm run selenium-install` # don't need to repeat
- - Run a selenium server `npm run selenium`
- - Run all the tests `npm run nightwatch_local_firefox` or `npm run nightwatch_local_chrome`
- - Or run a specific test case: 
- 
-		- npm run nightwatch_local_ballot
-		
-		- npm run nightwatch_local_libraryDeployment
-		
-		- npm run nightwatch_local_solidityImport
-		
-		- npm run nightwatch_local_recorder
-		
-		- npm run nightwatch_local_transactionExecution
-		
-		- npm run nightwatch_local_staticAnalysis
-		
-		- npm run nightwatch_local_signingMessage
-
-		- npm run nightwatch_local_console
-		
-		- npm run nightwatch_local_remixd # remixd needs to be run
-		
+Copyright (c) 2014, 2015, 2019 the individual contributors
 
 
-## Usage as a Chrome Extension
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
 
-If you would like to use this as a Chrome extension, you must either build it first or pull from the `gh-pages` branch, both described above.
-After that, follow these steps:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-- Browse to `chrome://extensions/`
-- Make sure 'Developer mode' has been checked
-- Click 'Load unpacked extension...' to pop up a file-selection dialog
-- Select your `remix-ide` folder
-
-## Documentation
-
-To see details about how to use Remix for developing and/or debugging Solidity contracts, please see [our documentation page](https://remix-ide.readthedocs.io/en/latest/)
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

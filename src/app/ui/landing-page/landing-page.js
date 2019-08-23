@@ -26,6 +26,7 @@ let css = csjs`
   .thisJumboton {
     padding: 2.5rem 0rem;
     margin-bottom: 4rem;
+    background-color: #0b1bee!important;
   }
   .hpLogoContainer {
     margin:30px;
