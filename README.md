@@ -4,7 +4,7 @@
 ![Travis (.com) branch](https://img.shields.io/travis/com/echoprotocol/echo-studio/master?label=build%20master)
 ![Travis (.com) branch](https://img.shields.io/travis/com/echoprotocol/echo-studio/develop?label=build%20develop)
 
-Echo Studio is a browser-based compiler and IDE that enables users to build **Echo contracts with Solidity language** and to debug transactions.
+Echo Studio is a browser-based compiler and IDE that enables users to build **Echo contracts with Solidity language**, to debug transactions  and to interact with the [Echo](httpd://echo.org) blockchain
 
 ![Echo Studio example](./echo_studio_example.png)
 
