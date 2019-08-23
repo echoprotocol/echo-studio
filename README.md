@@ -23,7 +23,7 @@ Clone the git repository:
 git clone https://github.com/echoprotocol/echo-studio.git
 ```
 
-Go into the repository:
+Go into the `echo-studio` repository:
 
 ```bash
 cd echo-studio
@@ -50,19 +50,19 @@ Install `tools` dependencies:
 npm install
 ```
 
-Bootstrap the packages in the current repo:
+Bootstrap the packages in the `tools` repository:
 
 ```bash
 npm run bootstrap
 ```
 
-Go back into the echo-studio repository:
+Go back into the `echo-studio` repository:
 
 ```bash
 cd ..
 ```
 
-Setup `tools`:
+Setup `tools` in the `echo-studio` repository:
 
 ```bash
 npm run setupstudio
