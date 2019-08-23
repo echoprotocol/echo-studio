@@ -8,10 +8,7 @@ Echo Studio is a browser-based compiler and IDE that enables users to build **Ec
 
 To try it out, visit [https://echo-studio.echo-dev.io](https://echo-studio.echo-dev.io).
 
-Studio consists of many modules and in this repository you will find the Echo Studio (aka. Browser-Solidity).
-
 ![Echo Studio example](./echo_studio_example.png)
-
 
 ## Installation Prerequisites
 
