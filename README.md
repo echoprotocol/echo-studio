@@ -115,7 +115,7 @@ Read our [Contributing Guide](https://github.com/echoprotocol/echo-studio/CONTRI
 
 The MIT License (MIT)
 
-Copyright (c) 2019 ECHO DEVELOPMENT LTD
+Copyright (c) 2019 Echo Technological Solutions LLC
 
 Copyright (c) 2014, 2015, 2019 the individual contributors
 
