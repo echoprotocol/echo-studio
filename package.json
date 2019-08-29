@@ -1,6 +1,6 @@
 {
   "name": "echo-studio",
-  "version": "v0.2.0",
+  "version": "v0.2.1",
   "description": "Echo Studio is a browser-based compiler and IDE that enables users to build Echo contracts with Solidity language and to debug transactions.",
   "devDependencies": {
     "@babel/core": "^7.4.5",
