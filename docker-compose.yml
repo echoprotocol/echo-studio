@@ -2,7 +2,7 @@ version: '3'
 
 services:
   echo-studio:
-    image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    image: $CI_FULL_REGISTRY
     ports:
       - 0.0.0.0:26900:8080
     restart: always
